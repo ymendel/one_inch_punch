@@ -1,6 +1,23 @@
 $:.unshift(File.dirname(__FILE__)) unless
   $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
 
-module OneInchPunch
-  
+require 'yaml'
+
+module Punch
+  class << self
+    def load
+      begin
+        raw = File.read(File.expand_path('~/.punch.yml'))
+        @data = YAML.load(raw)
+      rescue Errno::ENOENT
+        return false
+      end
+      
+      true
+    end
+    
+    def reset
+      @data = nil
+    end
+  end
 end
