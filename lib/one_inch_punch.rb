@@ -19,5 +19,11 @@ module Punch
     def reset
       @data = nil
     end
+    
+    def write
+      File.open(File.expand_path('~/.punch.yml'), 'w') do |file|
+        file.puts @data.to_yaml
+      end
+    end
   end
 end

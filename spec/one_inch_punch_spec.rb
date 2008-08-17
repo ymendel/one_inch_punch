@@ -82,4 +82,27 @@ describe Punch do
       Punch.data.should be_nil
     end
   end
+  
+  it 'should write data' do
+    Punch.should respond_to(:write)
+  end
+  
+  describe 'when writing data' do
+    before :each do
+      @file = stub('file')
+      File.stubs(:open).yields(@file)
+      @data = { 'proj' => 'data goes here' }
+      Punch.instance_variable_set('@data', @data)
+    end
+    
+    it 'should open the data file for writing' do
+      File.expects(:open).with(File.expand_path('~/.punch.yml'), 'w')
+      Punch.write
+    end
+    
+    it 'should write the data to the file in YAML form' do
+      @file.expects(:puts).with(@data.to_yaml)
+      Punch.write
+    end
+  end
 end
