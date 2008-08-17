@@ -33,7 +33,9 @@ describe Punch do
       File.stubs(:read).returns(@data)
       
       Punch.instance_eval do
-        def data() @data; end
+        class << self
+          public :data
+        end
       end
       
       Punch.reset
@@ -76,8 +78,16 @@ describe Punch do
   end
   
   describe 'when resetting itself' do
+    before :each do
+      Punch.instance_eval do
+        class << self
+          public :data, :data=
+        end
+      end
+    end
+    
     it 'should set its data to nil' do
-      Punch.instance_variable_set('@data', {'proj' => 'lots of stuff here'})
+      Punch.data = { 'proj' => 'lots of stuff here' }
       Punch.reset
       Punch.data.should be_nil
     end
@@ -92,7 +102,13 @@ describe Punch do
       @file = stub('file')
       File.stubs(:open).yields(@file)
       @data = { 'proj' => 'data goes here' }
-      Punch.instance_variable_set('@data', @data)
+      
+      Punch.instance_eval do
+        class << self
+          public :data=
+        end
+      end
+      Punch.data = @data
     end
     
     it 'should open the data file for writing' do

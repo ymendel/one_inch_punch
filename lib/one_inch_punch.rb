@@ -5,6 +5,11 @@ require 'yaml'
 
 module Punch
   class << self
+    private
+    attr_accessor :data
+    
+    public
+    
     def load
       begin
         raw = File.read(File.expand_path('~/.punch.yml'))
