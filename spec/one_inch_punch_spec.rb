@@ -105,4 +105,18 @@ describe Punch do
       Punch.write
     end
   end
+  
+  it "should give a project's status" do
+    Punch.should respond_to(:status)
+  end
+  
+  describe "giving a project's status" do
+    it 'should accept a project name' do
+      lambda { Punch.status('proj') }.should_not raise_error(ArgumentError)
+    end
+    
+    it 'should require a project name' do
+      lambda { Punch.status }.should raise_error(ArgumentError)
+    end
+  end
 end

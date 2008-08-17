@@ -25,5 +25,8 @@ module Punch
         file.puts @data.to_yaml
       end
     end
+    
+    def status(project)
+    end
   end
 end
