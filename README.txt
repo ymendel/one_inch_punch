@@ -11,19 +11,35 @@ One-inch punch: Smaller, more effective
 
 == FEATURES/PROBLEMS:
 
-* FIX (list of features or problems)
+* Can load and write .punch.yml data compatibly with Ara's punch gem
+* Can punch in and out of projects
+* Can query project status
+
+* Cannot give a total time (yet)
+* Cannot list time entries (yet)
+* Cannot be used command-line (yet)
+* More, since this is unfinished
 
 == SYNOPSIS:
 
-  FIX (code sample of usage)
+  require 'punch'
+  
+  Punch.load
+  Punch.status('my project')  # => 'out'
+  Punch.in('my project')
+  Punch.status('my project')  # => 'in'
+  # do some work
+  Punch.out('my project')
+  Punch.out?('my project')    # => true
 
 == REQUIREMENTS:
 
-* FIX (list of requirements)
+* A reason to track time
+* Ruby
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+* gem install one_inch_punch
 
 == THANKS:
 
