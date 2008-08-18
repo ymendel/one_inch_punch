@@ -338,4 +338,87 @@ describe Punch do
       end
     end
   end
+  
+  it 'should punch a project out' do
+    Punch.should respond_to(:out)
+  end
+  
+  describe 'punching a project out' do
+    before :each do
+      @now = Time.now
+      Time.stubs(:now).returns(@now)
+      @project = 'test project'
+      @data = { @project => [ {'in' => @now - 50, 'out' => @now - 25} ] }
+      
+      Punch.instance_eval do
+        class << self
+          public :data, :data=
+        end
+      end
+      Punch.data = @data
+      
+      @test = states('test').starts_as('setup')
+      Punch.stubs(:write).when(@test.is('setup'))
+    end
+    
+    it 'should accept a project name' do
+      lambda { Punch.out('proj') }.should_not raise_error(ArgumentError)
+    end
+    
+    it 'should require a project name' do
+      lambda { Punch.out }.should raise_error(ArgumentError)
+    end
+    
+    it 'should check whether the project is already punched out' do
+      Punch.expects(:out?).with(@project)
+      Punch.out(@project)
+    end
+    
+    describe 'when the project is already punched out' do
+      before :each do
+        Punch.stubs(:out?).returns(true)
+      end
+      
+      it 'should not change the project data' do
+        Punch.out(@project)
+        Punch.data.should == @data
+      end
+      
+      it 'should not write the data' do
+        @test.become('test')
+        Punch.expects(:write).never.when(@test.is('test'))
+        Punch.out(@project)
+      end
+      
+      it 'should return false' do
+        Punch.out(@project).should == false
+      end
+    end
+    
+    describe 'when the project is not already punched out' do
+      before :each do
+        Punch.stubs(:out?).returns(false)
+      end
+      
+      it 'should not add a time entry to the project data' do
+        Punch.out(@project)
+        Punch.data[@project].length.should == 1
+      end
+      
+      it 'should use now for the punch-out time' do
+        Punch.out(@project)
+        Punch.data[@project].last['out'].should == @now
+      end
+      
+      it 'should write the data' do
+        @test.become('test')
+        Punch.expects(:write).when(@test.is('test'))
+        Punch.out(@project)
+      end
+      
+      it 'should return true' do
+        Punch.out(@project).should == true
+      end
+    end
+  end
 end

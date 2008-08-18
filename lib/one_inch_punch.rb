@@ -57,5 +57,12 @@ module Punch
       write
       true
     end
+    
+    def out(project)
+      return false if out?(project)
+      data[project].last['out'] = Time.now
+      write
+      true
+    end
   end
 end
