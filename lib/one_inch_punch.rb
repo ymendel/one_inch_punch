@@ -50,5 +50,12 @@ module Punch
     def in?(project)
       status(project) == 'in'
     end
+    
+    def in(project)
+      return false if in?(project)
+      data[project].push({'in' => Time.now})
+      write
+      true
+    end
   end
 end
