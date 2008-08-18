@@ -1,4 +1,4 @@
-module OneInchPunch
+module Punch
   module VERSION #:nodoc:
     MAJOR = 0
     MINOR = 0

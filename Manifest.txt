@@ -5,13 +5,13 @@ README.txt
 Rakefile
 config/hoe.rb
 config/requirements.rb
-lib/one_inch_punch.rb
-lib/one_inch_punch/version.rb
+lib/punch.rb
+lib/punch/version.rb
 script/console
 script/destroy
 script/generate
 setup.rb
-spec/one_inch_punch_spec.rb
+spec/punch_spec.rb
 spec/spec.opts
 spec/spec_helper.rb
 tasks/deployment.rake

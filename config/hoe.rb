@@ -1,8 +1,8 @@
-require 'one_inch_punch/version'
+require 'punch/version'
 
 AUTHOR = 'Yossef Mendelssohn'  # can also be an array of Authors
-EMAIL = "ymendel@pobox.com"
-DESCRIPTION = "description of gem"
+EMAIL = 'ymendel@pobox.com'
+DESCRIPTION = 'a simple time-tracking tool'
 GEM_NAME = 'one_inch_punch' # what ppl will type to install your gem
 RUBYFORGE_PROJECT = 'yomendel' # The unix name for your project
 HOMEPATH = "http://#{RUBYFORGE_PROJECT}.rubyforge.org"
@@ -34,7 +34,7 @@ end
 REV = nil
 # UNCOMMENT IF REQUIRED:
 # REV = YAML.load(`svn info`)['Revision']
-VERS = OneInchPunch::VERSION::STRING + (REV ? ".#{REV}" : "")
+VERS = Punch::VERSION::STRING + (REV ? ".#{REV}" : "")
 RDOC_OPTS = ['--quiet', '--title', 'one_inch_punch documentation',
     "--opname", "index.html",
     "--line-numbers",

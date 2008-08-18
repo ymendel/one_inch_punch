@@ -20,4 +20,4 @@ Spec::Runner.configure do |config|
 end
 
 $:.unshift(File.dirname(__FILE__) + '/../lib')
-require 'one_inch_punch'
+require 'punch'
