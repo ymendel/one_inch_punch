@@ -42,5 +42,13 @@ module Punch
         'in'
       end
     end
+    
+    def out?(project)
+      status(project) != 'in'
+    end
+    
+    def in?(project)
+      status(project) == 'in'
+    end
   end
 end

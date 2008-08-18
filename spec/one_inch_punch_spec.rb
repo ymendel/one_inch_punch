@@ -179,4 +179,80 @@ describe Punch do
       Punch.status(@projects['in']).should  == 'in'
     end
   end
+  
+  it 'should indicate whether a project is punched out' do
+    Punch.should respond_to(:out?)
+  end
+  
+  describe 'indicating whether a project is punched out' do
+    before :each do
+      @project = 'testola'
+    end
+    
+    it 'should accept a project name' do
+      lambda { Punch.out?('proj') }.should_not raise_error(ArgumentError)
+    end
+    
+    it 'should require a project name' do
+      lambda { Punch.out? }.should raise_error(ArgumentError)
+    end
+        
+    it "should get the project's status" do
+      Punch.expects(:status).with(@project)
+      Punch.out?(@project)
+    end
+    
+    it "should return true if the project's status is 'out'" do
+      Punch.stubs(:status).returns('out')
+      Punch.out?(@project).should == true
+    end
+    
+    it "should return false if the project's status is 'in'" do
+      Punch.stubs(:status).returns('in')
+      Punch.out?(@project).should == false
+    end
+    
+    it "should return true if the project's status is nil" do
+      Punch.stubs(:status).returns(nil)
+      Punch.out?(@project).should == true
+    end
+  end
+  
+  it 'should indicate whether a project is punched in' do
+    Punch.should respond_to(:in?)
+  end
+  
+  describe 'indicating whether a project is punched in' do
+    before :each do
+      @project = 'testola'
+    end
+    
+    it 'should accept a project name' do
+      lambda { Punch.in?('proj') }.should_not raise_error(ArgumentError)
+    end
+    
+    it 'should require a project name' do
+      lambda { Punch.in? }.should raise_error(ArgumentError)
+    end
+        
+    it "should get the project's status" do
+      Punch.expects(:status).with(@project)
+      Punch.in?(@project)
+    end
+    
+    it "should return false if the project's status is 'out'" do
+      Punch.stubs(:status).returns('out')
+      Punch.in?(@project).should == false
+    end
+    
+    it "should return true if the project's status is 'in'" do
+      Punch.stubs(:status).returns('in')
+      Punch.in?(@project).should == true
+    end
+    
+    it "should return false if the project's status is nil" do
+      Punch.stubs(:status).returns(nil)
+      Punch.in?(@project).should == false
+    end
+  end
 end
