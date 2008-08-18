@@ -127,12 +127,56 @@ describe Punch do
   end
   
   describe "giving a project's status" do
+    before :each do
+      @now = Time.now
+      @projects = { 'out' => 'test-o', 'in' => 'testshank' }
+      @data = { 
+        @projects['out'] => [ { 'in' => @now, 'out' => @now + 12 } ],
+        @projects['in']  => [ { 'in' => @now } ]
+      }
+      
+      Punch.instance_eval do
+        class << self
+          public :data=
+        end
+      end
+      Punch.data = @data
+    end
+    
     it 'should accept a project name' do
       lambda { Punch.status('proj') }.should_not raise_error(ArgumentError)
     end
     
     it 'should require a project name' do
       lambda { Punch.status }.should raise_error(ArgumentError)
+    end
+    
+    it "should return 'out' if the project is currently punched out" do
+      Punch.status(@projects['out']).should == 'out'
+    end
+    
+    it "should return 'in' if the project is currently punched in" do
+      Punch.status(@projects['in']).should == 'in'
+    end
+    
+    it 'should return nil if the project does not exist' do
+      Punch.status('other project').should be_nil
+    end
+    
+    it 'should return nil if the project has no time data' do
+      project = 'empty project'
+      @data[project] = []
+      Punch.data = @data
+      Punch.status(project).should be_nil
+    end
+    
+    it 'should use the last time entry for the status' do
+      @data[@projects['out']].unshift *[{ 'in' => @now - 100 }, { 'in' => @now - 90, 'out' => @now - 50 }]
+      @data[@projects['in']].unshift  *[{ 'in' => @now - 100, 'out' => @now - 90 }, { 'in' => @now - 50 }]
+      Punch.data = @data
+      
+      Punch.status(@projects['out']).should == 'out'
+      Punch.status(@projects['in']).should  == 'in'
     end
   end
 end

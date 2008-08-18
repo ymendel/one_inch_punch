@@ -32,6 +32,15 @@ module Punch
     end
     
     def status(project)
+      project_data = data[project]
+      return nil if !project_data or project_data.empty?
+      
+      time_data = project_data.last
+      if time_data['out']
+        'out'
+      else
+        'in'
+      end
     end
   end
 end
