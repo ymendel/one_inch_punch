@@ -53,6 +53,7 @@ module Punch
     
     def in(project)
       return false if in?(project)
+      data[project] ||= []
       data[project].push({'in' => Time.now})
       write
       true

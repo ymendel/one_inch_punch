@@ -337,6 +337,42 @@ describe Punch do
         Punch.in(@project).should == true
       end
     end
+    
+    describe 'when the project does not yet exist' do
+      before :each do
+        @project = 'non-existent project'
+      end
+      
+      it 'should create the project' do
+        Punch.in(@project)
+        Punch.data.should include(@project)
+      end
+      
+      it 'should add a time entry to the project data' do
+        Punch.in(@project)
+        Punch.data[@project].length.should == 1
+      end
+      
+      it 'should use now for the punch-in time' do
+        Punch.in(@project)
+        Punch.data[@project].last['in'].should == @now
+      end
+      
+      it 'should use now for the punch-in time' do
+        Punch.in(@project)
+        Punch.data[@project].last['in'].should == @now
+      end
+      
+      it 'should write the data' do
+        @test.become('test')
+        Punch.expects(:write).when(@test.is('test'))
+        Punch.in(@project)
+      end
+      
+      it 'should return true' do
+        Punch.in(@project).should == true
+      end
+    end
   end
   
   it 'should punch a project out' do
