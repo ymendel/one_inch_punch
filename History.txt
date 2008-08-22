@@ -1,3 +1,10 @@
+== 0.0.2 2008-08-22
+
+* 3 tiny enhancements:
+  * Punching in will now create a project if necessary
+  * Can now delete a project
+  * Can now list project data
+
 == 0.0.1 2008-08-18
 
 * 1 major enhancement:

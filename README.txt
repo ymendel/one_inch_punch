@@ -12,11 +12,12 @@ One-inch punch: Smaller, more effective
 == FEATURES/PROBLEMS:
 
 * Can load and write .punch.yml data compatibly with Ara's punch gem
-* Can punch in and out of projects
+* Can punch in and out of projects (including creating a project by punching in)
 * Can query project status
+* Can delete a project
+* Can list project data
 
 * Cannot give a total time (yet)
-* Cannot list time entries (yet)
 * Cannot be used command-line (yet)
 * More, since this is unfinished
 
