@@ -65,5 +65,11 @@ module Punch
       write
       true
     end
+    
+    def delete(project)
+      return nil unless data.delete(project)
+      write
+      true
+    end
   end
 end

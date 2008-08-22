@@ -457,4 +457,67 @@ describe Punch do
       end
     end
   end
+
+  it 'should delete a project' do
+    Punch.should respond_to(:delete)
+  end
+  
+  describe 'deleting a project' do
+    before :each do
+      @now = Time.now
+      @project = 'test project'
+      @data = { @project => [ {'in' => @now - 50, 'out' => @now - 25} ] }
+      
+      Punch.instance_eval do
+        class << self
+          public :data, :data=
+        end
+      end
+      Punch.data = @data
+      
+      @test = states('test').starts_as('setup')
+      Punch.stubs(:write).when(@test.is('setup'))
+    end
+    
+    it 'should accept a project name' do
+      lambda { Punch.delete('proj') }.should_not raise_error(ArgumentError)
+    end
+    
+    it 'should require a project name' do
+      lambda { Punch.delete }.should raise_error(ArgumentError)
+    end
+    
+    describe 'when the project exists' do
+      it 'should remove the project data' do
+        Punch.delete(@project)
+        Punch.data.should_not include(@project)
+      end
+      
+      it 'should write the data' do
+        @test.become('test')
+        Punch.expects(:write).when(@test.is('test'))
+        Punch.delete(@project)
+      end
+      
+      it 'should return true' do
+        Punch.delete(@project).should == true
+      end
+    end
+    
+    describe 'when the project does not exist' do
+      before :each do
+        @project = 'non-existent project'
+      end
+      
+      it 'should not write the data' do
+        @test.become('test')
+        Punch.expects(:write).never.when(@test.is('test'))
+        Punch.delete(@project)
+      end
+      
+      it 'should return nil' do
+        Punch.delete(@project).should be_nil
+      end
+    end
+  end
 end
