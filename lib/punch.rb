@@ -71,5 +71,9 @@ module Punch
       write
       true
     end
+    
+    def list(project)
+      data[project]
+    end
   end
 end

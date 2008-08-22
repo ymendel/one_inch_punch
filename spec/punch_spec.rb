@@ -520,4 +520,47 @@ describe Punch do
       end
     end
   end
+  
+  it 'should list project data' do
+    Punch.should respond_to(:list)
+  end
+  
+  describe 'listing project data' do
+    before :each do
+      @now = Time.now
+      @project = 'test project'
+      @data = { @project => [ {'in' => @now - 50, 'out' => @now - 25} ] }
+      
+      Punch.instance_eval do
+        class << self
+          public :data, :data=
+        end
+      end
+      Punch.data = @data
+    end
+    
+    it 'should accept a project name' do
+      lambda { Punch.list('proj') }.should_not raise_error(ArgumentError)
+    end
+    
+    it 'should require a project name' do
+      lambda { Punch.list }.should raise_error(ArgumentError)
+    end
+    
+    describe 'when the project exists' do
+      it 'should return the project data' do
+        Punch.list(@project).should == Punch.data[@project]
+      end
+    end
+
+    describe 'when the project does not exist' do
+      before :each do
+        @project = 'non-existent project'
+      end
+      
+      it 'should return nil' do
+        Punch.list(@project).should be_nil
+      end
+    end
+  end
 end
