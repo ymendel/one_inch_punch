@@ -1,13 +1,13 @@
 class Fixnum
   def elapsed_time
-    tmp = divmod(60)
-    seconds = '%02d' % tmp.last
-    tmp = tmp.first.divmod(60)
-    minutes = '%02d' % tmp.last
-    hours   = tmp.first
+    minutes, seconds = divmod(60)
+    hours, minutes   = minutes.divmod(60)
+    
+    seconds = '%02d' % seconds
+    minutes = '%02d' % minutes
     
     time = "#{minutes}:#{seconds}"
-    time = "#{hours}:#{time}" unless hours == 0
+    time = "#{hours}:#{time}" unless hours.zero?
     time
   end
 end
