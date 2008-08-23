@@ -524,7 +524,7 @@ describe Punch do
     before :each do
       @now = Time.now
       @project = 'test project'
-      @data = { @project => [ {'in' => @now - 50, 'out' => @now - 25} ] }
+      @data = { @project => [ {'in' => @now - 5000, 'out' => @now - 2500}, {'in' => @now - 2000, 'out' => @now - 1000}, {'in' => @now - 500, 'out' => @now - 100} ] }
       
       Punch.instance_eval do
         class << self
@@ -542,9 +542,25 @@ describe Punch do
       lambda { Punch.list }.should raise_error(ArgumentError)
     end
     
+    it 'should allow options' do
+      lambda { Punch.list('proj', :after => Time.now) }.should_not raise_error(ArgumentError)
+    end
+    
     describe 'when the project exists' do
       it 'should return the project data' do
         Punch.list(@project).should == Punch.data[@project]
+      end
+      
+      it 'should restrict returned data to times only after a certain time' do
+        Punch.list(@project, :after => @now - 501).should == Punch.data[@project].last(1)
+      end
+      
+      it 'should restrict returned data to times only before a certain time' do
+        Punch.list(@project, :before => @now - 2499).should == Punch.data[@project].first(1)
+      end
+      
+      it 'should restrict returned data to times only within a time range' do
+        Punch.list(@project, :after => @now - 2001, :before => @now - 999).should == Punch.data[@project][1, 1]
       end
     end
 
@@ -555,6 +571,10 @@ describe Punch do
       
       it 'should return nil' do
         Punch.list(@project).should be_nil
+      end
+      
+      it 'should return nil if options given' do
+        Punch.list(@project, :after => @now - 500).should be_nil
       end
     end
   end

@@ -72,8 +72,11 @@ module Punch
       true
     end
     
-    def list(project)
-      data[project]
+    def list(project, options = {})
+      return nil unless project_data = data[project]
+      project_data = project_data.select { |t|  t['in']  > options[:after] }  if options[:after]
+      project_data = project_data.select { |t|  t['out'] < options[:before] } if options[:before]
+      project_data
     end
     
     def total(project)
