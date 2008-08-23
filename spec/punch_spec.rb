@@ -563,4 +563,61 @@ describe Punch do
       end
     end
   end
+
+  it 'should get the total time for a project' do
+    Punch.should respond_to(:total)
+  end
+  
+  describe 'getting total time for a project' do
+    before :each do
+      @now = Time.now
+      Time.stubs(:now).returns(@now)
+      @project = 'test project'
+      @data = { @project => [ {'in' => @now - 5000, 'out' => @now - 2500}, {'in' => @now - 500, 'out' => @now - 100} ] }
+      
+      Punch.instance_eval do
+        class << self
+          public :data, :data=
+        end
+      end
+      Punch.data = @data
+    end
+    
+    it 'should accept a project name' do
+      lambda { Punch.total('proj') }.should_not raise_error(ArgumentError)
+    end
+    
+    it 'should require a project name' do
+      lambda { Punch.total }.should raise_error(ArgumentError)
+    end
+    
+    describe 'when the project exists' do
+      describe 'and is punched out' do
+        it 'should return the amount of time spent on the project (in seconds)' do
+          Punch.total(@project).should == 2900
+        end
+      end
+      
+      describe 'and is punched in' do
+        before :each do
+          @data[@project].push({ 'in' => @now - 25 })
+          Punch.data = @data
+        end
+        
+        it 'give the time spent until now' do
+          Punch.total(@project).should == 2925
+        end
+      end
+    end
+
+    describe 'when the project does not exist' do
+      before :each do
+        @project = 'non-existent project'
+      end
+      
+      it 'should return nil' do
+        Punch.total(@project).should be_nil
+      end
+    end
+  end
 end

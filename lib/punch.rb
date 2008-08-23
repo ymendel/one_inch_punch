@@ -75,5 +75,10 @@ module Punch
     def list(project)
       data[project]
     end
+    
+    def total(project)
+      return nil unless data[project]
+      data[project].collect { |t|  ((t['out'] || Time.now) - t['in']).to_i }.inject(0) { |sum, t|  sum + t }
+    end
   end
 end
