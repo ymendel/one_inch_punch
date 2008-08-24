@@ -32,19 +32,13 @@ module Punch
     end
     
     def status(project = nil)
-      if project
-        project_data = data[project]
-        return nil if !project_data or project_data.empty?
+      return data.inject({}) { |hash, (project, data)|  hash.merge(project => status(project)) } unless project
       
-        time_data = project_data.last
-        if time_data['out']
-          'out'
-        else
-          'in'
-        end
-      else
-        data.inject({}) { |hash, (project, data)|  hash.merge(project => status(project)) }
-      end
+      project_data = data[project]
+      return nil if !project_data or project_data.empty?
+      
+      time_data = project_data.last
+      time_data['out'] ? 'out' : 'in'
     end
     
     def out?(project)
