@@ -588,7 +588,7 @@ describe Punch do
       @now = Time.now
       Time.stubs(:now).returns(@now)
       @project = 'test project'
-      @data = { @project => [ {'in' => @now - 5000, 'out' => @now - 2500}, {'in' => @now - 500, 'out' => @now - 100} ] }
+      @data = { @project => [ {'in' => @now - 5000, 'out' => @now - 2500}, {'in' => @now - 2000, 'out' => @now - 1000}, {'in' => @now - 500, 'out' => @now - 100} ] }
       
       Punch.instance_eval do
         class << self
@@ -606,10 +606,26 @@ describe Punch do
       lambda { Punch.total }.should raise_error(ArgumentError)
     end
     
+    it 'should allow options' do
+      lambda { Punch.total('proj', :after => Time.now) }.should_not raise_error(ArgumentError)
+    end
+    
     describe 'when the project exists' do
       describe 'and is punched out' do
         it 'should return the amount of time spent on the project (in seconds)' do
-          Punch.total(@project).should == 2900
+          Punch.total(@project).should == 3900
+        end
+        
+        it 'should restrict returned amount to times only after a certain time' do
+          Punch.total(@project, :after => @now - 501).should == 400
+        end
+
+        it 'should restrict returned amount to times only before a certain time' do
+          Punch.total(@project, :before => @now - 2499).should == 2500
+        end
+
+        it 'should restrict returned amount to times only within a time range' do
+          Punch.total(@project, :after => @now - 2001, :before => @now - 999).should == 1000
         end
       end
       
@@ -620,7 +636,7 @@ describe Punch do
         end
         
         it 'give the time spent until now' do
-          Punch.total(@project).should == 2925
+          Punch.total(@project).should == 3925
         end
       end
     end

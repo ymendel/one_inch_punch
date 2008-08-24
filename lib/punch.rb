@@ -79,9 +79,9 @@ module Punch
       project_data
     end
     
-    def total(project)
+    def total(project, options = {})
       return nil unless data[project]
-      data[project].collect { |t|  ((t['out'] || Time.now) - t['in']).to_i }.inject(0) { |sum, t|  sum + t }
+      list(project, options).collect { |t|  ((t['out'] || Time.now) - t['in']).to_i }.inject(0) { |sum, t|  sum + t }
     end
   end
 end
