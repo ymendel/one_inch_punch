@@ -593,8 +593,8 @@ describe Punch do
       lambda { Punch.list('proj') }.should_not raise_error(ArgumentError)
     end
     
-    it 'should require a project name' do
-      lambda { Punch.list }.should raise_error(ArgumentError)
+    it 'should not require a project name' do
+      lambda { Punch.list }.should_not raise_error(ArgumentError)
     end
     
     it 'should allow options' do
@@ -630,6 +630,22 @@ describe Punch do
       
       it 'should return nil if options given' do
         Punch.list(@project, :after => @now - 500).should be_nil
+      end
+    end
+    
+    describe 'when no project is given' do
+      before :each do
+        @projects = ['test project', 'out project', 'other project']
+        @data = {
+          @projects[0] => [ {'in' => @now - 50, 'out' => @now - 25} ],
+          @projects[1] => [ {'in' => @now - 300, 'out' => @now - 250}, {'in' => @now - 40, 'out' => @now - 20} ],
+          @projects[2] => [ {'in' => @now - 50, 'out' => @now - 35} ],
+        }
+        Punch.data = @data
+      end
+      
+      it 'should return data for all projects' do
+        Punch.list.should == @data
       end
     end
   end

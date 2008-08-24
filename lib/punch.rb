@@ -80,7 +80,8 @@ module Punch
       true
     end
     
-    def list(project, options = {})
+    def list(project = nil, options = {})
+      return data unless project
       return nil unless project_data = data[project]
       project_data = project_data.select { |t|  t['in']  > options[:after] }  if options[:after]
       project_data = project_data.select { |t|  t['out'] < options[:before] } if options[:before]
