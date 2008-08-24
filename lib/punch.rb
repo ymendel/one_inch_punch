@@ -111,5 +111,14 @@ module Punch
         end
       end
     end
+    
+    def log(project, message)
+      return false unless in?(project)
+      project_data = data[project].last
+      project_data['log'] ||= []
+      project_data['log'].push message
+      write
+      true
+    end
   end
 end

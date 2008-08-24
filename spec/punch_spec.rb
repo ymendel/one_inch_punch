@@ -750,4 +750,101 @@ describe Punch do
       end
     end
   end
+  
+  it 'should log information about a project' do
+    Punch.should respond_to(:log)
+  end
+  
+  describe 'logging information about a project' do
+    before :each do
+      @now = Time.now
+      @project = 'test project'
+      @data = { @project => [ {'in' => @now - 50, 'log' => ['some earlier message']} ] }
+      
+      Punch.instance_eval do
+        class << self
+          public :data, :data=
+        end
+      end
+      Punch.data = @data
+      
+      @test = states('test').starts_as('setup')
+      Punch.stubs(:write).when(@test.is('setup'))
+      
+      @message = 'some log message'
+    end
+    
+    it 'should accept a project and message' do
+      lambda { Punch.log('proj', 'some mess') }.should_not raise_error(ArgumentError)
+    end
+    
+    it 'should require a message' do
+      lambda { Punch.log('proj') }.should raise_error(ArgumentError)
+    end
+    
+    it 'should require a project' do
+      lambda { Punch.log }.should raise_error(ArgumentError)
+    end
+    
+    it 'should check if the project is punched in' do
+      Punch.expects(:in?).with(@project)
+      Punch.log(@project, @message)
+    end
+    
+    describe 'when the project is punched in' do
+      it 'should add a log message to the last time entry for the project' do
+        Punch.log(@project, @message)
+        Punch.data[@project].last['log'].length.should == 2
+      end
+      
+      it 'should use the given message for the log' do
+        Punch.log(@project, @message)
+        Punch.data[@project].last['log'].last.should == @message
+      end
+      
+      it 'should write the data' do
+        @test.become('test')
+        Punch.expects(:write).when(@test.is('test'))
+        Punch.log(@project, @message)
+      end
+      
+      it 'should return true' do
+        Punch.log(@project, @message).should == true
+      end
+      
+      describe 'and has no log' do
+        before :each do
+          @data = { @project => [ {'in' => @now - 50} ] }
+          Punch.data = @data
+        end
+        
+        it 'should create the log' do
+          Punch.log(@project, @message)
+          Punch.data[@project].last['log'].should == [@message]
+        end
+      end
+    end
+    
+    describe 'when the project is not punched in' do
+      before :each do
+        @data = { @project => [ {'in' => @now - 50, 'out' => @now - 25, 'log' => ['some earlier message']} ] }
+        Punch.data = @data
+      end
+      
+      it 'should not change the project data' do
+        Punch.log(@project, @message)
+        Punch.data.should == @data
+      end
+      
+      it 'should not write the data' do
+        @test.become('test')
+        Punch.expects(:write).never.when(@test.is('test'))
+        Punch.log(@project, @message)
+      end
+      
+      it 'should return false' do
+        Punch.log(@project, @message).should == false
+      end
+    end
+  end
 end
