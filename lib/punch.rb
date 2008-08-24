@@ -87,9 +87,15 @@ module Punch
       project_data
     end
     
-    def total(project, options = {})
-      return nil unless data[project]
-      list(project, options).collect { |t|  ((t['out'] || Time.now) - t['in']).to_i }.inject(0) { |sum, t|  sum + t }
+    def total(project = nil, options = {})
+      if project
+        return nil unless data[project]
+        list(project, options).collect { |t|  ((t['out'] || Time.now) - t['in']).to_i }.inject(0) { |sum, t|  sum + t }
+      else
+        data.inject({}) do |hash, (project, _)|
+          hash.merge(project => list(project, options).collect { |t|  ((t['out'] || Time.now) - t['in']).to_i }.inject(0) { |sum, t|  sum + t })
+        end
+      end
     end
   end
 end

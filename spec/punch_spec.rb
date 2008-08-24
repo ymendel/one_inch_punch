@@ -657,8 +657,8 @@ describe Punch do
       lambda { Punch.total('proj') }.should_not raise_error(ArgumentError)
     end
     
-    it 'should require a project name' do
-      lambda { Punch.total }.should raise_error(ArgumentError)
+    it 'should not require a project name' do
+      lambda { Punch.total }.should_not raise_error(ArgumentError)
     end
     
     it 'should allow options' do
@@ -701,6 +701,22 @@ describe Punch do
       
       it 'should return nil' do
         Punch.total(@project).should be_nil
+      end
+    end
+    
+    describe 'when no project is given' do
+      before :each do
+        @projects = ['test project', 'out project', 'other project']
+        @data = {
+          @projects[0] => [ {'in' => @now - 50, 'out' => @now - 25} ],
+          @projects[1] => [ {'in' => @now - 300, 'out' => @now - 250}, {'in' => @now - 40, 'out' => @now - 20} ],
+          @projects[2] => [ {'in' => @now - 50, 'out' => @now - 35} ],
+        }
+        Punch.data = @data
+      end
+      
+      it 'should give totals for all projects' do
+        Punch.total.should == { @projects[0] => 25, @projects[1] => 70, @projects[2] => 15}
       end
     end
   end
