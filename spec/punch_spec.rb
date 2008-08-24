@@ -611,22 +611,20 @@ describe Punch do
     end
     
     describe 'when the project exists' do
-      describe 'and is punched out' do
-        it 'should return the amount of time spent on the project (in seconds)' do
-          Punch.total(@project).should == 3900
-        end
-        
-        it 'should restrict returned amount to times only after a certain time' do
-          Punch.total(@project, :after => @now - 501).should == 400
-        end
-
-        it 'should restrict returned amount to times only before a certain time' do
-          Punch.total(@project, :before => @now - 2499).should == 2500
-        end
-
-        it 'should restrict returned amount to times only within a time range' do
-          Punch.total(@project, :after => @now - 2001, :before => @now - 999).should == 1000
-        end
+      it 'should return the amount of time spent on the project (in seconds)' do
+        Punch.total(@project).should == 3900
+      end
+      
+      it 'should restrict returned amount to times only after a certain time' do
+        Punch.total(@project, :after => @now - 501).should == 400
+      end
+      
+      it 'should restrict returned amount to times only before a certain time' do
+        Punch.total(@project, :before => @now - 2499).should == 2500
+      end
+      
+      it 'should restrict returned amount to times only within a time range' do
+        Punch.total(@project, :after => @now - 2001, :before => @now - 999).should == 1000
       end
       
       describe 'and is punched in' do
