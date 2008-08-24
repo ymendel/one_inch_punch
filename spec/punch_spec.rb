@@ -718,6 +718,10 @@ describe Punch do
       it 'should give totals for all projects' do
         Punch.total.should == { @projects[0] => 25, @projects[1] => 70, @projects[2] => 15}
       end
+      
+      it 'should respect options' do
+        Punch.total(:after => @now - 51).should == { @projects[0] => 25, @projects[1] => 20, @projects[2] => 15}
+      end
     end
   end
 end
