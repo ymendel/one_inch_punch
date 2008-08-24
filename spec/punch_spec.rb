@@ -358,11 +358,6 @@ describe Punch do
         Punch.data[@project].last['in'].should == @now
       end
       
-      it 'should use now for the punch-in time' do
-        Punch.in(@project)
-        Punch.data[@project].last['in'].should == @now
-      end
-      
       it 'should write the data' do
         @test.become('test')
         Punch.expects(:write).when(@test.is('test'))
