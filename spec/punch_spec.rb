@@ -400,8 +400,8 @@ describe Punch do
       lambda { Punch.out('proj') }.should_not raise_error(ArgumentError)
     end
     
-    it 'should require a project name' do
-      lambda { Punch.out }.should raise_error(ArgumentError)
+    it 'should not require a project name' do
+      lambda { Punch.out }.should_not raise_error(ArgumentError)
     end
     
     it 'should check whether the project is already punched out' do
@@ -453,6 +453,35 @@ describe Punch do
       
       it 'should return true' do
         Punch.out(@project).should == true
+      end
+    end
+    
+    describe 'when no project is given' do
+      before :each do
+        @projects = ['test project', 'out project', 'other project']
+        @data = {
+          @projects[0] => [ {'in' => @now - 50, 'out' => @now - 25} ],
+          @projects[1] => [ {'in' => @now - 300, 'out' => @now - 250}, {'in' => @now - 40} ],
+          @projects[2] => [ {'in' => @now - 50} ],
+        }
+        Punch.data = @data
+      end
+      
+      it 'should punch out all projects that are currently punched in' do
+        Punch.out
+        Punch.data[@projects[0]].last['out'].should == @now - 25
+        Punch.data[@projects[1]].last['out'].should == @now
+        Punch.data[@projects[2]].last['out'].should == @now
+      end
+      
+      it 'should write the data' do
+        @test.become('test')
+        Punch.expects(:write).when(@test.is('test'))
+        Punch.out
+      end
+      
+      it 'should return true' do
+        Punch.out.should == true
       end
     end
   end

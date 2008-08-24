@@ -57,9 +57,13 @@ module Punch
       true
     end
     
-    def out(project)
-      return false if out?(project)
-      data[project].last['out'] = Time.now
+    def out(project = nil)
+      if project
+        return false if out?(project)
+        data[project].last['out'] = Time.now
+      else
+        data.each_key { |project|  data[project].last['out'] = Time.now unless out?(project) }
+      end
       write
       true
     end
