@@ -62,7 +62,13 @@ module Punch
         return false if out?(project)
         data[project].last['out'] = Time.now
       else
-        data.each_key { |project|  data[project].last['out'] = Time.now unless out?(project) }
+        changed = false
+        data.each_key do |project|
+          next if out?(project)
+          data[project].last['out'] = Time.now
+          changed = true
+        end
+        return false unless changed
       end
       write
       true

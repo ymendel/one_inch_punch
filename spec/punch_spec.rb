@@ -483,6 +483,28 @@ describe Punch do
       it 'should return true' do
         Punch.out.should == true
       end
+      
+      describe 'when all projects were already punched out' do
+        before :each do
+          @projects = ['test project', 'out project', 'other project']
+          @data = {
+            @projects[0] => [ {'in' => @now - 50, 'out' => @now - 25} ],
+            @projects[1] => [ {'in' => @now - 300, 'out' => @now - 250}, {'in' => @now - 40, 'out' => @now - 20} ],
+            @projects[2] => [ {'in' => @now - 50, 'out' => @now - 35} ],
+          }
+          Punch.data = @data
+        end
+        
+        it 'should not write the data' do
+          @test.become('test')
+          Punch.expects(:write).never.when(@test.is('test'))
+          Punch.out
+        end
+        
+        it 'should return false' do
+          Punch.out.should == false
+        end
+      end
     end
   end
 
