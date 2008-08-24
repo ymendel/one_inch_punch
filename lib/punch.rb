@@ -89,8 +89,9 @@ module Punch
         project_data = project_data.select { |t|  t['out'] < options[:before] } if options[:before]
         project_data
       else
-        list_data = data
-        list_data.each_key do |project|
+        list_data = {}
+        data.each_key do |project|
+          list_data[project] = data[project]
           list_data[project] = list_data[project].select { |t|  t['in']  > options[:after] }  if options[:after]
           list_data[project] = list_data[project].select { |t|  t['out'] < options[:before] } if options[:before]
         end

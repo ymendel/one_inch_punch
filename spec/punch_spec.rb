@@ -651,6 +651,12 @@ describe Punch do
       it 'should respect options' do
         Punch.list(:after => @now - 51).should == { @projects[0] => @data[@projects[0]], @projects[1] => @data[@projects[1]].last(1), @projects[2] => @data[@projects[2]]}
       end
+      
+      it 'should not change the stored data when options are given' do
+        old_data = @data.dup
+        Punch.list(:after => @now - 51)
+        Punch.data.should == old_data
+      end
     end
   end
 
