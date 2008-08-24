@@ -122,7 +122,7 @@ describe Punch do
     end
   end
   
-  it "should give a project's status" do
+  it 'should give project status' do
     Punch.should respond_to(:status)
   end
   
@@ -147,8 +147,8 @@ describe Punch do
       lambda { Punch.status('proj') }.should_not raise_error(ArgumentError)
     end
     
-    it 'should require a project name' do
-      lambda { Punch.status }.should raise_error(ArgumentError)
+    it 'should not require a project name' do
+      lambda { Punch.status }.should_not raise_error(ArgumentError)
     end
     
     it "should return 'out' if the project is currently punched out" do
@@ -177,6 +177,10 @@ describe Punch do
       
       Punch.status(@projects['out']).should == 'out'
       Punch.status(@projects['in']).should  == 'in'
+    end
+    
+    it 'should return the status of all projects if no project name given' do
+      Punch.status.should == { @projects['out'] => 'out', @projects['in'] => 'in' }
     end
   end
   
