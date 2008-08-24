@@ -80,12 +80,22 @@ module Punch
       true
     end
     
-    def list(project = nil, options = {})
-      return data unless project
-      return nil unless project_data = data[project]
-      project_data = project_data.select { |t|  t['in']  > options[:after] }  if options[:after]
-      project_data = project_data.select { |t|  t['out'] < options[:before] } if options[:before]
-      project_data
+    def list(*args)
+      options = args.last.is_a?(Hash) ? args.pop : {}
+      project = args.first
+      if project
+        return nil unless project_data = data[project]
+        project_data = project_data.select { |t|  t['in']  > options[:after] }  if options[:after]
+        project_data = project_data.select { |t|  t['out'] < options[:before] } if options[:before]
+        project_data
+      else
+        list_data = data
+        list_data.each_key do |project|
+          list_data[project] = list_data[project].select { |t|  t['in']  > options[:after] }  if options[:after]
+          list_data[project] = list_data[project].select { |t|  t['out'] < options[:before] } if options[:before]
+        end
+        list_data
+      end
     end
     
     def total(*args)
