@@ -60,4 +60,11 @@ when 'in'
 when 'out'
   Punch.write if result = Punch.out(project)
   puts result.inspect
+when 'delete'
+  if project
+    Punch.write if result = Punch.delete(project)
+    puts result.inspect
+  else
+    puts "Project required when deleting"
+  end
 end

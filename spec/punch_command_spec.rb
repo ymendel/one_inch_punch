@@ -207,4 +207,67 @@ describe 'punch command' do
       end
     end
   end
+  
+  describe "when the command is 'delete'" do
+    before :each do
+      Punch.stubs(:delete).when(@test.is('setup'))
+    end
+    
+    it 'should load punch data' do
+      Punch.expects(:load)
+      run_command('delete')
+    end
+    
+    it 'should delete the given project' do
+      @test.become('test')
+      Punch.stubs(:write)
+      Punch.expects(:delete).with(@project).when(@test.is('test'))
+      run_command('delete', @project)
+    end
+    
+    it 'should output the result' do
+      result = 'result'
+      Punch.stubs(:delete).returns(result)
+      self.expects(:puts).with(result.inspect)
+      run_command('delete', @project)
+    end
+    
+    describe 'when deleted successfully' do
+      it 'should write the data' do
+        @test.become('test')
+        Punch.stubs(:delete).returns(true)
+        Punch.expects(:write).when(@test.is('test'))
+        run_command('delete', @project)
+      end
+    end
+    
+    describe 'when not deleted successfully' do
+      it 'should not write the data' do
+        @test.become('test')
+        Punch.stubs(:delete).returns(nil)
+        Punch.expects(:write).never.when(@test.is('test'))
+        run_command('delete', @project)
+      end
+    end
+    
+    describe 'when no project given' do
+      it 'should display an error message' do
+        self.expects(:puts).with(regexp_matches(/project.+require/i))
+        run_command('delete')
+      end
+      
+      it 'should not delete' do
+        @test.become('test')
+        Punch.stubs(:write)
+        Punch.expects(:delete).never.when(@test.is('test'))
+        run_command('delete')
+      end
+      
+      it 'should not write the data' do
+        @test.become('test')
+        Punch.expects(:write).never.when(@test.is('test'))
+        run_command('delete')
+      end
+    end
+  end
 end
