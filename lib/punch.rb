@@ -32,7 +32,7 @@ module Punch
     end
     
     def status(project = nil)
-      return data.inject({}) { |hash, (project, data)|  hash.merge(project => status(project)) } unless project
+      return data.keys.inject({}) { |hash, project|  hash.merge(project => status(project)) } unless project
       
       project_data = data[project]
       return nil if !project_data or project_data.empty?
@@ -80,9 +80,7 @@ module Punch
       if project
         do_list_single(project, options)
       else
-        data.inject({}) do |hash, (project, _)|
-          hash.merge(project => do_list_single(project, options))
-        end
+        data.keys.inject({}) { |hash, project|  hash.merge(project => do_list_single(project, options)) }
       end
     end
     
@@ -93,7 +91,7 @@ module Punch
         return nil unless data[project]
         list(project, options).collect { |t|  ((t['out'] || Time.now) - t['in']).to_i }.inject(0) { |sum, t|  sum + t }
       else
-        data.inject({}) do |hash, (project, _)|
+        data.keys.inject({}) do |hash, project|
           hash.merge(project => list(project, options).collect { |t|  ((t['out'] || Time.now) - t['in']).to_i }.inject(0) { |sum, t|  sum + t })
         end
       end
