@@ -19,6 +19,7 @@ describe 'punch command' do
     Punch.stubs(:load)
     @test = states('test').starts_as('setup')
     Punch.stubs(:write).when(@test.is('setup'))
+    @project = 'myproj'
   end
   
   it 'should exist' do
@@ -33,7 +34,6 @@ describe 'punch command' do
   describe "when the command is 'total'" do
     before :each do
       Punch.stubs(:total)
-      @project = 'myproj'
     end
     
     it 'should load punch data' do
@@ -68,7 +68,6 @@ describe 'punch command' do
   describe "when the command is 'status'" do
     before :each do
       Punch.stubs(:status)
-      @project = 'myproj'
     end
     
     it 'should load punch data' do
@@ -103,7 +102,6 @@ describe 'punch command' do
   describe "when the command is 'in'" do
     before :each do
       Punch.stubs(:in).when(@test.is('setup'))
-      @project = 'myproj'
     end
     
     it 'should load punch data' do
@@ -167,7 +165,6 @@ describe 'punch command' do
   describe "when the command is 'out'" do
     before :each do
       Punch.stubs(:out)
-      @project = 'myproj'
     end
     
     it 'should load punch data' do
