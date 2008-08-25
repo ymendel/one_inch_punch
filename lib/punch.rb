@@ -61,12 +61,16 @@ module Punch
     def out(project = nil)
       if project
         return false if out?(project)
-        data[project].last['out'] = Time.now
+        time = Time.now
+        log(project, "punch out @ #{time.strftime('%Y-%m-%dT%H:%M:%S%z')}")
+        data[project].last['out'] = time
       else
         changed = false
         data.each_key do |project|
           next if out?(project)
-          data[project].last['out'] = Time.now
+          time = Time.now
+          log(project, "punch out @ #{time.strftime('%Y-%m-%dT%H:%M:%S%z')}")
+          data[project].last['out'] = time
           changed = true
         end
         return false unless changed

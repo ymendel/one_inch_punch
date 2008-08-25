@@ -408,16 +408,7 @@ describe Punch do
       lambda { Punch.out }.should_not raise_error(ArgumentError)
     end
     
-    it 'should check whether the project is already punched out' do
-      Punch.expects(:out?).with(@project)
-      Punch.out(@project)
-    end
-    
     describe 'when the project is already punched out' do
-      before :each do
-        Punch.stubs(:out?).returns(true)
-      end
-      
       it 'should not change the project data' do
         Punch.out(@project)
         Punch.data.should == @data
@@ -436,7 +427,8 @@ describe Punch do
     
     describe 'when the project is not already punched out' do
       before :each do
-        Punch.stubs(:out?).returns(false)
+        @data = { @project => [ {'in' => @now - 50} ] }
+        Punch.data = @data
       end
       
       it 'should not add a time entry to the project data' do
@@ -449,9 +441,15 @@ describe Punch do
         Punch.data[@project].last['out'].should == @now
       end
       
+      it 'should log a message about punch-in time' do
+        time = @now.strftime('%Y-%m-%dT%H:%M:%S%z')
+        Punch.expects(:log).with(@project, "punch out @ #{time}")
+        Punch.out(@project)
+      end
+      
       it 'should write the data' do
         @test.become('test')
-        Punch.expects(:write).when(@test.is('test'))
+        Punch.expects(:write).at_least_once.when(@test.is('test'))
         Punch.out(@project)
       end
       
@@ -478,9 +476,16 @@ describe Punch do
         Punch.data[@projects[2]].last['out'].should == @now
       end
       
+      it 'should log punch-out messages for all projects being punched out' do
+        time = @now.strftime('%Y-%m-%dT%H:%M:%S%z')
+        Punch.expects(:log).with(@projects[1], "punch out @ #{time}")
+        Punch.expects(:log).with(@projects[2], "punch out @ #{time}")
+        Punch.out
+      end
+      
       it 'should write the data' do
         @test.become('test')
-        Punch.expects(:write).when(@test.is('test'))
+        Punch.expects(:write).at_least_once.when(@test.is('test'))
         Punch.out
       end
       
@@ -497,6 +502,11 @@ describe Punch do
             @projects[2] => [ {'in' => @now - 50, 'out' => @now - 35} ],
           }
           Punch.data = @data
+        end
+        
+        it 'should not log any message' do
+          Punch.expects(:log).never
+          Punch.out
         end
         
         it 'should not write the data' do
