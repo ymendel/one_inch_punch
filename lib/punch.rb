@@ -52,8 +52,9 @@ module Punch
     def in(project)
       return false if in?(project)
       data[project] ||= []
-      data[project].push({'in' => Time.now})
-      write
+      time = Time.now
+      data[project].push({'in' => time})
+      log(project, "punch in @ #{time.strftime('%Y-%m-%dT%H:%M:%S%z')}")
       true
     end
     

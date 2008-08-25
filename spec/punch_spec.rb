@@ -290,14 +290,10 @@ describe Punch do
       lambda { Punch.in }.should raise_error(ArgumentError)
     end
     
-    it 'should check whether the project is already punched in' do
-      Punch.expects(:in?).with(@project)
-      Punch.in(@project)
-    end
-    
     describe 'when the project is already punched in' do
       before :each do
-        Punch.stubs(:in?).returns(true)
+        @data = { @project => [ {'in' => @now - 50, 'out' => @now - 25}, {'in' => @now - 5} ] }
+        Punch.data = @data
       end
       
       it 'should not change the project data' do
@@ -317,10 +313,6 @@ describe Punch do
     end
     
     describe 'when the project is not already punched in' do
-      before :each do
-        Punch.stubs(:in?).returns(false)
-      end
-      
       it 'should add a time entry to the project data' do
         Punch.in(@project)
         Punch.data[@project].length.should == 2
@@ -329,6 +321,12 @@ describe Punch do
       it 'should use now for the punch-in time' do
         Punch.in(@project)
         Punch.data[@project].last['in'].should == @now
+      end
+      
+      it 'should log a message about punch-in time' do
+        time = @now.strftime('%Y-%m-%dT%H:%M:%S%z')
+        Punch.expects(:log).with(@project, "punch in @ #{time}")
+        Punch.in(@project)
       end
       
       it 'should write the data' do
@@ -360,6 +358,12 @@ describe Punch do
       it 'should use now for the punch-in time' do
         Punch.in(@project)
         Punch.data[@project].last['in'].should == @now
+      end
+      
+      it 'should log a message about punch-in time' do
+        time = @now.strftime('%Y-%m-%dT%H:%M:%S%z')
+        Punch.expects(:log).with(@project, "punch in @ #{time}")
+        Punch.in(@project)
       end
       
       it 'should write the data' do
