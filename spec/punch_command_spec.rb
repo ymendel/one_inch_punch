@@ -64,6 +64,41 @@ describe 'punch command' do
       run_command('total')
     end
   end
+
+  describe "when the command is 'status'" do
+    before :each do
+      Punch.stubs(:status)
+      @project = 'myproj'
+    end
+    
+    it 'should load punch data' do
+      Punch.expects(:load)
+      run_command('status')
+    end
+    
+    it 'should get the status for the requested project' do
+      Punch.expects(:status).with(@project)
+      run_command('status', @project)
+    end
+    
+    it 'should get the status for all projects if none given' do
+      Punch.expects(:status).with(nil)
+      run_command('status')
+    end
+    
+    it 'should output the status' do
+      status = 'status data'
+      Punch.stubs(:status).returns(status)
+      self.expects(:puts).with(status.inspect)
+      run_command('status')
+    end
+    
+    it 'should not write the data' do
+      @test.become('test')
+      Punch.expects(:write).never.when(@test.is('test'))
+      run_command('status')
+    end
+  end
   
   describe "when the command is 'in'" do
     before :each do
