@@ -16,8 +16,8 @@ One-inch punch: Smaller, more effective
 * Can query project status
 * Can delete a project
 * Can list project data
+* Can give total time for a project
 
-* Cannot give a total time (yet)
 * Cannot be used command-line (yet)
 * More, since this is unfinished
 
@@ -32,6 +32,7 @@ One-inch punch: Smaller, more effective
   # do some work
   Punch.out('my project')
   Punch.out?('my project')    # => true
+  Punch.write
 
 == REQUIREMENTS:
 

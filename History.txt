@@ -1,3 +1,18 @@
+== 0.0.3 2008-08-25
+
+* 5 enhancements:
+  * Can now get total time for a project
+  * Listing and getting total time accept arguments of :before and :after
+  * Can log messages while punched in for a project
+  * Punching in and out automatically create log messages
+  * Some operations can be performed on all projects at once:
+    * status
+    * out
+    * list
+    * total
+* 1 change:
+  * Data-changing operations no longer automatically write the data
+
 == 0.0.2 2008-08-22
 
 * 3 tiny enhancements:
