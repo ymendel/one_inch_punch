@@ -85,15 +85,12 @@ module Punch
     end
     
     def total(*args)
-      options = args.last.is_a?(Hash) ? args.pop : {}
-      project = args.first
-      if project
-        return nil unless data[project]
-        list(project, options).collect { |t|  ((t['out'] || Time.now) - t['in']).to_i }.inject(0) { |sum, t|  sum + t }
+      list_data = list(*args)
+      if list_data.is_a?(Hash)
+        list_data.inject({}) { |hash, (project, project_data)|  hash.merge(project => do_total_time(project_data)) }
       else
-        data.keys.inject({}) do |hash, project|
-          hash.merge(project => list(project, options).collect { |t|  ((t['out'] || Time.now) - t['in']).to_i }.inject(0) { |sum, t|  sum + t })
-        end
+        return nil unless list_data
+        do_total_time(list_data)
       end
     end
     
@@ -121,6 +118,10 @@ module Punch
       project_data = project_data.select { |t|  t['in']  > options[:after] }  if options[:after]
       project_data = project_data.select { |t|  t['out'] < options[:before] } if options[:before]
       project_data
+    end
+    
+    def do_total_time(list_data)
+      list_data.collect { |t|  ((t['out'] || Time.now) - t['in']).to_i }.inject(0) { |sum, t|  sum + t }
     end
   end
 end
