@@ -128,4 +128,51 @@ describe 'punch command' do
       end
     end
   end
+
+  describe "when the command is 'out'" do
+    before :each do
+      Punch.stubs(:out)
+      @project = 'myproj'
+    end
+    
+    it 'should load punch data' do
+      Punch.expects(:load)
+      run_command('out')
+    end
+    
+    it 'should punch out of the given project' do
+      Punch.expects(:out).with(@project)
+      run_command('out', @project)
+    end
+    
+    it 'should punch out of all projects if none given' do
+      Punch.expects(:out).with(nil)
+      run_command('out')
+    end
+    
+    it 'should output the result' do
+      result = 'result'
+      Punch.stubs(:out).returns(result)
+      self.expects(:puts).with(result.inspect)
+      run_command('out', @project)
+    end
+    
+    describe 'when punched out successfully' do
+      it 'should write the data' do
+        @test.become('test')
+        Punch.stubs(:out).returns(true)
+        Punch.expects(:write).when(@test.is('test'))
+        run_command('out', @project)
+      end
+    end
+    
+    describe 'when not punched out successfully' do
+      it 'should not write the data' do
+        @test.become('test')
+        Punch.stubs(:out).returns(false)
+        Punch.expects(:write).never.when(@test.is('test'))
+        run_command('out', @project)
+      end
+    end
+  end
 end

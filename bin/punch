@@ -55,4 +55,7 @@ when 'in'
   else
     puts "Project required when punching in"
   end
+when 'out'
+  Punch.write if result = Punch.out(project)
+  puts result.inspect
 end
