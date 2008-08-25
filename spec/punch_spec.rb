@@ -277,9 +277,6 @@ describe Punch do
         end
       end
       Punch.data = @data
-      
-      @test = states('test').starts_as('setup')
-      Punch.stubs(:write).when(@test.is('setup'))
     end
     
     it 'should accept a project name' do
@@ -301,12 +298,6 @@ describe Punch do
         Punch.data.should == @data
       end
       
-      it 'should not write the data' do
-        @test.become('test')
-        Punch.expects(:write).never.when(@test.is('test'))
-        Punch.in(@project)
-      end
-      
       it 'should return false' do
         Punch.in(@project).should == false
       end
@@ -326,12 +317,6 @@ describe Punch do
       it 'should log a message about punch-in time' do
         time = @now.strftime('%Y-%m-%dT%H:%M:%S%z')
         Punch.expects(:log).with(@project, "punch in @ #{time}")
-        Punch.in(@project)
-      end
-      
-      it 'should write the data' do
-        @test.become('test')
-        Punch.expects(:write).when(@test.is('test'))
         Punch.in(@project)
       end
       
@@ -363,12 +348,6 @@ describe Punch do
       it 'should log a message about punch-in time' do
         time = @now.strftime('%Y-%m-%dT%H:%M:%S%z')
         Punch.expects(:log).with(@project, "punch in @ #{time}")
-        Punch.in(@project)
-      end
-      
-      it 'should write the data' do
-        @test.become('test')
-        Punch.expects(:write).when(@test.is('test'))
         Punch.in(@project)
       end
       
@@ -414,12 +393,6 @@ describe Punch do
         Punch.data.should == @data
       end
       
-      it 'should not write the data' do
-        @test.become('test')
-        Punch.expects(:write).never.when(@test.is('test'))
-        Punch.out(@project)
-      end
-      
       it 'should return false' do
         Punch.out(@project).should == false
       end
@@ -444,12 +417,6 @@ describe Punch do
       it 'should log a message about punch-in time' do
         time = @now.strftime('%Y-%m-%dT%H:%M:%S%z')
         Punch.expects(:log).with(@project, "punch out @ #{time}")
-        Punch.out(@project)
-      end
-      
-      it 'should write the data' do
-        @test.become('test')
-        Punch.expects(:write).at_least_once.when(@test.is('test'))
         Punch.out(@project)
       end
       
@@ -483,12 +450,6 @@ describe Punch do
         Punch.out
       end
       
-      it 'should write the data' do
-        @test.become('test')
-        Punch.expects(:write).at_least_once.when(@test.is('test'))
-        Punch.out
-      end
-      
       it 'should return true' do
         Punch.out.should == true
       end
@@ -506,12 +467,6 @@ describe Punch do
         
         it 'should not log any message' do
           Punch.expects(:log).never
-          Punch.out
-        end
-        
-        it 'should not write the data' do
-          @test.become('test')
-          Punch.expects(:write).never.when(@test.is('test'))
           Punch.out
         end
         
@@ -557,12 +512,6 @@ describe Punch do
         Punch.data.should_not include(@project)
       end
       
-      it 'should write the data' do
-        @test.become('test')
-        Punch.expects(:write).when(@test.is('test'))
-        Punch.delete(@project)
-      end
-      
       it 'should return true' do
         Punch.delete(@project).should == true
       end
@@ -571,12 +520,6 @@ describe Punch do
     describe 'when the project does not exist' do
       before :each do
         @project = 'non-existent project'
-      end
-      
-      it 'should not write the data' do
-        @test.become('test')
-        Punch.expects(:write).never.when(@test.is('test'))
-        Punch.delete(@project)
       end
       
       it 'should return nil' do
@@ -782,9 +725,6 @@ describe Punch do
       end
       Punch.data = @data
       
-      @test = states('test').starts_as('setup')
-      Punch.stubs(:write).when(@test.is('setup'))
-      
       @message = 'some log message'
     end
     
@@ -816,12 +756,6 @@ describe Punch do
         Punch.data[@project].last['log'].last.should == @message
       end
       
-      it 'should write the data' do
-        @test.become('test')
-        Punch.expects(:write).when(@test.is('test'))
-        Punch.log(@project, @message)
-      end
-      
       it 'should return true' do
         Punch.log(@project, @message).should == true
       end
@@ -848,12 +782,6 @@ describe Punch do
       it 'should not change the project data' do
         Punch.log(@project, @message)
         Punch.data.should == @data
-      end
-      
-      it 'should not write the data' do
-        @test.become('test')
-        Punch.expects(:write).never.when(@test.is('test'))
-        Punch.log(@project, @message)
       end
       
       it 'should return false' do

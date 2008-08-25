@@ -64,13 +64,11 @@ module Punch
       else
         return false unless data.keys.collect { |project|  do_out_single(project) }.any?
       end
-      write
       true
     end
     
     def delete(project)
       return nil unless data.delete(project)
-      write
       true
     end
     
@@ -99,7 +97,6 @@ module Punch
       project_data = data[project].last
       project_data['log'] ||= []
       project_data['log'].push message
-      write
       true
     end
     
