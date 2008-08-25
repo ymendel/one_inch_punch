@@ -294,8 +294,9 @@ describe Punch do
       end
       
       it 'should not change the project data' do
+        old_data = @data.dup
         Punch.in(@project)
-        Punch.data.should == @data
+        Punch.data.should == old_data
       end
       
       it 'should return false' do
@@ -389,8 +390,9 @@ describe Punch do
     
     describe 'when the project is already punched out' do
       it 'should not change the project data' do
+        old_data = @data.dup
         Punch.out(@project)
-        Punch.data.should == @data
+        Punch.data.should == old_data
       end
       
       it 'should return false' do
@@ -465,9 +467,10 @@ describe Punch do
           Punch.data = @data
         end
         
-        it 'should not log any message' do
-          Punch.expects(:log).never
+        it 'should not change the data' do
+          old_data = @data.dup
           Punch.out
+          Punch.data.should == old_data
         end
         
         it 'should return false' do
@@ -780,8 +783,9 @@ describe Punch do
       end
       
       it 'should not change the project data' do
+        old_data = @data.dup
         Punch.log(@project, @message)
-        Punch.data.should == @data
+        Punch.data.should == old_data
       end
       
       it 'should return false' do
