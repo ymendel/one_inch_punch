@@ -3,6 +3,7 @@ License.txt
 Manifest.txt
 README.txt
 Rakefile
+bin/punch
 config/hoe.rb
 config/requirements.rb
 lib/punch.rb
@@ -11,6 +12,7 @@ script/console
 script/destroy
 script/generate
 setup.rb
+spec/punch_command_spec.rb
 spec/punch_spec.rb
 spec/spec.opts
 spec/spec_helper.rb

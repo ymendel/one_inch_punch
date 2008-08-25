@@ -1,0 +1,47 @@
+#!/usr/bin/env ruby
+#
+#  Created on 2008-8-25.
+#  Copyright (c) 2008. All rights reserved.
+
+begin
+  require 'rubygems'
+rescue LoadError
+  # no rubygems to load, so we fail silently
+end
+
+require 'punch'
+require 'optparse'
+
+OPTIONS = {}
+MANDATORY_OPTIONS = %w[]
+
+parser = OptionParser.new do |opts|
+  opts.banner = <<BANNER
+This application is wonderful because...
+
+Usage: #{File.basename($0)} [options]
+
+Options are:
+BANNER
+  opts.separator ''
+  opts.on('-v', '--version',
+          "Show the #{File.basename($0)} version number and exit") { puts "#{File.basename($0)} #{Punch::VERSION::STRING}"; exit  }
+  opts.on("-h", "--help",
+          "Show this help message.") { puts opts; exit }
+  opts.parse!(ARGV)
+
+  if MANDATORY_OPTIONS && MANDATORY_OPTIONS.find { |option| OPTIONS[option.to_sym].nil? }
+    puts opts; exit
+  end
+end
+
+command = ARGV[0]
+
+unless command
+  puts "Usage: #{File.basename($0)} [command] <project>"
+  exit
+end
+
+
+Punch.load
+puts Punch.total(ARGV[1]).inspect
