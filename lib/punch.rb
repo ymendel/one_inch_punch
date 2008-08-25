@@ -60,20 +60,9 @@ module Punch
     
     def out(project = nil)
       if project
-        return false if out?(project)
-        time = Time.now
-        log(project, "punch out @ #{time.strftime('%Y-%m-%dT%H:%M:%S%z')}")
-        data[project].last['out'] = time
+        return false unless do_out_single(project)
       else
-        changed = false
-        data.each_key do |project|
-          next if out?(project)
-          time = Time.now
-          log(project, "punch out @ #{time.strftime('%Y-%m-%dT%H:%M:%S%z')}")
-          data[project].last['out'] = time
-          changed = true
-        end
-        return false unless changed
+        return false unless data.keys.collect { |project|  do_out_single(project) }.any?
       end
       write
       true
@@ -124,6 +113,16 @@ module Punch
       project_data['log'].push message
       write
       true
+    end
+    
+    
+    private
+    
+    def do_out_single(project)
+      return false if out?(project)
+      time = Time.now
+      log(project, "punch out @ #{time.strftime('%Y-%m-%dT%H:%M:%S%z')}")
+      data[project].last['out'] = time
     end
   end
 end
