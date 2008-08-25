@@ -78,18 +78,11 @@ module Punch
       options = args.last.is_a?(Hash) ? args.pop : {}
       project = args.first
       if project
-        return nil unless project_data = data[project]
-        project_data = project_data.select { |t|  t['in']  > options[:after] }  if options[:after]
-        project_data = project_data.select { |t|  t['out'] < options[:before] } if options[:before]
-        project_data
+        do_list_single(project, options)
       else
-        list_data = {}
-        data.each_key do |project|
-          list_data[project] = data[project]
-          list_data[project] = list_data[project].select { |t|  t['in']  > options[:after] }  if options[:after]
-          list_data[project] = list_data[project].select { |t|  t['out'] < options[:before] } if options[:before]
+        data.inject({}) do |hash, (project, _)|
+          hash.merge(project => do_list_single(project, options))
         end
-        list_data
       end
     end
     
@@ -123,6 +116,13 @@ module Punch
       time = Time.now
       log(project, "punch out @ #{time.strftime('%Y-%m-%dT%H:%M:%S%z')}")
       data[project].last['out'] = time
+    end
+    
+    def do_list_single(project, options)
+      return nil unless project_data = data[project]
+      project_data = project_data.select { |t|  t['in']  > options[:after] }  if options[:after]
+      project_data = project_data.select { |t|  t['out'] < options[:before] } if options[:before]
+      project_data
     end
   end
 end
