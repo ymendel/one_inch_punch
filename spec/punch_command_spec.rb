@@ -15,6 +15,10 @@ describe 'punch command' do
     end
     
     self.stubs(:puts)
+    
+    Punch.stubs(:load)
+    @test = states('test').starts_as('setup')
+    Punch.stubs(:write).when(@test.is('setup'))
   end
   
   it 'should exist' do
@@ -28,7 +32,6 @@ describe 'punch command' do
   
   describe "when the command is 'total'" do
     before :each do
-      Punch.stubs(:load)
       Punch.stubs(:total)
       @project = 'myproj'
     end
@@ -56,8 +59,73 @@ describe 'punch command' do
     end
     
     it 'should not write the data' do
-      Punch.expects(:write).never
+      @test.become('test')
+      Punch.expects(:write).never.when(@test.is('test'))
       run_command('total')
+    end
+  end
+  
+  describe "when the command is 'in'" do
+    before :each do
+      Punch.stubs(:in).when(@test.is('setup'))
+      @project = 'myproj'
+    end
+    
+    it 'should load punch data' do
+      Punch.expects(:load)
+      run_command('in')
+    end
+    
+    it 'should punch in to the given project' do
+      @test.become('test')
+      Punch.stubs(:write)
+      Punch.expects(:in).with(@project).when(@test.is('test'))
+      run_command('in', @project)
+    end
+    
+    it 'should output the result' do
+      result = 'result'
+      Punch.stubs(:in).returns(result)
+      self.expects(:puts).with(result.inspect)
+      run_command('in', @project)
+    end
+    
+    describe 'when punched in successfully' do
+      it 'should write the data' do
+        @test.become('test')
+        Punch.stubs(:in).returns(true)
+        Punch.expects(:write).when(@test.is('test'))
+        run_command('in', @project)
+      end
+    end
+    
+    describe 'when not punched in successfully' do
+      it 'should not write the data' do
+        @test.become('test')
+        Punch.stubs(:in).returns(false)
+        Punch.expects(:write).never.when(@test.is('test'))
+        run_command('in', @project)
+      end
+    end
+    
+    describe 'when no project given' do
+      it 'should display an error message' do
+        self.expects(:puts).with(regexp_matches(/project.+require/i))
+        run_command('in')
+      end
+      
+      it 'should not punch in' do
+        @test.become('test')
+        Punch.stubs(:write)
+        Punch.expects(:in).never.when(@test.is('test'))
+        run_command('in')
+      end
+      
+      it 'should not write the data' do
+        @test.become('test')
+        Punch.expects(:write).never.when(@test.is('test'))
+        run_command('in')
+      end
     end
   end
 end
