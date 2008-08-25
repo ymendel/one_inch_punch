@@ -42,16 +42,15 @@ unless command
   exit
 end
 
+project = ARGV[1]
+
+Punch.load
 case command
 when 'total'
-  Punch.load
-  puts Punch.total(ARGV[1]).inspect
+  puts Punch.total(project).inspect
 when 'in'
-  Punch.load
-  project = ARGV[1]
   if project
-    result = Punch.in(project)
-    Punch.write if result
+    Punch.write if result = Punch.in(project)
     puts result.inspect
   else
     puts "Project required when punching in"
