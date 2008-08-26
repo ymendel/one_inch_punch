@@ -1,3 +1,13 @@
+== 0.1.0 2008-08-26
+
+* 1 enhancement:
+  * punch command, for the following operations at the command line:
+    * status
+    * in/out
+    * log
+    * total
+    * delete
+
 == 0.0.3 2008-08-25
 
 * 5 enhancements:
