@@ -270,4 +270,88 @@ describe 'punch command' do
       end
     end
   end
+  
+  describe "when the command is 'log'" do
+    before :each do
+      Punch.stubs(:log).when(@test.is('setup'))
+      @message = 'log message'
+    end
+    
+    it 'should load punch data' do
+      Punch.expects(:load)
+      run_command('log')
+    end
+    
+    it 'should log a message for the given project' do
+      @test.become('test')
+      Punch.stubs(:write)
+      Punch.expects(:log).with(@project, @message).when(@test.is('test'))
+      run_command('log', @project, @message)
+    end
+        
+    it 'should output the result' do
+      result = 'result'
+      Punch.stubs(:log).returns(result)
+      self.expects(:puts).with(result.inspect)
+      run_command('log', @project, @message)
+    end
+    
+    describe 'when logged successfully' do
+      it 'should write the data' do
+        @test.become('test')
+        Punch.stubs(:log).returns(true)
+        Punch.expects(:write).when(@test.is('test'))
+        run_command('log', @project, @message)
+      end
+    end
+    
+    describe 'when not deleted successfully' do
+      it 'should not write the data' do
+        @test.become('test')
+        Punch.stubs(:log).returns(false)
+        Punch.expects(:write).never.when(@test.is('test'))
+        run_command('log', @project, @message)
+      end
+    end
+    
+    describe 'when no project given' do
+      it 'should display an error message' do
+        self.expects(:puts).with(regexp_matches(/project.+require/i))
+        run_command('log')
+      end
+      
+      it 'should not log' do
+        @test.become('test')
+        Punch.stubs(:write)
+        Punch.expects(:log).never.when(@test.is('test'))
+        run_command('log')
+      end
+      
+      it 'should not write the data' do
+        @test.become('test')
+        Punch.expects(:write).never.when(@test.is('test'))
+        run_command('log')
+      end
+    end
+    
+    describe 'when no message given' do
+      it 'should display an error message' do
+        self.expects(:puts).with(regexp_matches(/message.+require/i))
+        run_command('log', @project)
+      end
+      
+      it 'should not log' do
+        @test.become('test')
+        Punch.stubs(:write)
+        Punch.expects(:log).never.when(@test.is('test'))
+        run_command('log', @project)
+      end
+      
+      it 'should not write the data' do
+        @test.become('test')
+        Punch.expects(:write).never.when(@test.is('test'))
+        run_command('log', @project)
+      end
+    end
+  end
 end

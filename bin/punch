@@ -67,4 +67,15 @@ when 'delete'
   else
     puts "Project required when deleting"
   end
+when 'log'
+  if project
+    if message = ARGV[2]
+      Punch.write if result = Punch.log(project, message)
+      puts result.inspect
+    else
+      puts "Message required when logging"
+    end
+  else
+    puts "Project required when logging"
+  end
 end
