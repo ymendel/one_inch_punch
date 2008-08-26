@@ -26,7 +26,7 @@ Options are:
 BANNER
   opts.separator ''
   opts.on('-v', '--version',
-          "Show the #{File.basename($0)} version number and exit") { puts "#{File.basename($0)} #{Punch::VERSION::STRING}"; exit  }
+          "Show the #{File.basename($0)} version number and exit") { require 'punch/version'; puts "#{File.basename($0)} #{Punch::VERSION::STRING}"; exit  }
   opts.on('--after [TIME]', String,
           "Restrict command to only after the given time") { |time|  OPTIONS[:after] = Time.parse(time) }
   opts.on('--before [TIME]', String,
