@@ -46,36 +46,27 @@ project = ARGV[1]
 
 Punch.load
 case command
-when 'total'
-  puts Punch.total(project).inspect
-when 'status'
-  puts Punch.status(project).inspect
-when 'in'
+when 'total', 'status'
+  puts Punch.send(command, project).inspect
+when 'in', 'delete'
   if project
-    Punch.write if result = Punch.in(project)
+    Punch.write if result = Punch.send(command, project)
     puts result.inspect
   else
-    puts "Project required when punching in"
+    puts "Project required"
   end
 when 'out'
   Punch.write if result = Punch.out(project)
   puts result.inspect
-when 'delete'
-  if project
-    Punch.write if result = Punch.delete(project)
-    puts result.inspect
-  else
-    puts "Project required when deleting"
-  end
 when 'log'
   if project
     if message = ARGV[2]
       Punch.write if result = Punch.log(project, message)
       puts result.inspect
     else
-      puts "Message required when logging"
+      puts "Message required"
     end
   else
-    puts "Project required when logging"
+    puts "Project required"
   end
 end
