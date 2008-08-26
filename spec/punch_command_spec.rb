@@ -42,12 +42,12 @@ describe 'punch command' do
     end
     
     it 'should get the total for the requested project' do
-      Punch.expects(:total).with(@project)
+      Punch.expects(:total).with(@project, anything)
       run_command('total', @project)
     end
     
     it 'should get the total for all projects if none given' do
-      Punch.expects(:total).with(nil)
+      Punch.expects(:total).with(nil, anything)
       run_command('total')
     end
     
@@ -62,6 +62,22 @@ describe 'punch command' do
       @test.become('test')
       Punch.expects(:write).never.when(@test.is('test'))
       run_command('total')
+    end
+    
+    describe 'when options specified' do
+      it "should pass on an 'after' time option given by --after" do
+        time_option = '2008-08-26 09:47'
+        time = Time.local(2008, 8, 26, 9, 47)
+        Punch.expects(:total).with(@project, has_entry(:after => time))
+        run_command('total', @project, '--after', time_option)
+      end
+      
+      it "should pass on a 'before' time option given by --before" do
+        time_option = '2008-08-23 15:39'
+        time = Time.local(2008, 8, 23, 15, 39)
+        Punch.expects(:total).with(@project, has_entry(:before => time))
+        run_command('total', @project, '--before', time_option)
+      end
     end
   end
 

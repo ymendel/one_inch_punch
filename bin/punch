@@ -11,6 +11,7 @@ end
 
 require 'punch'
 require 'optparse'
+require 'time'
 
 OPTIONS = {}
 MANDATORY_OPTIONS = %w[]
@@ -26,6 +27,10 @@ BANNER
   opts.separator ''
   opts.on('-v', '--version',
           "Show the #{File.basename($0)} version number and exit") { puts "#{File.basename($0)} #{Punch::VERSION::STRING}"; exit  }
+  opts.on('--after [TIME]', String,
+          "Restrict command to only after the given time") { |time|  OPTIONS[:after] = Time.parse(time) }
+  opts.on('--before [TIME]', String,
+          "Restrict command to only before the given time") { |time|  OPTIONS[:before] = Time.parse(time) }
   opts.on("-h", "--help",
           "Show this help message.") { puts opts; exit }
   opts.parse!(ARGV)
@@ -46,8 +51,10 @@ project = ARGV[1]
 
 Punch.load
 case command
-when 'total', 'status'
-  puts Punch.send(command, project).inspect
+when 'status'
+  puts Punch.status(project).inspect
+when 'total'
+  puts Punch.total(project, OPTIONS).inspect
 when 'in', 'delete'
   if project
     Punch.write if result = Punch.send(command, project)
