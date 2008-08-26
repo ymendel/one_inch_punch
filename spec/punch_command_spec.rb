@@ -38,7 +38,7 @@ describe 'punch command' do
     
     it 'should load punch data' do
       Punch.expects(:load)
-      run_command('total')
+      run_command('total', @project)
     end
     
     it 'should get the total for the requested project' do
@@ -72,7 +72,7 @@ describe 'punch command' do
     
     it 'should load punch data' do
       Punch.expects(:load)
-      run_command('status')
+      run_command('status', @project)
     end
     
     it 'should get the status for the requested project' do
@@ -106,7 +106,7 @@ describe 'punch command' do
     
     it 'should load punch data' do
       Punch.expects(:load)
-      run_command('in')
+      run_command('in', @project)
     end
     
     it 'should punch in to the given project' do
@@ -169,7 +169,7 @@ describe 'punch command' do
     
     it 'should load punch data' do
       Punch.expects(:load)
-      run_command('out')
+      run_command('out', @project)
     end
     
     it 'should punch out of the given project' do
@@ -215,7 +215,7 @@ describe 'punch command' do
     
     it 'should load punch data' do
       Punch.expects(:load)
-      run_command('delete')
+      run_command('delete', @project)
     end
     
     it 'should delete the given project' do
@@ -279,7 +279,7 @@ describe 'punch command' do
     
     it 'should load punch data' do
       Punch.expects(:load)
-      run_command('log')
+      run_command('log', @project, @message)
     end
     
     it 'should log a message for the given project' do
