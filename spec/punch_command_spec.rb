@@ -78,6 +78,25 @@ describe 'punch command' do
         Punch.expects(:total).with(@project, has_entry(:before => time))
         run_command('total', @project, '--before', time_option)
       end
+      
+      it 'should handle a time option given as a date' do
+        time_option = '2008-08-23'
+        time = Time.local(2008, 8, 23)
+        Punch.expects(:total).with(@project, has_entry(:before => time))
+        run_command('total', @project, '--before', time_option)
+      end
+      
+      it 'should accept time options if no project given' do
+        time_option = '2008-08-26 09:47'
+        time = Time.local(2008, 8, 26, 9, 47)
+        Punch.expects(:total).with(nil, has_entry(:before => time))
+        run_command('total', '--before', time_option)
+      end
+    end
+    
+    it 'should pass no options if none specified' do
+      Punch.expects(:total).with(@project, {})
+      run_command('total', @project)
     end
   end
 
