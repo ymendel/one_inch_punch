@@ -52,9 +52,9 @@ describe 'punch command' do
     end
     
     it 'should output the total' do
-      total = 'total data'
-      Punch.stubs(:total).returns(total)
-      self.expects(:puts).with(total.inspect)
+      result = 'total data'
+      Punch.stubs(:total).returns(result)
+      self.expects(:puts).with(result.inspect)
       run_command('total')
     end
     
@@ -86,9 +86,9 @@ describe 'punch command' do
     end
     
     it 'should output the status' do
-      status = 'status data'
-      Punch.stubs(:status).returns(status)
-      self.expects(:puts).with(status.inspect)
+      result = 'status data'
+      Punch.stubs(:status).returns(result)
+      self.expects(:puts).with(result.inspect)
       run_command('status')
     end
     
