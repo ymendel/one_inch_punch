@@ -235,27 +235,52 @@ describe 'punch command' do
       run_command('out')
     end
     
-    it 'should output the result' do
-      result = 'result'
-      Punch.stubs(:out).returns(result)
-      self.expects(:puts).with(result.inspect)
-      run_command('out', @project)
-    end
-    
     describe 'when punched out successfully' do
-      it 'should write the data' do
+      before :each do
         Punch.stubs(:out).returns(true)
+      end
+      
+      it 'should write the data' do
         Punch.expects(:write)
         run_command('out', @project)
+      end
+      
+      it 'should not print anything' do
+        @states['puts'].become('test')
+        self.expects(:puts).never.when(@states['puts'].is('test'))
+        run_command('out', @project)
+      end
+      
+      describe 'and no project given' do
+        it 'should not print anything' do
+          @states['puts'].become('test')
+          self.expects(:puts).never.when(@states['puts'].is('test'))
+          run_command('out')
+        end
       end
     end
     
     describe 'when not punched out successfully' do
+      before :each do
+        Punch.stubs(:out).returns(false)
+      end
+      
       it 'should not write the data' do
         @states['write'].become('test')
-        Punch.stubs(:out).returns(false)
         Punch.expects(:write).never.when(@states['write'].is('test'))
         run_command('out', @project)
+      end
+      
+      it 'should print a message' do
+        self.expects(:puts).with(regexp_matches(/already.+out/i))
+        run_command('out', @project)
+      end
+      
+      describe 'and no project given' do
+        it 'should print a message' do
+          self.expects(:puts).with(regexp_matches(/already.+out/i))
+          run_command('out')
+        end
       end
     end
   end

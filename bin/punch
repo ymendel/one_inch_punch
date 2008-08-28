@@ -72,8 +72,13 @@ when 'delete'
     puts "Project required"
   end
 when 'out'
-  Punch.write if result = Punch.out(project)
-  puts result.inspect
+  if Punch.out(project)
+    Punch.write
+  else
+    message = 'Already punched out of '
+    message += project ? "'#{project}'" : 'all projects'
+    puts message
+  end
 when 'log'
   if project
     if message = ARGV[2]
