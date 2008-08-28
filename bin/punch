@@ -97,4 +97,8 @@ commands = {
   end
 }
 
-commands[command].call(project)
+if command_code = commands[command]
+  command_code.call(project)
+else
+  puts "Command '#{command}' unknown"
+end

@@ -439,4 +439,28 @@ describe 'punch command' do
       end
     end
   end
+  
+  describe 'when the command is unknown' do
+    it 'should not error' do
+      lambda { run_command('bunk') }.should_not raise_error
+    end
+    
+    it 'should print a message' do
+      self.expects(:puts).with(regexp_matches(/command.+unknown/i))
+      run_command('bunk')
+    end
+    
+    it 'should not write the data' do
+      @states['write'].become('test')
+      Punch.expects(:write).never.when(@states['write'].is('test'))
+      run_command('bunk')
+    end
+    
+    it 'should not run any punch command' do
+      [:in, :out, :delete, :status, :total, :log].each do |command|
+        Punch.expects(command).never
+      end
+      run_command('bunk')
+    end
+  end
 end
