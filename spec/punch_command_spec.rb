@@ -364,27 +364,37 @@ describe 'punch command' do
       Punch.expects(:log).with(@project, @message)
       run_command('log', @project, @message)
     end
-        
-    it 'should output the result' do
-      result = 'result'
-      Punch.stubs(:log).returns(result)
-      self.expects(:puts).with(result.inspect)
-      run_command('log', @project, @message)
-    end
     
     describe 'when logged successfully' do
-      it 'should write the data' do
+      before :each do
         Punch.stubs(:log).returns(true)
+      end
+      
+      it 'should write the data' do
         Punch.expects(:write)
+        run_command('log', @project, @message)
+      end
+      
+      it 'should not print anything' do
+        @states['puts'].become('test')
+        self.expects(:puts).never.when(@states['write'].is('test'))
         run_command('log', @project, @message)
       end
     end
     
     describe 'when not deleted successfully' do
+      before :each do
+        Punch.stubs(:log).returns(false)
+      end
+      
       it 'should not write the data' do
         @states['write'].become('test')
-        Punch.stubs(:log).returns(false)
         Punch.expects(:write).never.when(@states['write'].is('test'))
+        run_command('log', @project, @message)
+      end
+      
+      it 'should print a message' do
+        self.expects(:puts).with(regexp_matches(/not.+in/i))
         run_command('log', @project, @message)
       end
     end

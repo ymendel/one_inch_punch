@@ -82,8 +82,11 @@ when 'out'
 when 'log'
   if project
     if message = ARGV[2]
-      Punch.write if result = Punch.log(project, message)
-      puts result.inspect
+      if Punch.log(project, message)
+        Punch.write
+      else
+        puts "Not punched in to '#{project}'"
+      end
     else
       puts "Message required"
     end
