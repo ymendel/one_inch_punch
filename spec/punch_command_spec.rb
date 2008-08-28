@@ -14,11 +14,15 @@ describe 'punch command' do
       Object.send(:remove_const, const) if Object.const_defined?(const)
     end
     
-    self.stubs(:puts)
+    @states = {}
+    %w[puts load write].each do |state|
+      @states[state] = states(state).starts_as('setup')
+    end
     
-    Punch.stubs(:load)
-    @test = states('test').starts_as('setup')
-    Punch.stubs(:write).when(@test.is('setup'))
+    self.stubs(:puts).when(@states['puts'].is('setup'))
+    Punch.stubs(:load).when(@states['load'].is('setup'))
+    Punch.stubs(:write).when(@states['write'].is('setup'))
+    
     @project = 'myproj'
   end
   
@@ -59,8 +63,8 @@ describe 'punch command' do
     end
     
     it 'should not write the data' do
-      @test.become('test')
-      Punch.expects(:write).never.when(@test.is('test'))
+      @states['write'].become('test')
+      Punch.expects(:write).never.when(@states['write'].is('test'))
       run_command('total')
     end
     
@@ -134,15 +138,16 @@ describe 'punch command' do
     end
     
     it 'should not write the data' do
-      @test.become('test')
-      Punch.expects(:write).never.when(@test.is('test'))
+      @states['write'].become('test')
+      Punch.expects(:write).never.when(@states['write'].is('test'))
       run_command('status')
     end
   end
   
   describe "when the command is 'in'" do
     before :each do
-      Punch.stubs(:in).when(@test.is('setup'))
+      @states['in'] = states('in').starts_as('setup')
+      Punch.stubs(:in).when(@states['write'].is('setup'))
     end
     
     it 'should load punch data' do
@@ -151,9 +156,8 @@ describe 'punch command' do
     end
     
     it 'should punch in to the given project' do
-      @test.become('test')
-      Punch.stubs(:write)
-      Punch.expects(:in).with(@project).when(@test.is('test'))
+      @states['in'].become('test')
+      Punch.expects(:in).with(@project).when(@states['in'].is('test'))
       run_command('in', @project)
     end
     
@@ -166,18 +170,18 @@ describe 'punch command' do
     
     describe 'when punched in successfully' do
       it 'should write the data' do
-        @test.become('test')
+        @states['write'].become('test')
         Punch.stubs(:in).returns(true)
-        Punch.expects(:write).when(@test.is('test'))
+        Punch.expects(:write).when(@states['write'].is('test'))
         run_command('in', @project)
       end
     end
     
     describe 'when not punched in successfully' do
       it 'should not write the data' do
-        @test.become('test')
+        @states['write'].become('test')
         Punch.stubs(:in).returns(false)
-        Punch.expects(:write).never.when(@test.is('test'))
+        Punch.expects(:write).never.when(@states['write'].is('test'))
         run_command('in', @project)
       end
     end
@@ -189,15 +193,15 @@ describe 'punch command' do
       end
       
       it 'should not punch in' do
-        @test.become('test')
+        @states['in'].become('test')
         Punch.stubs(:write)
-        Punch.expects(:in).never.when(@test.is('test'))
+        Punch.expects(:in).never.when(@states['in'].is('test'))
         run_command('in')
       end
       
       it 'should not write the data' do
-        @test.become('test')
-        Punch.expects(:write).never.when(@test.is('test'))
+        @states['write'].become('test')
+        Punch.expects(:write).never.when(@states['write'].is('test'))
         run_command('in')
       end
     end
@@ -232,18 +236,18 @@ describe 'punch command' do
     
     describe 'when punched out successfully' do
       it 'should write the data' do
-        @test.become('test')
+        @states['write'].become('test')
         Punch.stubs(:out).returns(true)
-        Punch.expects(:write).when(@test.is('test'))
+        Punch.expects(:write).when(@states['write'].is('test'))
         run_command('out', @project)
       end
     end
     
     describe 'when not punched out successfully' do
       it 'should not write the data' do
-        @test.become('test')
+        @states['write'].become('test')
         Punch.stubs(:out).returns(false)
-        Punch.expects(:write).never.when(@test.is('test'))
+        Punch.expects(:write).never.when(@states['write'].is('test'))
         run_command('out', @project)
       end
     end
@@ -251,7 +255,8 @@ describe 'punch command' do
   
   describe "when the command is 'delete'" do
     before :each do
-      Punch.stubs(:delete).when(@test.is('setup'))
+      @states['delete'] = states('delete').starts_as('setup')
+      Punch.stubs(:delete).when(@states['write'].is('setup'))
     end
     
     it 'should load punch data' do
@@ -260,9 +265,9 @@ describe 'punch command' do
     end
     
     it 'should delete the given project' do
-      @test.become('test')
+      @states['delete'].become('test')
       Punch.stubs(:write)
-      Punch.expects(:delete).with(@project).when(@test.is('test'))
+      Punch.expects(:delete).with(@project).when(@states['delete'].is('test'))
       run_command('delete', @project)
     end
     
@@ -275,18 +280,18 @@ describe 'punch command' do
     
     describe 'when deleted successfully' do
       it 'should write the data' do
-        @test.become('test')
+        @states['write'].become('test')
         Punch.stubs(:delete).returns(true)
-        Punch.expects(:write).when(@test.is('test'))
+        Punch.expects(:write).when(@states['write'].is('test'))
         run_command('delete', @project)
       end
     end
     
     describe 'when not deleted successfully' do
       it 'should not write the data' do
-        @test.become('test')
+        @states['write'].become('test')
         Punch.stubs(:delete).returns(nil)
-        Punch.expects(:write).never.when(@test.is('test'))
+        Punch.expects(:write).never.when(@states['write'].is('test'))
         run_command('delete', @project)
       end
     end
@@ -298,15 +303,15 @@ describe 'punch command' do
       end
       
       it 'should not delete' do
-        @test.become('test')
+        @states['delete'].become('test')
         Punch.stubs(:write)
-        Punch.expects(:delete).never.when(@test.is('test'))
+        Punch.expects(:delete).never.when(@states['delete'].is('test'))
         run_command('delete')
       end
       
       it 'should not write the data' do
-        @test.become('test')
-        Punch.expects(:write).never.when(@test.is('test'))
+        @states['write'].become('test')
+        Punch.expects(:write).never.when(@states['write'].is('test'))
         run_command('delete')
       end
     end
@@ -314,7 +319,8 @@ describe 'punch command' do
   
   describe "when the command is 'log'" do
     before :each do
-      Punch.stubs(:log).when(@test.is('setup'))
+      @states['log'] = states('log').starts_as('setup')
+      Punch.stubs(:log).when(@states['log'].is('setup'))
       @message = 'log message'
     end
     
@@ -324,9 +330,9 @@ describe 'punch command' do
     end
     
     it 'should log a message for the given project' do
-      @test.become('test')
+      @states['log'].become('test')
       Punch.stubs(:write)
-      Punch.expects(:log).with(@project, @message).when(@test.is('test'))
+      Punch.expects(:log).with(@project, @message).when(@states['log'].is('test'))
       run_command('log', @project, @message)
     end
         
@@ -339,18 +345,18 @@ describe 'punch command' do
     
     describe 'when logged successfully' do
       it 'should write the data' do
-        @test.become('test')
+        @states['write'].become('test')
         Punch.stubs(:log).returns(true)
-        Punch.expects(:write).when(@test.is('test'))
+        Punch.expects(:write).when(@states['write'].is('test'))
         run_command('log', @project, @message)
       end
     end
     
     describe 'when not deleted successfully' do
       it 'should not write the data' do
-        @test.become('test')
+        @states['write'].become('test')
         Punch.stubs(:log).returns(false)
-        Punch.expects(:write).never.when(@test.is('test'))
+        Punch.expects(:write).never.when(@states['write'].is('test'))
         run_command('log', @project, @message)
       end
     end
@@ -362,15 +368,15 @@ describe 'punch command' do
       end
       
       it 'should not log' do
-        @test.become('test')
+        @states['log'].become('test')
         Punch.stubs(:write)
-        Punch.expects(:log).never.when(@test.is('test'))
+        Punch.expects(:log).never.when(@states['log'].is('test'))
         run_command('log')
       end
       
       it 'should not write the data' do
-        @test.become('test')
-        Punch.expects(:write).never.when(@test.is('test'))
+        @states['write'].become('test')
+        Punch.expects(:write).never.when(@states['write'].is('test'))
         run_command('log')
       end
     end
@@ -382,15 +388,15 @@ describe 'punch command' do
       end
       
       it 'should not log' do
-        @test.become('test')
+        @states['log'].become('test')
         Punch.stubs(:write)
-        Punch.expects(:log).never.when(@test.is('test'))
+        Punch.expects(:log).never.when(@states['log'].is('test'))
         run_command('log', @project)
       end
       
       it 'should not write the data' do
-        @test.become('test')
-        Punch.expects(:write).never.when(@test.is('test'))
+        @states['write'].become('test')
+        Punch.expects(:write).never.when(@states['write'].is('test'))
         run_command('log', @project)
       end
     end

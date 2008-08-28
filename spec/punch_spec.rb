@@ -375,9 +375,6 @@ describe Punch do
         end
       end
       Punch.data = @data
-      
-      @test = states('test').starts_as('setup')
-      Punch.stubs(:write).when(@test.is('setup'))
     end
     
     it 'should accept a project name' do
@@ -496,9 +493,6 @@ describe Punch do
         end
       end
       Punch.data = @data
-      
-      @test = states('test').starts_as('setup')
-      Punch.stubs(:write).when(@test.is('setup'))
     end
     
     it 'should accept a project name' do
