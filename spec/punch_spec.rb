@@ -668,6 +668,10 @@ describe Punch do
         Punch.total(@project, :after => @now - 2001, :before => @now - 999).should == 1000
       end
       
+      it 'should format the time spent if passed a format option' do
+        Punch.total(@project, :format => true).should == "1:05:00"
+      end
+      
       describe 'and is punched in' do
         before :each do
           @data[@project].push({ 'in' => @now - 25 })
@@ -707,6 +711,10 @@ describe Punch do
       
       it 'should respect options' do
         Punch.total(:after => @now - 51).should == { @projects[0] => 25, @projects[1] => 20, @projects[2] => 15}
+      end
+      
+      it 'should format the time spent if passed a format option' do
+        Punch.total(:format => true).should == { @projects[0] => "00:25", @projects[1] => "01:10", @projects[2] => "00:15"}
       end
     end
   end

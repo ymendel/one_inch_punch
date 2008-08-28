@@ -84,12 +84,13 @@ module Punch
     end
     
     def total(*args)
+      options = args.last.is_a?(Hash) ? args.last : {}
       list_data = list(*args)
       if list_data.is_a?(Hash)
-        list_data.inject({}) { |hash, (project, project_data)|  hash.merge(project => do_total_time(project_data)) }
+        list_data.inject({}) { |hash, (project, project_data)|  hash.merge(project => do_total_time(project_data, options)) }
       else
         return nil unless list_data
-        do_total_time(list_data)
+        do_total_time(list_data, options)
       end
     end
     
@@ -118,8 +119,10 @@ module Punch
       project_data
     end
     
-    def do_total_time(list_data)
-      list_data.collect { |t|  ((t['out'] || Time.now) - t['in']).to_i }.inject(0) { |sum, t|  sum + t }
+    def do_total_time(list_data, options)
+      total = list_data.collect { |t|  ((t['out'] || Time.now) - t['in']).to_i }.inject(0) { |sum, t|  sum + t }
+      return total unless options[:format]
+      total.elapsed_time
     end
   end
 end
