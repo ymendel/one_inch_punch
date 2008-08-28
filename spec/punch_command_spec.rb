@@ -92,10 +92,16 @@ describe 'punch command' do
         Punch.expects(:total).with(nil, has_entry(:before => time))
         run_command('total', '--before', time_option)
       end
+      
+      it 'should also pass the formatting option' do
+        time_option = '2008-08-26 09:47'
+        Punch.expects(:total).with(@project, has_entry(:format => true))
+        run_command('total', @project, '--before', time_option)
+      end
     end
     
-    it 'should pass no options if none specified' do
-      Punch.expects(:total).with(@project, {})
+    it 'should pass only the formatting option if no options specified' do
+      Punch.expects(:total).with(@project, {:format => true})
       run_command('total', @project)
     end
   end
