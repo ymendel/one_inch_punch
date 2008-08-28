@@ -48,14 +48,25 @@ end
 project = ARGV[1]
 
 Punch.load
+
 case command
 when 'status'
   puts Punch.status(project).inspect
 when 'total'
   puts Punch.total(project, OPTIONS.merge(:format => true)).inspect
-when 'in', 'delete'
+when 'in'
   if project
-    Punch.write if result = Punch.send(command, project)
+    if Punch.in(project)
+      Punch.write
+    else
+      puts "Already punched in to '#{project}'"
+    end
+  else
+    puts "Project required"
+  end
+when 'delete'
+  if project
+    Punch.write if result = Punch.delete(project)
     puts result.inspect
   else
     puts "Project required"

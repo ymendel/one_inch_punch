@@ -160,26 +160,36 @@ describe 'punch command' do
       run_command('in', @project)
     end
     
-    it 'should output the result' do
-      result = 'result'
-      Punch.stubs(:in).returns(result)
-      self.expects(:puts).with(result.inspect)
-      run_command('in', @project)
-    end
-    
     describe 'when punched in successfully' do
-      it 'should write the data' do
+      before :each do
         Punch.stubs(:in).returns(true)
+      end
+      
+      it 'should write the data' do
         Punch.expects(:write)
+        run_command('in', @project)
+      end
+      
+      it 'should not print anything' do
+        @states['puts'].become('test')
+        self.expects(:puts).never.when(@states['puts'].is('test'))
         run_command('in', @project)
       end
     end
     
     describe 'when not punched in successfully' do
+      before :each do
+        Punch.stubs(:in).returns(false)
+      end
+      
       it 'should not write the data' do
         @states['write'].become('test')
-        Punch.stubs(:in).returns(false)
         Punch.expects(:write).never.when(@states['write'].is('test'))
+        run_command('in', @project)
+      end
+      
+      it 'should print a message' do
+        self.expects(:puts).with(regexp_matches(/already.+in/i))
         run_command('in', @project)
       end
     end
