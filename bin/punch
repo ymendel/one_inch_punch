@@ -18,9 +18,7 @@ MANDATORY_OPTIONS = %w[]
 
 parser = OptionParser.new do |opts|
   opts.banner = <<BANNER
-This application is wonderful because...
-
-Usage: #{File.basename($0)} [options]
+Usage: #{File.basename($0)} [command] <project>
 
 Options are:
 BANNER
