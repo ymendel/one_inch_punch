@@ -49,48 +49,52 @@ project = ARGV[1]
 
 Punch.load
 
-case command
-when 'status'
-  puts Punch.status(project).inspect
-when 'total'
-  puts Punch.total(project, OPTIONS.merge(:format => true)).inspect
-when 'in'
-  if project
-    if Punch.in(project)
-      Punch.write
-    else
-      puts "Already punched in to '#{project}'"
-    end
-  else
-    puts "Project required"
-  end
-when 'delete'
-  if project
-    Punch.write if result = Punch.delete(project)
-    puts result.inspect
-  else
-    puts "Project required"
-  end
-when 'out'
-  if Punch.out(project)
-    Punch.write
-  else
-    message = 'Already punched out of '
-    message += project ? "'#{project}'" : 'all projects'
-    puts message
-  end
-when 'log'
-  if project
-    if message = ARGV[2]
-      if Punch.log(project, message)
+commands = {
+  'status' => lambda { |project|  puts Punch.status(project).inspect },
+  'total'  => lambda { |project|  puts Punch.total(project, OPTIONS.merge(:format => true)).inspect },
+  'in'     => lambda do |project|
+    if project
+      if Punch.in(project)
         Punch.write
       else
-        puts "Not punched in to '#{project}'"
+        puts "Already punched in to '#{project}'"
       end
     else
-      puts "Message required"
+      puts "Project required"
     end
-  else
-    puts "Project required"
+  end,
+  'delete' => lambda do |project|
+    if project
+      Punch.write if result = Punch.delete(project)
+      puts result.inspect
+    else
+      puts "Project required"
+    end
+  end,
+  'out' => lambda do |project|
+    if Punch.out(project)
+      Punch.write
+    else
+      message = 'Already punched out of '
+      message += project ? "'#{project}'" : 'all projects'
+      puts message
+    end
+  end,
+  'log' => lambda do |project|
+    if project
+      if message = ARGV[2]
+        if Punch.log(project, message)
+          Punch.write
+        else
+          puts "Not punched in to '#{project}'"
+        end
+      else
+        puts "Message required"
+      end
+    else
+      puts "Project required"
+    end
   end
-end
+}
+
+commands[command].call(project)
