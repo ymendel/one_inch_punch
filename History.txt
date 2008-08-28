@@ -1,3 +1,11 @@
+== 0.1.1 2008-08-28
+
+* 3 enhancements:
+  * Can format total time as "elapsed time" instead of only getting the number of seconds
+  * punch command gives improved output for some commands:
+    * in/out/log: either silent or gives a message explaining a failure
+    * total: shows "elapsed time" instead of number of seconds
+
 == 0.1.0 2008-08-26
 
 * 1 enhancement:
