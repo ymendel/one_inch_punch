@@ -156,8 +156,7 @@ describe 'punch command' do
     end
     
     it 'should punch in to the given project' do
-      @states['in'].become('test')
-      Punch.expects(:in).with(@project).when(@states['in'].is('test'))
+      Punch.expects(:in).with(@project)
       run_command('in', @project)
     end
     
@@ -170,9 +169,8 @@ describe 'punch command' do
     
     describe 'when punched in successfully' do
       it 'should write the data' do
-        @states['write'].become('test')
         Punch.stubs(:in).returns(true)
-        Punch.expects(:write).when(@states['write'].is('test'))
+        Punch.expects(:write)
         run_command('in', @project)
       end
     end
@@ -236,9 +234,8 @@ describe 'punch command' do
     
     describe 'when punched out successfully' do
       it 'should write the data' do
-        @states['write'].become('test')
         Punch.stubs(:out).returns(true)
-        Punch.expects(:write).when(@states['write'].is('test'))
+        Punch.expects(:write)
         run_command('out', @project)
       end
     end
@@ -265,9 +262,8 @@ describe 'punch command' do
     end
     
     it 'should delete the given project' do
-      @states['delete'].become('test')
       Punch.stubs(:write)
-      Punch.expects(:delete).with(@project).when(@states['delete'].is('test'))
+      Punch.expects(:delete).with(@project)
       run_command('delete', @project)
     end
     
@@ -280,9 +276,8 @@ describe 'punch command' do
     
     describe 'when deleted successfully' do
       it 'should write the data' do
-        @states['write'].become('test')
         Punch.stubs(:delete).returns(true)
-        Punch.expects(:write).when(@states['write'].is('test'))
+        Punch.expects(:write)
         run_command('delete', @project)
       end
     end
@@ -330,9 +325,8 @@ describe 'punch command' do
     end
     
     it 'should log a message for the given project' do
-      @states['log'].become('test')
       Punch.stubs(:write)
-      Punch.expects(:log).with(@project, @message).when(@states['log'].is('test'))
+      Punch.expects(:log).with(@project, @message)
       run_command('log', @project, @message)
     end
         
@@ -345,9 +339,8 @@ describe 'punch command' do
     
     describe 'when logged successfully' do
       it 'should write the data' do
-        @states['write'].become('test')
         Punch.stubs(:log).returns(true)
-        Punch.expects(:write).when(@states['write'].is('test'))
+        Punch.expects(:write)
         run_command('log', @project, @message)
       end
     end
