@@ -1,3 +1,8 @@
+== 0.1.2 2008-08-28
+
+* 1 tiny enhancement:
+  * Repackaging to include the fixnum "elapsed time" stuff I stupidly left out of the release earlier today
+
 == 0.1.1 2008-08-28
 
 * 3 enhancements:
