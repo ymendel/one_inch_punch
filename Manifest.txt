@@ -7,11 +7,14 @@ bin/punch
 config/hoe.rb
 config/requirements.rb
 lib/punch.rb
+lib/punch/core_ext.rb
+lib/punch/core_ext/fixnum.rb
 lib/punch/version.rb
 script/console
 script/destroy
 script/generate
 setup.rb
+spec/fixnum_spec.rb
 spec/punch_command_spec.rb
 spec/punch_spec.rb
 spec/spec.opts
