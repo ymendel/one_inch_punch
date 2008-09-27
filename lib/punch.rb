@@ -59,7 +59,9 @@ module Punch
       true
     end
     
-    def out(project = nil, options = {})
+    def out(*args)
+      options = args.last.is_a?(Hash) ? args.pop : {}
+      project = args.first
       if project
         return false unless do_out_single(project, options)
       else
