@@ -53,7 +53,7 @@ module Punch
     def in(project, options = {})
       return false if in?(project)
       data[project] ||= []
-      time = options[:time] || Time.now
+      time = time_from_options(options)
       data[project].push({'in' => time})
       log(project, "punch in @ #{time.strftime('%Y-%m-%dT%H:%M:%S%z')}")
       log(project, options[:message]) if options[:message]
@@ -110,7 +110,7 @@ module Punch
     
     def do_out_single(project, options)
       return false if out?(project)
-      time = options[:time] || Time.now
+      time = time_from_options(options)
       log(project, options[:message]) if options[:message]
       log(project, "punch out @ #{time.strftime('%Y-%m-%dT%H:%M:%S%z')}")
       data[project].last['out'] = time
@@ -127,6 +127,10 @@ module Punch
       total = list_data.collect { |t|  ((t['out'] || Time.now) - t['in']).to_i }.inject(0) { |sum, t|  sum + t }
       return total unless options[:format]
       total.elapsed_time
+    end
+    
+    def time_from_options(options)
+      options[:time] || options[:at] || Time.now
     end
   end
 end

@@ -345,6 +345,12 @@ describe Punch do
         Punch.in(@project, :message => message)
       end
       
+      it "should allow the different time to be specified using :at" do
+        time = @now + 50
+        Punch.in(@project, :at => time)
+        Punch.data[@project].last['in'].should == time
+      end
+      
       it 'should return true' do
         Punch.in(@project).should == true
       end
@@ -482,6 +488,12 @@ describe Punch do
         message = 'finished working on some stuff'
         Punch.expects(:log).with(@project, message)
         Punch.out(@project, :message => message)
+      end
+      
+      it "should allow the different time to be specified using :at" do
+        time = @now + 50
+        Punch.out(@project, :at => time)
+        Punch.data[@project].last['out'].should == time
       end
       
       it 'should return true' do
