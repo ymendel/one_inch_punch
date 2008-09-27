@@ -287,6 +287,10 @@ describe Punch do
       lambda { Punch.in }.should raise_error(ArgumentError)
     end
     
+    it 'should accept options' do
+      lambda { Punch.in('proj', :time => Time.now) }.should_not raise_error(ArgumentError)
+    end
+    
     describe 'when the project is already punched in' do
       before :each do
         @data = { @project => [ {'in' => @now - 50, 'out' => @now - 25}, {'in' => @now - 5} ] }
@@ -321,6 +325,19 @@ describe Punch do
         Punch.in(@project)
       end
       
+      it 'should use a different time if given' do
+        time = @now + 50
+        Punch.in(@project, :time => time)
+        Punch.data[@project].last['in'].should == time
+      end
+      
+      it 'should log a message using the given time' do
+        time = @now + 75
+        time_str = time.strftime('%Y-%m-%dT%H:%M:%S%z')
+        Punch.expects(:log).with(@project, "punch in @ #{time_str}")
+        Punch.in(@project, :time => time)
+      end
+      
       it 'should return true' do
         Punch.in(@project).should == true
       end
@@ -350,6 +367,19 @@ describe Punch do
         time = @now.strftime('%Y-%m-%dT%H:%M:%S%z')
         Punch.expects(:log).with(@project, "punch in @ #{time}")
         Punch.in(@project)
+      end
+      
+      it 'should use a different time if given' do
+        time = @now + 50
+        Punch.in(@project, :time => time)
+        Punch.data[@project].last['in'].should == time
+      end
+      
+      it 'should log a message using the given time' do
+        time = @now + 75
+        time_str = time.strftime('%Y-%m-%dT%H:%M:%S%z')
+        Punch.expects(:log).with(@project, "punch in @ #{time_str}")
+        Punch.in(@project, :time => time)
       end
       
       it 'should return true' do
