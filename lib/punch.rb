@@ -56,6 +56,7 @@ module Punch
       time = options[:time] || Time.now
       data[project].push({'in' => time})
       log(project, "punch in @ #{time.strftime('%Y-%m-%dT%H:%M:%S%z')}")
+      log(project, options[:message]) if options[:message]
       true
     end
     

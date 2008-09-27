@@ -338,6 +338,13 @@ describe Punch do
         Punch.in(@project, :time => time)
       end
       
+      it 'should log an additional message if given' do
+        Punch.stubs(:log)  # for the time-based message
+        message = 'working on some stuff'
+        Punch.expects(:log).with(@project, message)
+        Punch.in(@project, :message => message)
+      end
+      
       it 'should return true' do
         Punch.in(@project).should == true
       end
