@@ -477,6 +477,13 @@ describe Punch do
         Punch.out(@project, :time => time)
       end
       
+      it 'should log an additional message if given' do
+        Punch.stubs(:log)  # for the time-based message
+        message = 'finished working on some stuff'
+        Punch.expects(:log).with(@project, message)
+        Punch.out(@project, :message => message)
+      end
+      
       it 'should return true' do
         Punch.out(@project).should == true
       end
@@ -521,6 +528,14 @@ describe Punch do
         Punch.expects(:log).with(@projects[1], "punch out @ #{time_str}")
         Punch.expects(:log).with(@projects[2], "punch out @ #{time_str}")
         Punch.out(:time => time)
+      end
+      
+      it 'should log an additional message if given' do
+        Punch.stubs(:log)  # for the time-based messages
+        message = 'finished working on some stuff'
+        Punch.expects(:log).with(@projects[1], message)
+        Punch.expects(:log).with(@projects[2], message)
+        Punch.out(:message => message)
       end
       
       it 'should return true' do

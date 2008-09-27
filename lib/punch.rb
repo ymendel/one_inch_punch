@@ -111,6 +111,7 @@ module Punch
     def do_out_single(project, options)
       return false if out?(project)
       time = options[:time] || Time.now
+      log(project, options[:message]) if options[:message]
       log(project, "punch out @ #{time.strftime('%Y-%m-%dT%H:%M:%S%z')}")
       data[project].last['out'] = time
     end
