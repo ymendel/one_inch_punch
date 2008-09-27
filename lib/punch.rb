@@ -59,11 +59,11 @@ module Punch
       true
     end
     
-    def out(project = nil)
+    def out(project = nil, options = {})
       if project
-        return false unless do_out_single(project)
+        return false unless do_out_single(project, options)
       else
-        return false unless data.keys.collect { |project|  do_out_single(project) }.any?
+        return false unless data.keys.collect { |project|  do_out_single(project, options) }.any?
       end
       true
     end
@@ -105,9 +105,9 @@ module Punch
     
     private
     
-    def do_out_single(project)
+    def do_out_single(project, options)
       return false if out?(project)
-      time = Time.now
+      time = options[:time] || Time.now
       log(project, "punch out @ #{time.strftime('%Y-%m-%dT%H:%M:%S%z')}")
       data[project].last['out'] = time
     end

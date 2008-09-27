@@ -415,6 +415,10 @@ describe Punch do
       lambda { Punch.out }.should_not raise_error(ArgumentError)
     end
     
+    it 'should accept a project name and options' do
+      lambda { Punch.out('proj', :time => Time.now) }.should_not raise_error(ArgumentError)
+    end
+    
     describe 'when the project is already punched out' do
       it 'should not change the project data' do
         old_data = @data.dup
@@ -443,10 +447,23 @@ describe Punch do
         Punch.data[@project].last['out'].should == @now
       end
       
-      it 'should log a message about punch-in time' do
+      it 'should log a message about punch-out time' do
         time = @now.strftime('%Y-%m-%dT%H:%M:%S%z')
         Punch.expects(:log).with(@project, "punch out @ #{time}")
         Punch.out(@project)
+      end
+      
+      it 'should use a different time if given' do
+        time = @now + 50
+        Punch.out(@project, :time => time)
+        Punch.data[@project].last['out'].should == time
+      end
+      
+      it 'should log a message using the given time' do
+        time = @now + 75
+        time_str = time.strftime('%Y-%m-%dT%H:%M:%S%z')
+        Punch.expects(:log).with(@project, "punch out @ #{time_str}")
+        Punch.out(@project, :time => time)
       end
       
       it 'should return true' do
