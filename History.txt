@@ -1,3 +1,10 @@
+== 0.1.3 2008-09-30
+
+* 3 enhancements:
+  * Punching in and out can take a time (with now as a default)
+  * Punching in and out can take a message (in addition to the auto-generated time-based message)
+  * punch command options for in/out time and message
+
 == 0.1.2 2008-08-28
 
 * 1 tiny enhancement:
