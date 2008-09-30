@@ -156,8 +156,22 @@ describe 'punch command' do
     end
     
     it 'should punch in to the given project' do
-      Punch.expects(:in).with(@project)
+      Punch.expects(:in).with(@project, {})
       run_command('in', @project)
+    end
+    
+    it 'should pass a time if specified on the command line (with --time)' do
+      time_option = '2008-08-23 15:39'
+      time = Time.local(2008, 8, 23, 15, 39)
+      Punch.expects(:in).with(@project, has_entry(:time => time))
+      run_command('in', @project, '--time', time_option)
+    end
+    
+    it 'should pass a time if specified on the command line (with --at)' do
+      time_option = '2008-08-23 15:39'
+      time = Time.local(2008, 8, 23, 15, 39)
+      Punch.expects(:in).with(@project, has_entry(:time => time))
+      run_command('in', @project, '--at', time_option)
     end
     
     describe 'when punched in successfully' do

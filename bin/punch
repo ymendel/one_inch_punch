@@ -29,6 +29,8 @@ BANNER
           "Restrict command to only after the given time") { |time|  OPTIONS[:after] = Time.parse(time) }
   opts.on('--before [TIME]', String,
           "Restrict command to only before the given time") { |time|  OPTIONS[:before] = Time.parse(time) }
+  opts.on('--at [TIME]', '--time [TIME]', String,
+          "Use the given time to punch in") { |time|  OPTIONS[:time] = Time.parse(time) }
   opts.on("-h", "--help",
           "Show this help message.") { puts opts; exit }
   opts.parse!(ARGV)
@@ -54,7 +56,7 @@ commands = {
   'total'  => lambda { |project|  puts Punch.total(project, OPTIONS.merge(:format => true)).inspect },
   'in'     => lambda do |project|
     if project
-      if Punch.in(project)
+      if Punch.in(project, OPTIONS)
         Punch.write
       else
         puts "Already punched in to '#{project}'"
