@@ -31,6 +31,8 @@ BANNER
           "Restrict command to only before the given time") { |time|  OPTIONS[:before] = Time.parse(time) }
   opts.on('--at [TIME]', '--time [TIME]', String,
           "Use the given time to punch in/out") { |time|  OPTIONS[:time] = Time.parse(time) }
+  opts.on('-m', '--message [MESSAGE]', String,
+          "Add the given log message when punching in/out") { |message|  OPTIONS[:message] = message }
   opts.on("-h", "--help",
           "Show this help message.") { puts opts; exit }
   opts.parse!(ARGV)

@@ -174,6 +174,18 @@ describe 'punch command' do
       run_command('in', @project, '--at', time_option)
     end
     
+    it 'should pass a message if specified on the command line (with --message)' do
+      message = 'About to do some amazing work'
+      Punch.expects(:in).with(@project, has_entry(:message => message))
+      run_command('in', @project, '--message', message)
+    end
+    
+    it 'should pass a message if specified on the command line (with -m)' do
+      message = 'About to do some amazing work'
+      Punch.expects(:in).with(@project, has_entry(:message => message))
+      run_command('in', @project, '-m', message)
+    end
+    
     describe 'when punched in successfully' do
       before :each do
         Punch.stubs(:in).returns(true)
@@ -258,6 +270,18 @@ describe 'punch command' do
       run_command('out', @project, '--at', time_option)
     end
     
+    it 'should pass a message if specified on the command line (with --message)' do
+      message = 'Finished doing some stellar work'
+      Punch.expects(:out).with(@project, has_entry(:message => message))
+      run_command('out', @project, '--message', message)
+    end
+    
+    it 'should pass a message if specified on the command line (with -m)' do
+      message = 'Finished doing some stellar work'
+      Punch.expects(:out).with(@project, has_entry(:message => message))
+      run_command('out', @project, '-m', message)
+    end
+    
     describe 'if no project given' do
       it 'should punch out of all projects' do
         Punch.expects(:out).with(nil, {})
@@ -276,6 +300,18 @@ describe 'punch command' do
         time = Time.local(2008, 8, 23, 15, 39)
         Punch.expects(:out).with(nil, has_entry(:time => time))
         run_command('out', '--at', time_option)
+      end
+      
+      it 'should pass a message if specified on the command line (with --message)' do
+        message = 'Finished doing some stellar work'
+        Punch.expects(:out).with(nil, has_entry(:message => message))
+        run_command('out', '--message', message)
+      end
+      
+      it 'should pass a message if specified on the command line (with -m)' do
+        message = 'Finished doing some stellar work'
+        Punch.expects(:out).with(nil, has_entry(:message => message))
+        run_command('out', '-m', message)
       end
     end
     
