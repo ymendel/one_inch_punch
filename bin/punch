@@ -30,7 +30,7 @@ BANNER
   opts.on('--before [TIME]', String,
           "Restrict command to only before the given time") { |time|  OPTIONS[:before] = Time.parse(time) }
   opts.on('--at [TIME]', '--time [TIME]', String,
-          "Use the given time to punch in") { |time|  OPTIONS[:time] = Time.parse(time) }
+          "Use the given time to punch in/out") { |time|  OPTIONS[:time] = Time.parse(time) }
   opts.on("-h", "--help",
           "Show this help message.") { puts opts; exit }
   opts.parse!(ARGV)
@@ -74,7 +74,7 @@ commands = {
     end
   end,
   'out' => lambda do |project|
-    if Punch.out(project)
+    if Punch.out(project, OPTIONS)
       Punch.write
     else
       message = 'Already punched out of '

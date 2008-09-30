@@ -240,13 +240,43 @@ describe 'punch command' do
     end
     
     it 'should punch out of the given project' do
-      Punch.expects(:out).with(@project)
+      Punch.expects(:out).with(@project, {})
       run_command('out', @project)
     end
     
-    it 'should punch out of all projects if none given' do
-      Punch.expects(:out).with(nil)
-      run_command('out')
+    it 'should pass a time if specified on the command line (with --time)' do
+      time_option = '2008-08-23 15:39'
+      time = Time.local(2008, 8, 23, 15, 39)
+      Punch.expects(:out).with(@project, has_entry(:time => time))
+      run_command('out', @project, '--time', time_option)
+    end
+    
+    it 'should pass a time if specified on the command line (with --at)' do
+      time_option = '2008-08-23 15:39'
+      time = Time.local(2008, 8, 23, 15, 39)
+      Punch.expects(:out).with(@project, has_entry(:time => time))
+      run_command('out', @project, '--at', time_option)
+    end
+    
+    describe 'if no project given' do
+      it 'should punch out of all projects' do
+        Punch.expects(:out).with(nil, {})
+        run_command('out')
+      end
+      
+      it 'should pass a time if specified on the command line (with --time)' do
+        time_option = '2008-08-23 15:39'
+        time = Time.local(2008, 8, 23, 15, 39)
+        Punch.expects(:out).with(nil, has_entry(:time => time))
+        run_command('out', '--time', time_option)
+      end
+      
+      it 'should pass a time if specified on the command line (with --at)' do
+        time_option = '2008-08-23 15:39'
+        time = Time.local(2008, 8, 23, 15, 39)
+        Punch.expects(:out).with(nil, has_entry(:time => time))
+        run_command('out', '--at', time_option)
+      end
     end
     
     describe 'when punched out successfully' do
