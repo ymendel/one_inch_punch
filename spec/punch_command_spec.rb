@@ -59,6 +59,13 @@ describe 'punch command' do
       result = 'total data'
       Punch.stubs(:total).returns(result)
       self.expects(:puts).with(result.inspect)
+      run_command('total', @project)
+    end
+    
+    it 'should output the total as YAML if no project given' do
+      result = 'total data'
+      Punch.stubs(:total).returns(result)
+      self.expects(:puts).with(result.to_yaml)
       run_command('total')
     end
     

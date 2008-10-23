@@ -62,7 +62,14 @@ commands = {
       puts result.to_yaml
     end
   end,
-  'total'  => lambda { |project|  puts Punch.total(project, OPTIONS.merge(:format => true)).inspect },
+  'total'  => lambda do |project|
+    result = Punch.total(project, OPTIONS.merge(:format => true))
+    if project
+      puts result.inspect
+    else
+      puts result.to_yaml
+    end
+  end,
   'in'     => lambda do |project|
     if project
       if Punch.in(project, OPTIONS)
