@@ -54,7 +54,14 @@ project = ARGV[1]
 Punch.load
 
 commands = {
-  'status' => lambda { |project|  puts Punch.status(project).inspect },
+  'status' => lambda do |project|
+    result = Punch.status(project)
+    if project
+      puts result.inspect
+    else
+      puts result.to_yaml
+    end
+  end,
   'total'  => lambda { |project|  puts Punch.total(project, OPTIONS.merge(:format => true)).inspect },
   'in'     => lambda do |project|
     if project

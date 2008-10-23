@@ -134,6 +134,13 @@ describe 'punch command' do
       result = 'status data'
       Punch.stubs(:status).returns(result)
       self.expects(:puts).with(result.inspect)
+      run_command('status', @project)
+    end
+    
+    it 'should output the status as YAML if no project given' do
+      result = 'status data'
+      Punch.stubs(:status).returns(result)
+      self.expects(:puts).with(result.to_yaml)
       run_command('status')
     end
     
