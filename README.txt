@@ -18,9 +18,7 @@ One-inch punch: Smaller, more effective
 * Can list project data
 * Can give total time for a project
 * Can be used command-line
-
-* Command-line does not give access to the list operation
-* Command-line output is ugly
+* Command-line output is less ugly
 * More, since this is unfinished
 
 == SYNOPSIS:
