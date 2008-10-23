@@ -531,12 +531,12 @@ describe 'punch command' do
     end
     
     it 'should get the data for the requested project' do
-      Punch.expects(:list).with(@project)
+      Punch.expects(:list).with(@project, anything)
       run_command('list', @project)
     end
     
     it 'should get the data for all projects if none given' do
-      Punch.expects(:list).with(nil)
+      Punch.expects(:list).with(nil, anything)
       run_command('list')
     end
     
@@ -545,6 +545,36 @@ describe 'punch command' do
       Punch.stubs(:list).returns(result)
       self.expects(:puts).with(result.to_yaml)
       run_command('list')
+    end
+    
+    describe 'when options specified' do
+      it "should pass on an 'after' time option given by --after" do
+        time_option = '2008-08-26 09:47'
+        time = Time.local(2008, 8, 26, 9, 47)
+        Punch.expects(:list).with(@project, has_entry(:after => time))
+        run_command('list', @project, '--after', time_option)
+      end
+      
+      it "should pass on a 'before' time option given by --before" do
+        time_option = '2008-08-23 15:39'
+        time = Time.local(2008, 8, 23, 15, 39)
+        Punch.expects(:list).with(@project, has_entry(:before => time))
+        run_command('list', @project, '--before', time_option)
+      end
+      
+      it 'should handle a time option given as a date' do
+        time_option = '2008-08-23'
+        time = Time.local(2008, 8, 23)
+        Punch.expects(:list).with(@project, has_entry(:before => time))
+        run_command('list', @project, '--before', time_option)
+      end
+      
+      it 'should accept time options if no project given' do
+        time_option = '2008-08-26 09:47'
+        time = Time.local(2008, 8, 26, 9, 47)
+        Punch.expects(:list).with(nil, has_entry(:before => time))
+        run_command('list', '--before', time_option)
+      end
     end
     
     it 'should not write the data' do
