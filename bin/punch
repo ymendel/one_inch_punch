@@ -98,7 +98,8 @@ commands = {
     else
       puts "Project required"
     end
-  end
+  end,
+  'list' => lambda { |project|  puts Punch.list(project).inspect },
 }
 
 if command_code = commands[command]

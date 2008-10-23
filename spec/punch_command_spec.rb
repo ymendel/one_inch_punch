@@ -520,6 +520,40 @@ describe 'punch command' do
     end
   end
   
+  describe "when the command is 'list'" do
+    before :each do
+      Punch.stubs(:list)
+    end
+    
+    it 'should load punch data' do
+      Punch.expects(:load)
+      run_command('list', @project)
+    end
+    
+    it 'should get the data for the requested project' do
+      Punch.expects(:list).with(@project)
+      run_command('list', @project)
+    end
+    
+    it 'should get the data for all projects if none given' do
+      Punch.expects(:list).with(nil)
+      run_command('list')
+    end
+    
+    it 'should output the list data' do
+      result = 'list data'
+      Punch.stubs(:list).returns(result)
+      self.expects(:puts).with(result.inspect)
+      run_command('list')
+    end
+    
+    it 'should not write the data' do
+      @states['write'].become('test')
+      Punch.expects(:write).never.when(@states['write'].is('test'))
+      run_command('list')
+    end
+  end
+  
   describe 'when the command is unknown' do
     it 'should not error' do
       lambda { run_command('bunk') }.should_not raise_error
