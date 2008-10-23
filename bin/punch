@@ -99,7 +99,7 @@ commands = {
       puts "Project required"
     end
   end,
-  'list' => lambda { |project|  puts Punch.list(project).inspect },
+  'list' => lambda { |project|  puts Punch.list(project).to_yaml },
 }
 
 if command_code = commands[command]

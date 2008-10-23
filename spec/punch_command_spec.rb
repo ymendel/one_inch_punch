@@ -543,7 +543,7 @@ describe 'punch command' do
     it 'should output the list data' do
       result = 'list data'
       Punch.stubs(:list).returns(result)
-      self.expects(:puts).with(result.inspect)
+      self.expects(:puts).with(result.to_yaml)
       run_command('list')
     end
     
