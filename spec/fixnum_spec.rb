@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/spec_helper.rb'
 
 describe Fixnum do
   it 'should give an elapsed time' do
-    50.should respond_to(:elapsed_time)
+    50.should.respond_to(:elapsed_time)
   end
   
   describe 'giving an elapsed time' do
