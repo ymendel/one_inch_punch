@@ -10,12 +10,14 @@ lib/punch.rb
 lib/punch/core_ext.rb
 lib/punch/core_ext/fixnum.rb
 lib/punch/version.rb
+lib/punch/instance.rb
 script/console
 script/destroy
 script/generate
 setup.rb
 spec/fixnum_spec.rb
 spec/punch_command_spec.rb
+spec/punch_instance_spec.rb
 spec/punch_spec.rb
 spec/spec.opts
 spec/spec_helper.rb

@@ -40,6 +40,19 @@ One-inch punch: Smaller, more effective
   $ echo 'working, really'
   $ punch out proj
   $ punch status
+  
+  or!
+  
+  require 'punch'
+  
+  proj = Punch.new('my project')
+  proj.status                     # => 'out'
+  proj.in
+  proj.status                     # => 'in'
+  # do some work
+  proj.out
+  proj.out?                       # => true
+  Punch.write
 
 == REQUIREMENTS:
 
