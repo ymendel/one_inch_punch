@@ -3,8 +3,9 @@ $:.unshift(File.dirname(__FILE__)) unless
 
 require 'yaml'
 require 'punch/core_ext'
+require 'punch/instance'
 
-module Punch
+class Punch
   class << self
     private
     attr_writer :data
