@@ -363,7 +363,7 @@ describe Punch do
       
       it 'should create the project' do
         Punch.in(@project)
-        Punch.data.should include(@project)
+        Punch.data.should have_key(@project)
       end
       
       it 'should add a time entry to the project data' do
@@ -607,7 +607,7 @@ describe Punch do
     describe 'when the project exists' do
       it 'should remove the project data' do
         Punch.delete(@project)
-        Punch.data.should_not include(@project)
+        Punch.data.should_not have_key(@project)
       end
       
       it 'should return true' do
