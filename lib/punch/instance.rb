@@ -24,4 +24,8 @@ class Punch
   def out(options = {})
     self.class.out(project, options)
   end
+  
+  def list(options = {})
+    self.class.list(project, options)
+  end
 end

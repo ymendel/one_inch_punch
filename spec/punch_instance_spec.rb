@@ -182,4 +182,48 @@ describe Punch, 'instance' do
       @punch.out.should == @out
     end
   end
+  
+  it 'should list the project data' do
+    @punch.should respond_to(:list)
+  end
+  
+  describe 'listing the project data' do
+    before :each do
+      @list = 'list val'
+      Punch.stubs(:list).returns(@list)
+    end
+    
+    it 'should accept options' do
+      lambda { @punch.list(:time => Time.now) }.should_not raise_error(ArgumentError)
+    end
+    
+    it 'should not require options' do
+      lambda { @punch.list }.should_not raise_error(ArgumentError)
+    end
+    
+    it 'should delegate to the class' do
+      Punch.expects(:list)
+      @punch.list
+    end
+    
+    it 'should pass the project when delegating to the class' do
+      Punch.expects(:list).with(@project, anything)
+      @punch.list
+    end
+    
+    it 'should pass the options when delegating to the class' do
+      options = { :time => Time.now }
+      Punch.expects(:list).with(anything, options)
+      @punch.list(options)
+    end
+    
+    it 'should pass an empty hash if no options given' do
+      Punch.expects(:list).with(anything, {})
+      @punch.list
+    end
+    
+    it 'should return the value returned by the class method' do
+      @punch.list.should == @list
+    end
+  end
 end
