@@ -34,7 +34,7 @@ describe Punch do
       
       Punch.instance_eval do
         class << self
-          public :data
+          public :data, :data=
         end
       end
       
@@ -71,6 +71,19 @@ describe Punch do
         Punch.load.should == false
       end
     end
+    
+    describe 'and returning data' do
+      it 'should return the data if set' do
+        val = { 'rip' => [] }
+        Punch.data = val
+        Punch.data.should == val
+      end
+      
+      it 'should load the data if not set' do
+        Punch.data = nil
+        Punch.data.should == YAML.load(@data)
+      end
+    end
   end
   
   it 'should reset itself' do
@@ -89,7 +102,7 @@ describe Punch do
     it 'should set its data to nil' do
       Punch.data = { 'proj' => 'lots of stuff here' }
       Punch.reset
-      Punch.data.should be_nil
+      Punch.instance_variable_get('@data').should be_nil
     end
   end
   

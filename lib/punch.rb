@@ -7,7 +7,13 @@ require 'punch/core_ext'
 module Punch
   class << self
     private
-    attr_accessor :data
+    attr_writer :data
+    
+    def data
+      load unless @data
+      @data
+    end
+    
     
     public
     
@@ -28,7 +34,7 @@ module Punch
     
     def write
       File.open(File.expand_path('~/.punch.yml'), 'w') do |file|
-        file.puts @data.to_yaml
+        file.puts data.to_yaml
       end
     end
     
