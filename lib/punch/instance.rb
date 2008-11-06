@@ -28,4 +28,8 @@ class Punch
   def list(options = {})
     self.class.list(project, options)
   end
+  
+  def total(options = {})
+    self.class.total(project, options)
+  end
 end

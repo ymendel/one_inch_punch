@@ -226,4 +226,48 @@ describe Punch, 'instance' do
       @punch.list.should == @list
     end
   end
+  
+  it 'should get the project total' do
+    @punch.should respond_to(:total)
+  end
+  
+  describe 'getting the project total' do
+    before :each do
+      @total = 'total val'
+      Punch.stubs(:total).returns(@total)
+    end
+    
+    it 'should accept options' do
+      lambda { @punch.total(:time => Time.now) }.should_not raise_error(ArgumentError)
+    end
+    
+    it 'should not require options' do
+      lambda { @punch.total }.should_not raise_error(ArgumentError)
+    end
+    
+    it 'should delegate to the class' do
+      Punch.expects(:total)
+      @punch.total
+    end
+    
+    it 'should pass the project when delegating to the class' do
+      Punch.expects(:total).with(@project, anything)
+      @punch.total
+    end
+    
+    it 'should pass the options when delegating to the class' do
+      options = { :time => Time.now }
+      Punch.expects(:total).with(anything, options)
+      @punch.total(options)
+    end
+    
+    it 'should pass an empty hash if no options given' do
+      Punch.expects(:total).with(anything, {})
+      @punch.total
+    end
+    
+    it 'should return the value returned by the class method' do
+      @punch.total.should == @total
+    end
+  end
 end
