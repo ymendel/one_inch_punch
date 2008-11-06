@@ -32,4 +32,8 @@ class Punch
   def total(options = {})
     self.class.total(project, options)
   end
+  
+  def log(message)
+    self.class.log(project, message)
+  end
 end

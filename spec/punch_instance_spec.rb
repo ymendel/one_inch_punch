@@ -270,4 +270,43 @@ describe Punch, 'instance' do
       @punch.total.should == @total
     end
   end
+  
+  it 'should log information about the project' do
+    @punch.should respond_to(:log)
+  end
+  
+  describe 'logging information about the project' do
+    before :each do
+      @log = 'log val'
+      @message = 'some log message'
+      Punch.stubs(:log).returns(@log)
+    end
+    
+    it 'should accept a log message' do
+      lambda { @punch.log(@message) }.should_not raise_error(ArgumentError)
+    end
+    
+    it 'should require a log message' do
+      lambda { @punch.log }.should raise_error(ArgumentError)
+    end
+    
+    it 'should delegate to the class' do
+      Punch.expects(:log)
+      @punch.log(@message)
+    end
+    
+    it 'should pass the project when delegating to the class' do
+      Punch.expects(:log).with(@project, anything)
+      @punch.log(@message)
+    end
+    
+    it 'should pass the message when delegating to the class' do
+      Punch.expects(:log).with(anything, @message)
+      @punch.log(@message)
+    end
+    
+    it 'should return the value returned by the class method' do
+      @punch.log(@message).should == @log
+    end
+  end
 end
