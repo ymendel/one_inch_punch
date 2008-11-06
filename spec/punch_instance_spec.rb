@@ -94,4 +94,92 @@ describe Punch, 'instance' do
       @punch.in?.should == @in
     end
   end
+  
+  it 'should punch the project in' do
+    @punch.should respond_to(:in)
+  end
+  
+  describe 'punching the project in' do
+    before :each do
+      @in = 'in val'
+      Punch.stubs(:in).returns(@in)
+    end
+    
+    it 'should accept options' do
+      lambda { @punch.in(:time => Time.now) }.should_not raise_error(ArgumentError)
+    end
+    
+    it 'should not require options' do
+      lambda { @punch.in }.should_not raise_error(ArgumentError)
+    end
+    
+    it 'should delegate to the class' do
+      Punch.expects(:in)
+      @punch.in
+    end
+    
+    it 'should pass the project when delegating to the class' do
+      Punch.expects(:in).with(@project, anything)
+      @punch.in
+    end
+    
+    it 'should pass the options when delegating to the class' do
+      options = { :time => Time.now }
+      Punch.expects(:in).with(anything, options)
+      @punch.in(options)
+    end
+    
+    it 'should pass an empty hash if no options given' do
+      Punch.expects(:in).with(anything, {})
+      @punch.in
+    end
+    
+    it 'should return the value returned by the class method' do
+      @punch.in.should == @in
+    end
+  end
+  
+  it 'should punch the project out' do
+    @punch.should respond_to(:out)
+  end
+  
+  describe 'punching the project out' do
+    before :each do
+      @out = 'out val'
+      Punch.stubs(:out).returns(@out)
+    end
+    
+    it 'should accept options' do
+      lambda { @punch.out(:time => Time.now) }.should_not raise_error(ArgumentError)
+    end
+    
+    it 'should not require options' do
+      lambda { @punch.out }.should_not raise_error(ArgumentError)
+    end
+    
+    it 'should delegate to the class' do
+      Punch.expects(:out)
+      @punch.out
+    end
+    
+    it 'should pass the project when delegating to the class' do
+      Punch.expects(:out).with(@project, anything)
+      @punch.out
+    end
+    
+    it 'should pass the options when delegating to the class' do
+      options = { :time => Time.now }
+      Punch.expects(:out).with(anything, options)
+      @punch.out(options)
+    end
+    
+    it 'should pass an empty hash if no options given' do
+      Punch.expects(:out).with(anything, {})
+      @punch.out
+    end
+    
+    it 'should return the value returned by the class method' do
+      @punch.out.should == @out
+    end
+  end
 end

@@ -16,4 +16,12 @@ class Punch
   def in?
     self.class.in?(project)
   end
+  
+  def in(options = {})
+    self.class.in(project, options)
+  end
+  
+  def out(options = {})
+    self.class.out(project, options)
+  end
 end
