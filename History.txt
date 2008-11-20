@@ -1,3 +1,9 @@
+== 0.2.1 2008-11-20
+
+* 1 enhancement:
+  * A missing or empty .punch.yml file no longer causes an exception
+    (thanks to Jamie van Dyke for finding this problem)
+
 == 0.2.0 2008-11-05
 
 * 2 enhancements:
