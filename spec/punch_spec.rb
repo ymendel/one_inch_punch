@@ -55,6 +55,21 @@ describe Punch do
       it 'should return true' do
         Punch.load.should == true
       end
+      
+      describe 'and is empty' do
+        before :each do
+          File.stubs(:read).returns('')
+        end
+        
+        it 'should load the data as yaml' do
+          Punch.load
+          Punch.data.should == {}
+        end
+
+        it 'should return true' do
+          Punch.load.should == true
+        end
+      end
     end
     
     describe 'when no file is found' do
@@ -62,13 +77,13 @@ describe Punch do
         File.stubs(:read).raises(Errno::ENOENT)
       end
       
-      it 'should leave the data blank' do
+      it 'should set the data to an empty hash' do
         Punch.load
-        Punch.data.should be_nil
+        Punch.data.should == {}
       end
       
       it 'should return false' do
-        Punch.load.should == false
+        Punch.load.should == true
       end
     end
     

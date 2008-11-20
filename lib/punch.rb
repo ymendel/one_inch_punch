@@ -21,9 +21,9 @@ class Punch
     def load
       begin
         raw = File.read(File.expand_path('~/.punch.yml'))
-        @data = YAML.load(raw)
+        @data = YAML.load(raw) || {}
       rescue Errno::ENOENT
-        return false
+        @data = {}
       end
       
       true
