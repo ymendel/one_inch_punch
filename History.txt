@@ -1,3 +1,9 @@
+== 0.2.2 2008-12-01
+
+* 1 enhancement:
+  * Getting list or total for a punched-in project and using the :before option no longer causes an exception
+    (thanks to Rick Bradley for finding this problem)
+
 == 0.2.1 2008-11-20
 
 * 1 enhancement:
