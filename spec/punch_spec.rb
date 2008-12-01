@@ -700,6 +700,25 @@ describe Punch do
       it 'should restrict returned data to times only within a time range' do
         Punch.list(@project, :after => @now - 2001, :before => @now - 999).should == Punch.data[@project][1, 1]
       end
+      
+      describe 'and is punched in' do
+        before :each do
+          @data[@project].push({ 'in' => @now - 25 })
+          Punch.data = @data
+        end
+        
+        it 'should restrict returned data to times only after a certain time' do
+          Punch.list(@project, :after => @now - 501).should == Punch.data[@project].last(2)
+        end
+
+        it 'should restrict returned data to times only before a certain time' do
+          Punch.list(@project, :before => @now - 2499).should == Punch.data[@project].first(1)
+        end
+
+        it 'should restrict returned data to times only within a time range' do
+          Punch.list(@project, :after => @now - 2001, :before => @now - 999).should == Punch.data[@project][1, 1]
+        end
+      end
     end
 
     describe 'when the project does not exist' do
@@ -803,6 +822,18 @@ describe Punch do
         
         it 'give the time spent until now' do
           Punch.total(@project).should == 3925
+        end
+        
+        it 'should restrict returned amount to times only after a certain time' do
+          Punch.total(@project, :after => @now - 501).should == 425
+        end
+
+        it 'should restrict returned amount to times only before a certain time' do
+          Punch.total(@project, :before => @now - 2499).should == 2500
+        end
+
+        it 'should restrict returned amount to times only within a time range' do
+          Punch.total(@project, :after => @now - 2001, :before => @now - 999).should == 1000
         end
       end
     end

@@ -125,8 +125,8 @@ class Punch
     
     def do_list_single(project, options)
       return nil unless project_data = data[project]
-      project_data = project_data.select { |t|  t['in']  > options[:after] }  if options[:after]
-      project_data = project_data.select { |t|  t['out'] < options[:before] } if options[:before]
+      project_data = project_data.select { |t|  t['in']                > options[:after] }  if options[:after]
+      project_data = project_data.select { |t|  (t['out'] || Time.now) < options[:before] } if options[:before]
       project_data
     end
     
