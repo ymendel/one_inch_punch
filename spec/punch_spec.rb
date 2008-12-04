@@ -2,11 +2,11 @@ require File.dirname(__FILE__) + '/spec_helper.rb'
 
 describe Punch do
   it 'should load data' do
-    Punch.should respond_to(:load)
+    Punch.should.respond_to(:load)
   end
   
   describe 'when loading data' do
-    before :each do
+    before do
       @data = <<-EOD
       ---
       rip: 
@@ -30,7 +30,7 @@ describe Punch do
         total: "00:55:17"
         in: 2008-05-19T11:23:35.00-05:00
       EOD
-      File.stubs(:read).returns(@data)
+      File.stub!(:read).and_return(@data)
       
       Punch.instance_eval do
         class << self
@@ -42,7 +42,7 @@ describe Punch do
     end
     
     it 'should read the ~/.punch.yml file' do
-      File.expects(:read).with(File.expand_path('~/.punch.yml')).returns(@data)
+      File.should_receive(:read).with(File.expand_path('~/.punch.yml')).and_return(@data)
       Punch.load
     end
     
@@ -57,8 +57,8 @@ describe Punch do
       end
       
       describe 'and is empty' do
-        before :each do
-          File.stubs(:read).returns('')
+        before do
+          File.stub!(:read).and_return('')
         end
         
         it 'should set the data to an empty hash' do
@@ -73,8 +73,8 @@ describe Punch do
     end
     
     describe 'when no file is found' do
-      before :each do
-        File.stubs(:read).raises(Errno::ENOENT)
+      before do
+        File.stub!(:read).and_raise(Errno::ENOENT)
       end
       
       it 'should set the data to an empty hash' do
@@ -102,11 +102,11 @@ describe Punch do
   end
   
   it 'should reset itself' do
-    Punch.should respond_to(:reset)
+    Punch.should.respond_to(:reset)
   end
   
   describe 'when resetting itself' do
-    before :each do
+    before do
       Punch.instance_eval do
         class << self
           public :data=
@@ -117,18 +117,18 @@ describe Punch do
     it 'should set its data to nil' do
       Punch.data = { 'proj' => 'lots of stuff here' }
       Punch.reset
-      Punch.instance_variable_get('@data').should be_nil
+      Punch.instance_variable_get('@data').should.be.nil
     end
   end
   
   it 'should write data' do
-    Punch.should respond_to(:write)
+    Punch.should.respond_to(:write)
   end
   
   describe 'when writing data' do
-    before :each do
-      @file = stub('file')
-      File.stubs(:open).yields(@file)
+    before do
+      @file = mock('file')
+      File.stub!(:open).and_yield(@file)
       @data = { 'proj' => 'data goes here' }
       
       Punch.instance_eval do
@@ -140,22 +140,22 @@ describe Punch do
     end
     
     it 'should open the data file for writing' do
-      File.expects(:open).with(File.expand_path('~/.punch.yml'), 'w')
+      File.should_receive(:open).with(File.expand_path('~/.punch.yml'), 'w')
       Punch.write
     end
     
     it 'should write the data to the file in YAML form' do
-      @file.expects(:puts).with(@data.to_yaml)
+      @file.should_receive(:puts).with(@data.to_yaml)
       Punch.write
     end
   end
   
   it 'should give project status' do
-    Punch.should respond_to(:status)
+    Punch.should.respond_to(:status)
   end
   
   describe "giving a project's status" do
-    before :each do
+    before do
       @now = Time.now
       @projects = { 'out' => 'test-o', 'in' => 'testshank' }
       @data = { 
@@ -172,11 +172,11 @@ describe Punch do
     end
     
     it 'should accept a project name' do
-      lambda { Punch.status('proj') }.should_not raise_error(ArgumentError)
+      lambda { Punch.status('proj') }.should.not.raise(ArgumentError)
     end
     
     it 'should not require a project name' do
-      lambda { Punch.status }.should_not raise_error(ArgumentError)
+      lambda { Punch.status }.should.not.raise(ArgumentError)
     end
     
     it "should return 'out' if the project is currently punched out" do
@@ -188,14 +188,14 @@ describe Punch do
     end
     
     it 'should return nil if the project does not exist' do
-      Punch.status('other project').should be_nil
+      Punch.status('other project').should.be.nil
     end
     
     it 'should return nil if the project has no time data' do
       project = 'empty project'
       @data[project] = []
       Punch.data = @data
-      Punch.status(project).should be_nil
+      Punch.status(project).should.be.nil
     end
     
     it 'should use the last time entry for the status' do
@@ -213,89 +213,89 @@ describe Punch do
   end
   
   it 'should indicate whether a project is punched out' do
-    Punch.should respond_to(:out?)
+    Punch.should.respond_to(:out?)
   end
   
   describe 'indicating whether a project is punched out' do
-    before :each do
+    before do
       @project = 'testola'
     end
     
     it 'should accept a project name' do
-      lambda { Punch.out?('proj') }.should_not raise_error(ArgumentError)
+      lambda { Punch.out?('proj') }.should.not.raise(ArgumentError)
     end
     
     it 'should require a project name' do
-      lambda { Punch.out? }.should raise_error(ArgumentError)
+      lambda { Punch.out? }.should.raise(ArgumentError)
     end
         
     it "should get the project's status" do
-      Punch.expects(:status).with(@project)
+      Punch.should_receive(:status).with(@project)
       Punch.out?(@project)
     end
     
     it "should return true if the project's status is 'out'" do
-      Punch.stubs(:status).returns('out')
+      Punch.stub!(:status).and_return('out')
       Punch.out?(@project).should == true
     end
     
     it "should return false if the project's status is 'in'" do
-      Punch.stubs(:status).returns('in')
+      Punch.stub!(:status).and_return('in')
       Punch.out?(@project).should == false
     end
     
     it "should return true if the project's status is nil" do
-      Punch.stubs(:status).returns(nil)
+      Punch.stub!(:status).and_return(nil)
       Punch.out?(@project).should == true
     end
   end
   
   it 'should indicate whether a project is punched in' do
-    Punch.should respond_to(:in?)
+    Punch.should.respond_to(:in?)
   end
   
   describe 'indicating whether a project is punched in' do
-    before :each do
+    before do
       @project = 'testola'
     end
     
     it 'should accept a project name' do
-      lambda { Punch.in?('proj') }.should_not raise_error(ArgumentError)
+      lambda { Punch.in?('proj') }.should.not.raise(ArgumentError)
     end
     
     it 'should require a project name' do
-      lambda { Punch.in? }.should raise_error(ArgumentError)
+      lambda { Punch.in? }.should.raise(ArgumentError)
     end
         
     it "should get the project's status" do
-      Punch.expects(:status).with(@project)
+      Punch.should_receive(:status).with(@project)
       Punch.in?(@project)
     end
     
     it "should return false if the project's status is 'out'" do
-      Punch.stubs(:status).returns('out')
+      Punch.stub!(:status).and_return('out')
       Punch.in?(@project).should == false
     end
     
     it "should return true if the project's status is 'in'" do
-      Punch.stubs(:status).returns('in')
+      Punch.stub!(:status).and_return('in')
       Punch.in?(@project).should == true
     end
     
     it "should return false if the project's status is nil" do
-      Punch.stubs(:status).returns(nil)
+      Punch.stub!(:status).and_return(nil)
       Punch.in?(@project).should == false
     end
   end
   
   it 'should punch a project in' do
-    Punch.should respond_to(:in)
+    Punch.should.respond_to(:in)
   end
   
   describe 'punching a project in' do
-    before :each do
+    before do
       @now = Time.now
-      Time.stubs(:now).returns(@now)
+      Time.stub!(:now).and_return(@now)
       @project = 'test project'
       @data = { @project => [ {'in' => @now - 50, 'out' => @now - 25} ] }
       
@@ -308,19 +308,19 @@ describe Punch do
     end
     
     it 'should accept a project name' do
-      lambda { Punch.in('proj') }.should_not raise_error(ArgumentError)
+      lambda { Punch.in('proj') }.should.not.raise(ArgumentError)
     end
     
     it 'should require a project name' do
-      lambda { Punch.in }.should raise_error(ArgumentError)
+      lambda { Punch.in }.should.raise(ArgumentError)
     end
     
     it 'should accept options' do
-      lambda { Punch.in('proj', :time => Time.now) }.should_not raise_error(ArgumentError)
+      lambda { Punch.in('proj', :time => Time.now) }.should.not.raise(ArgumentError)
     end
     
     describe 'when the project is already punched in' do
-      before :each do
+      before do
         @data = { @project => [ {'in' => @now - 50, 'out' => @now - 25}, {'in' => @now - 5} ] }
         Punch.data = @data
       end
@@ -349,7 +349,7 @@ describe Punch do
       
       it 'should log a message about punch-in time' do
         time = @now.strftime('%Y-%m-%dT%H:%M:%S%z')
-        Punch.expects(:log).with(@project, "punch in @ #{time}")
+        Punch.should_receive(:log).with(@project, "punch in @ #{time}")
         Punch.in(@project)
       end
       
@@ -362,14 +362,14 @@ describe Punch do
       it 'should log a message using the given time' do
         time = @now + 75
         time_str = time.strftime('%Y-%m-%dT%H:%M:%S%z')
-        Punch.expects(:log).with(@project, "punch in @ #{time_str}")
+        Punch.should_receive(:log).with(@project, "punch in @ #{time_str}")
         Punch.in(@project, :time => time)
       end
       
       it 'should log an additional message if given' do
-        Punch.stubs(:log)  # for the time-based message
+        Punch.stub!(:log)  # for the time-based message
         message = 'working on some stuff'
-        Punch.expects(:log).with(@project, message)
+        Punch.should_receive(:log).with(@project, message)
         Punch.in(@project, :message => message)
       end
       
@@ -385,13 +385,13 @@ describe Punch do
     end
     
     describe 'when the project does not yet exist' do
-      before :each do
+      before do
         @project = 'non-existent project'
       end
       
       it 'should create the project' do
         Punch.in(@project)
-        Punch.data.should have_key(@project)
+        Punch.data.should.include(@project)
       end
       
       it 'should add a time entry to the project data' do
@@ -406,7 +406,7 @@ describe Punch do
       
       it 'should log a message about punch-in time' do
         time = @now.strftime('%Y-%m-%dT%H:%M:%S%z')
-        Punch.expects(:log).with(@project, "punch in @ #{time}")
+        Punch.should_receive(:log).with(@project, "punch in @ #{time}")
         Punch.in(@project)
       end
       
@@ -419,7 +419,7 @@ describe Punch do
       it 'should log a message using the given time' do
         time = @now + 75
         time_str = time.strftime('%Y-%m-%dT%H:%M:%S%z')
-        Punch.expects(:log).with(@project, "punch in @ #{time_str}")
+        Punch.should_receive(:log).with(@project, "punch in @ #{time_str}")
         Punch.in(@project, :time => time)
       end
       
@@ -430,13 +430,13 @@ describe Punch do
   end
   
   it 'should punch a project out' do
-    Punch.should respond_to(:out)
+    Punch.should.respond_to(:out)
   end
   
   describe 'punching a project out' do
-    before :each do
+    before do
       @now = Time.now
-      Time.stubs(:now).returns(@now)
+      Time.stub!(:now).and_return(@now)
       @project = 'test project'
       @data = { @project => [ {'in' => @now - 50, 'out' => @now - 25} ] }
       
@@ -449,19 +449,19 @@ describe Punch do
     end
     
     it 'should accept a project name' do
-      lambda { Punch.out('proj') }.should_not raise_error(ArgumentError)
+      lambda { Punch.out('proj') }.should.not.raise(ArgumentError)
     end
     
     it 'should not require a project name' do
-      lambda { Punch.out }.should_not raise_error(ArgumentError)
+      lambda { Punch.out }.should.not.raise(ArgumentError)
     end
     
     it 'should accept a project name and options' do
-      lambda { Punch.out('proj', :time => Time.now) }.should_not raise_error(ArgumentError)
+      lambda { Punch.out('proj', :time => Time.now) }.should.not.raise(ArgumentError)
     end
     
     it 'should accept options without a project name' do
-      lambda { Punch.out(:time => Time.now) }.should_not raise_error(ArgumentError)
+      lambda { Punch.out(:time => Time.now) }.should.not.raise(ArgumentError)
     end
     
     describe 'when the project is already punched out' do
@@ -477,7 +477,7 @@ describe Punch do
     end
     
     describe 'when the project is not already punched out' do
-      before :each do
+      before do
         @data = { @project => [ {'in' => @now - 50} ] }
         Punch.data = @data
       end
@@ -494,7 +494,7 @@ describe Punch do
       
       it 'should log a message about punch-out time' do
         time = @now.strftime('%Y-%m-%dT%H:%M:%S%z')
-        Punch.expects(:log).with(@project, "punch out @ #{time}")
+        Punch.should_receive(:log).with(@project, "punch out @ #{time}")
         Punch.out(@project)
       end
       
@@ -507,14 +507,14 @@ describe Punch do
       it 'should log a message using the given time' do
         time = @now + 75
         time_str = time.strftime('%Y-%m-%dT%H:%M:%S%z')
-        Punch.expects(:log).with(@project, "punch out @ #{time_str}")
+        Punch.should_receive(:log).with(@project, "punch out @ #{time_str}")
         Punch.out(@project, :time => time)
       end
       
       it 'should log an additional message if given' do
-        Punch.stubs(:log)  # for the time-based message
+        Punch.stub!(:log)  # for the time-based message
         message = 'finished working on some stuff'
-        Punch.expects(:log).with(@project, message)
+        Punch.should_receive(:log).with(@project, message)
         Punch.out(@project, :message => message)
       end
       
@@ -530,7 +530,7 @@ describe Punch do
     end
     
     describe 'when no project is given' do
-      before :each do
+      before do
         @projects = ['test project', 'out project', 'other project']
         @data = {
           @projects[0] => [ {'in' => @now - 50, 'out' => @now - 25} ],
@@ -549,8 +549,8 @@ describe Punch do
       
       it 'should log punch-out messages for all projects being punched out' do
         time = @now.strftime('%Y-%m-%dT%H:%M:%S%z')
-        Punch.expects(:log).with(@projects[1], "punch out @ #{time}")
-        Punch.expects(:log).with(@projects[2], "punch out @ #{time}")
+        Punch.should_receive(:log).with(@projects[1], "punch out @ #{time}")
+        Punch.should_receive(:log).with(@projects[2], "punch out @ #{time}")
         Punch.out
       end
       
@@ -565,16 +565,16 @@ describe Punch do
       it 'should log messages using the given time' do
         time = @now + 75
         time_str = time.strftime('%Y-%m-%dT%H:%M:%S%z')
-        Punch.expects(:log).with(@projects[1], "punch out @ #{time_str}")
-        Punch.expects(:log).with(@projects[2], "punch out @ #{time_str}")
+        Punch.should_receive(:log).with(@projects[1], "punch out @ #{time_str}")
+        Punch.should_receive(:log).with(@projects[2], "punch out @ #{time_str}")
         Punch.out(:time => time)
       end
       
       it 'should log an additional message if given' do
-        Punch.stubs(:log)  # for the time-based messages
+        Punch.stub!(:log)  # for the time-based messages
         message = 'finished working on some stuff'
-        Punch.expects(:log).with(@projects[1], message)
-        Punch.expects(:log).with(@projects[2], message)
+        Punch.should_receive(:log).with(@projects[1], message)
+        Punch.should_receive(:log).with(@projects[2], message)
         Punch.out(:message => message)
       end
       
@@ -583,7 +583,7 @@ describe Punch do
       end
       
       describe 'when all projects were already punched out' do
-        before :each do
+        before do
           @projects = ['test project', 'out project', 'other project']
           @data = {
             @projects[0] => [ {'in' => @now - 50, 'out' => @now - 25} ],
@@ -607,11 +607,11 @@ describe Punch do
   end
 
   it 'should delete a project' do
-    Punch.should respond_to(:delete)
+    Punch.should.respond_to(:delete)
   end
   
   describe 'deleting a project' do
-    before :each do
+    before do
       @now = Time.now
       @project = 'test project'
       @data = { @project => [ {'in' => @now - 50, 'out' => @now - 25} ] }
@@ -625,17 +625,17 @@ describe Punch do
     end
     
     it 'should accept a project name' do
-      lambda { Punch.delete('proj') }.should_not raise_error(ArgumentError)
+      lambda { Punch.delete('proj') }.should.not.raise(ArgumentError)
     end
     
     it 'should require a project name' do
-      lambda { Punch.delete }.should raise_error(ArgumentError)
+      lambda { Punch.delete }.should.raise(ArgumentError)
     end
     
     describe 'when the project exists' do
       it 'should remove the project data' do
         Punch.delete(@project)
-        Punch.data.should_not have_key(@project)
+        Punch.data.should.not.include(@project)
       end
       
       it 'should return true' do
@@ -644,22 +644,22 @@ describe Punch do
     end
     
     describe 'when the project does not exist' do
-      before :each do
+      before do
         @project = 'non-existent project'
       end
       
       it 'should return nil' do
-        Punch.delete(@project).should be_nil
+        Punch.delete(@project).should.be.nil
       end
     end
   end
   
   it 'should list project data' do
-    Punch.should respond_to(:list)
+    Punch.should.respond_to(:list)
   end
   
   describe 'listing project data' do
-    before :each do
+    before do
       @now = Time.now
       @project = 'test project'
       @data = { @project => [ {'in' => @now - 5000, 'out' => @now - 2500}, {'in' => @now - 2000, 'out' => @now - 1000}, {'in' => @now - 500, 'out' => @now - 100} ] }
@@ -673,15 +673,15 @@ describe Punch do
     end
     
     it 'should accept a project name' do
-      lambda { Punch.list('proj') }.should_not raise_error(ArgumentError)
+      lambda { Punch.list('proj') }.should.not.raise(ArgumentError)
     end
     
     it 'should not require a project name' do
-      lambda { Punch.list }.should_not raise_error(ArgumentError)
+      lambda { Punch.list }.should.not.raise(ArgumentError)
     end
     
     it 'should allow options' do
-      lambda { Punch.list('proj', :after => Time.now) }.should_not raise_error(ArgumentError)
+      lambda { Punch.list('proj', :after => Time.now) }.should.not.raise(ArgumentError)
     end
     
     describe 'when the project exists' do
@@ -702,7 +702,7 @@ describe Punch do
       end
       
       describe 'and is punched in' do
-        before :each do
+        before do
           @data[@project].push({ 'in' => @now - 25 })
           Punch.data = @data
         end
@@ -722,21 +722,21 @@ describe Punch do
     end
 
     describe 'when the project does not exist' do
-      before :each do
+      before do
         @project = 'non-existent project'
       end
       
       it 'should return nil' do
-        Punch.list(@project).should be_nil
+        Punch.list(@project).should.be.nil
       end
       
       it 'should return nil if options given' do
-        Punch.list(@project, :after => @now - 500).should be_nil
+        Punch.list(@project, :after => @now - 500).should.be.nil
       end
     end
     
     describe 'when no project is given' do
-      before :each do
+      before do
         @projects = ['test project', 'out project', 'other project']
         @data = {
           @projects[0] => [ {'in' => @now - 50, 'out' => @now - 25} ],
@@ -763,13 +763,13 @@ describe Punch do
   end
 
   it 'should get the total time for a project' do
-    Punch.should respond_to(:total)
+    Punch.should.respond_to(:total)
   end
   
   describe 'getting total time for a project' do
-    before :each do
+    before do
       @now = Time.now
-      Time.stubs(:now).returns(@now)
+      Time.stub!(:now).and_return(@now)
       @project = 'test project'
       @data = { @project => [ {'in' => @now - 5000, 'out' => @now - 2500}, {'in' => @now - 2000, 'out' => @now - 1000}, {'in' => @now - 500, 'out' => @now - 100} ] }
       
@@ -782,15 +782,15 @@ describe Punch do
     end
     
     it 'should accept a project name' do
-      lambda { Punch.total('proj') }.should_not raise_error(ArgumentError)
+      lambda { Punch.total('proj') }.should.not.raise(ArgumentError)
     end
     
     it 'should not require a project name' do
-      lambda { Punch.total }.should_not raise_error(ArgumentError)
+      lambda { Punch.total }.should.not.raise(ArgumentError)
     end
     
     it 'should allow options' do
-      lambda { Punch.total('proj', :after => Time.now) }.should_not raise_error(ArgumentError)
+      lambda { Punch.total('proj', :after => Time.now) }.should.not.raise(ArgumentError)
     end
     
     describe 'when the project exists' do
@@ -815,7 +815,7 @@ describe Punch do
       end
       
       describe 'and is punched in' do
-        before :each do
+        before do
           @data[@project].push({ 'in' => @now - 25 })
           Punch.data = @data
         end
@@ -839,17 +839,17 @@ describe Punch do
     end
 
     describe 'when the project does not exist' do
-      before :each do
+      before do
         @project = 'non-existent project'
       end
       
       it 'should return nil' do
-        Punch.total(@project).should be_nil
+        Punch.total(@project).should.be.nil
       end
     end
     
     describe 'when no project is given' do
-      before :each do
+      before do
         @projects = ['test project', 'out project', 'other project']
         @data = {
           @projects[0] => [ {'in' => @now - 50, 'out' => @now - 25} ],
@@ -874,11 +874,11 @@ describe Punch do
   end
   
   it 'should log information about a project' do
-    Punch.should respond_to(:log)
+    Punch.should.respond_to(:log)
   end
   
   describe 'logging information about a project' do
-    before :each do
+    before do
       @now = Time.now
       @project = 'test project'
       @data = { @project => [ {'in' => @now - 50, 'log' => ['some earlier message']} ] }
@@ -894,19 +894,19 @@ describe Punch do
     end
     
     it 'should accept a project and message' do
-      lambda { Punch.log('proj', 'some mess') }.should_not raise_error(ArgumentError)
+      lambda { Punch.log('proj', 'some mess') }.should.not.raise(ArgumentError)
     end
     
     it 'should require a message' do
-      lambda { Punch.log('proj') }.should raise_error(ArgumentError)
+      lambda { Punch.log('proj') }.should.raise(ArgumentError)
     end
     
     it 'should require a project' do
-      lambda { Punch.log }.should raise_error(ArgumentError)
+      lambda { Punch.log }.should.raise(ArgumentError)
     end
     
     it 'should check if the project is punched in' do
-      Punch.expects(:in?).with(@project)
+      Punch.should_receive(:in?).with(@project)
       Punch.log(@project, @message)
     end
     
@@ -926,7 +926,7 @@ describe Punch do
       end
       
       describe 'and has no log' do
-        before :each do
+        before do
           @data = { @project => [ {'in' => @now - 50} ] }
           Punch.data = @data
         end
@@ -939,7 +939,7 @@ describe Punch do
     end
     
     describe 'when the project is not punched in' do
-      before :each do
+      before do
         @data = { @project => [ {'in' => @now - 50, 'out' => @now - 25, 'log' => ['some earlier message']} ] }
         Punch.data = @data
       end
