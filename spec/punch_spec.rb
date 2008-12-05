@@ -42,7 +42,7 @@ describe Punch do
     end
     
     it 'should read the ~/.punch.yml file' do
-      File.should_receive(:read).with(File.expand_path('~/.punch.yml')).and_return(@data)
+      File.should.receive(:read).with(File.expand_path('~/.punch.yml')).and_return(@data)
       Punch.load
     end
     
@@ -140,12 +140,12 @@ describe Punch do
     end
     
     it 'should open the data file for writing' do
-      File.should_receive(:open).with(File.expand_path('~/.punch.yml'), 'w')
+      File.should.receive(:open).with(File.expand_path('~/.punch.yml'), 'w')
       Punch.write
     end
     
     it 'should write the data to the file in YAML form' do
-      @file.should_receive(:puts).with(@data.to_yaml)
+      @file.should.receive(:puts).with(@data.to_yaml)
       Punch.write
     end
   end
@@ -230,7 +230,7 @@ describe Punch do
     end
         
     it "should get the project's status" do
-      Punch.should_receive(:status).with(@project)
+      Punch.should.receive(:status).with(@project)
       Punch.out?(@project)
     end
     
@@ -268,7 +268,7 @@ describe Punch do
     end
         
     it "should get the project's status" do
-      Punch.should_receive(:status).with(@project)
+      Punch.should.receive(:status).with(@project)
       Punch.in?(@project)
     end
     
@@ -349,7 +349,7 @@ describe Punch do
       
       it 'should log a message about punch-in time' do
         time = @now.strftime('%Y-%m-%dT%H:%M:%S%z')
-        Punch.should_receive(:log).with(@project, "punch in @ #{time}")
+        Punch.should.receive(:log).with(@project, "punch in @ #{time}")
         Punch.in(@project)
       end
       
@@ -362,14 +362,14 @@ describe Punch do
       it 'should log a message using the given time' do
         time = @now + 75
         time_str = time.strftime('%Y-%m-%dT%H:%M:%S%z')
-        Punch.should_receive(:log).with(@project, "punch in @ #{time_str}")
+        Punch.should.receive(:log).with(@project, "punch in @ #{time_str}")
         Punch.in(@project, :time => time)
       end
       
       it 'should log an additional message if given' do
         Punch.stub!(:log)  # for the time-based message
         message = 'working on some stuff'
-        Punch.should_receive(:log).with(@project, message)
+        Punch.should.receive(:log).with(@project, message)
         Punch.in(@project, :message => message)
       end
       
@@ -406,7 +406,7 @@ describe Punch do
       
       it 'should log a message about punch-in time' do
         time = @now.strftime('%Y-%m-%dT%H:%M:%S%z')
-        Punch.should_receive(:log).with(@project, "punch in @ #{time}")
+        Punch.should.receive(:log).with(@project, "punch in @ #{time}")
         Punch.in(@project)
       end
       
@@ -419,7 +419,7 @@ describe Punch do
       it 'should log a message using the given time' do
         time = @now + 75
         time_str = time.strftime('%Y-%m-%dT%H:%M:%S%z')
-        Punch.should_receive(:log).with(@project, "punch in @ #{time_str}")
+        Punch.should.receive(:log).with(@project, "punch in @ #{time_str}")
         Punch.in(@project, :time => time)
       end
       
@@ -494,7 +494,7 @@ describe Punch do
       
       it 'should log a message about punch-out time' do
         time = @now.strftime('%Y-%m-%dT%H:%M:%S%z')
-        Punch.should_receive(:log).with(@project, "punch out @ #{time}")
+        Punch.should.receive(:log).with(@project, "punch out @ #{time}")
         Punch.out(@project)
       end
       
@@ -507,14 +507,14 @@ describe Punch do
       it 'should log a message using the given time' do
         time = @now + 75
         time_str = time.strftime('%Y-%m-%dT%H:%M:%S%z')
-        Punch.should_receive(:log).with(@project, "punch out @ #{time_str}")
+        Punch.should.receive(:log).with(@project, "punch out @ #{time_str}")
         Punch.out(@project, :time => time)
       end
       
       it 'should log an additional message if given' do
         Punch.stub!(:log)  # for the time-based message
         message = 'finished working on some stuff'
-        Punch.should_receive(:log).with(@project, message)
+        Punch.should.receive(:log).with(@project, message)
         Punch.out(@project, :message => message)
       end
       
@@ -549,8 +549,8 @@ describe Punch do
       
       it 'should log punch-out messages for all projects being punched out' do
         time = @now.strftime('%Y-%m-%dT%H:%M:%S%z')
-        Punch.should_receive(:log).with(@projects[1], "punch out @ #{time}")
-        Punch.should_receive(:log).with(@projects[2], "punch out @ #{time}")
+        Punch.should.receive(:log).with(@projects[1], "punch out @ #{time}")
+        Punch.should.receive(:log).with(@projects[2], "punch out @ #{time}")
         Punch.out
       end
       
@@ -565,16 +565,16 @@ describe Punch do
       it 'should log messages using the given time' do
         time = @now + 75
         time_str = time.strftime('%Y-%m-%dT%H:%M:%S%z')
-        Punch.should_receive(:log).with(@projects[1], "punch out @ #{time_str}")
-        Punch.should_receive(:log).with(@projects[2], "punch out @ #{time_str}")
+        Punch.should.receive(:log).with(@projects[1], "punch out @ #{time_str}")
+        Punch.should.receive(:log).with(@projects[2], "punch out @ #{time_str}")
         Punch.out(:time => time)
       end
       
       it 'should log an additional message if given' do
         Punch.stub!(:log)  # for the time-based messages
         message = 'finished working on some stuff'
-        Punch.should_receive(:log).with(@projects[1], message)
-        Punch.should_receive(:log).with(@projects[2], message)
+        Punch.should.receive(:log).with(@projects[1], message)
+        Punch.should.receive(:log).with(@projects[2], message)
         Punch.out(:message => message)
       end
       
@@ -906,7 +906,7 @@ describe Punch do
     end
     
     it 'should check if the project is punched in' do
-      Punch.should_receive(:in?).with(@project)
+      Punch.should.receive(:in?).with(@project)
       Punch.log(@project, @message)
     end
     
