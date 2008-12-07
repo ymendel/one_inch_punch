@@ -109,7 +109,7 @@ describe Punch do
     before :each do
       Punch.instance_eval do
         class << self
-          public :data, :data=
+          public :data=
         end
       end
     end

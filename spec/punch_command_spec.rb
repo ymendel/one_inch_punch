@@ -476,7 +476,7 @@ describe 'punch command' do
       end
     end
     
-    describe 'when not deleted successfully' do
+    describe 'when not logged successfully' do
       before :each do
         Punch.stubs(:log).returns(false)
       end
