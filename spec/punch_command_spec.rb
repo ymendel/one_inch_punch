@@ -615,7 +615,7 @@ describe 'punch command' do
     end
     
     it 'should not run any punch command' do
-      [:in, :out, :delete, :status, :total, :log].each do |command|
+      [:in, :out, :delete, :status, :total, :log, :list].each do |command|
         Punch.expects(command).never
       end
       run_command('bunk')
