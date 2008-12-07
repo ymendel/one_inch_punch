@@ -61,7 +61,7 @@ describe Punch do
           File.stubs(:read).returns('')
         end
         
-        it 'should load the data as yaml' do
+        it 'should set the data to an empty hash' do
           Punch.load
           Punch.data.should == {}
         end
@@ -82,7 +82,7 @@ describe Punch do
         Punch.data.should == {}
       end
       
-      it 'should return false' do
+      it 'should return true' do
         Punch.load.should == true
       end
     end
