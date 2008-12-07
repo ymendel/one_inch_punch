@@ -11,8 +11,8 @@ EXTRA_DEPENDENCIES = [
 #  ['activesupport', '>= 1.3.1']
 ]    # An array of rubygem dependencies [name, version]
 EXTRA_DEV_DEPENDENCIES = [
-  ['rspec', '>= 1.1.4'],
-  ['mocha', '>= 0.9.1']
+  ['bacon', '>= 1.1.0'],
+  ['facon', '>= 0.4.1']
 ]    # An array of rubygem dependencies [name, version]
 
 @config_file = "~/.rubyforge/user-config.yml"
