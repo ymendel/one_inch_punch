@@ -108,7 +108,8 @@ class Punch
       return false unless in?(project)
       project_data = data[project].last
       project_data['log'] ||= []
-      project_data['log'].push message
+      time = Time.now
+      project_data['log'].push "#{message} @ #{time.strftime('%Y-%m-%dT%H:%M:%S%z')}"
       true
     end
     

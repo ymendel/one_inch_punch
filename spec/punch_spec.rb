@@ -880,6 +880,7 @@ describe Punch do
   describe 'logging information about a project' do
     before do
       @now = Time.now
+      Time.stub!(:now).and_return(@now)
       @project = 'test project'
       @data = { @project => [ {'in' => @now - 50, 'log' => ['some earlier message']} ] }
       
@@ -918,7 +919,19 @@ describe Punch do
       
       it 'should use the given message for the log' do
         Punch.log(@project, @message)
-        Punch.data[@project].last['log'].last.should == @message
+        Punch.data[@project].last['log'].last.should.match(Regexp.new(Regexp.escape(@message)))
+      end
+      
+      it 'should add the formatted time to the message' do
+        time = @now.strftime('%Y-%m-%dT%H:%M:%S%z')
+        Punch.log(@project, @message)
+        Punch.data[@project].last['log'].last.should.match(Regexp.new(Regexp.escape(time)))
+      end
+      
+      it 'should format the message as "#{message} @ #{time}"' do
+        time = @now.strftime('%Y-%m-%dT%H:%M:%S%z')
+        Punch.log(@project, @message)
+        Punch.data[@project].last['log'].last.should == "#{@message} @ #{time}"
       end
       
       it 'should return true' do
@@ -932,8 +945,9 @@ describe Punch do
         end
         
         it 'should create the log' do
+          time = @now.strftime('%Y-%m-%dT%H:%M:%S%z')
           Punch.log(@project, @message)
-          Punch.data[@project].last['log'].should == [@message]
+          Punch.data[@project].last['log'].should == ["#{@message} @ #{time}"]
         end
       end
     end
