@@ -948,6 +948,10 @@ describe Punch do
       lambda { Punch.log('proj', 'some mess', :time => Time.now) }.should.not.raise(ArgumentError)
     end
     
+    it 'should require a project and message even when options are given' do
+      lambda { Punch.log('proj', :time => Time.now) }.should.raise(ArgumentError)
+    end
+    
     it 'should check if the project is punched in' do
       Punch.should.receive(:in?).with(@project)
       Punch.log(@project, @message)
