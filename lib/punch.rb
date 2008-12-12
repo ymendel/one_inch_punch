@@ -62,8 +62,8 @@ class Punch
       data[project] ||= []
       time = time_from_options(options)
       data[project].push({'in' => time})
-      log(project, "punch in @ #{time.strftime('%Y-%m-%dT%H:%M:%S%z')}")
-      log(project, options[:message]) if options[:message]
+      log(project, 'punch in', :time => time)
+      log(project, options[:message], :time => time) if options[:message]
       true
     end
     

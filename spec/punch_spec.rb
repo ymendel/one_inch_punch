@@ -348,8 +348,7 @@ describe Punch do
       end
       
       it 'should log a message about punch-in time' do
-        time = @now.strftime('%Y-%m-%dT%H:%M:%S%z')
-        Punch.should.receive(:log).with(@project, "punch in @ #{time}")
+        Punch.should.receive(:log).with(@project, 'punch in', :time => @now)
         Punch.in(@project)
       end
       
@@ -361,19 +360,26 @@ describe Punch do
       
       it 'should log a message using the given time' do
         time = @now + 75
-        time_str = time.strftime('%Y-%m-%dT%H:%M:%S%z')
-        Punch.should.receive(:log).with(@project, "punch in @ #{time_str}")
+        Punch.should.receive(:log).with(@project, 'punch in', :time => time)
         Punch.in(@project, :time => time)
       end
       
       it 'should log an additional message if given' do
         Punch.stub!(:log)  # for the time-based message
         message = 'working on some stuff'
-        Punch.should.receive(:log).with(@project, message)
+        Punch.should.receive(:log).with(@project, message, :time => @now)
         Punch.in(@project, :message => message)
       end
       
-      it "should allow the different time to be specified using :at" do
+      it 'should log the additional message with the given time' do
+        Punch.stub!(:log)  # for the time-based message
+        time = @now + 75
+        message = 'working on some stuff'
+        Punch.should.receive(:log).with(@project, message, :time => time)
+        Punch.in(@project, :message => message, :time => time)
+      end
+      
+      it 'should allow the different time to be specified using :at' do
         time = @now + 50
         Punch.in(@project, :at => time)
         Punch.data[@project].last['in'].should == time
@@ -405,8 +411,7 @@ describe Punch do
       end
       
       it 'should log a message about punch-in time' do
-        time = @now.strftime('%Y-%m-%dT%H:%M:%S%z')
-        Punch.should.receive(:log).with(@project, "punch in @ #{time}")
+        Punch.should.receive(:log).with(@project, 'punch in', :time => @now)
         Punch.in(@project)
       end
       
@@ -418,9 +423,29 @@ describe Punch do
       
       it 'should log a message using the given time' do
         time = @now + 75
-        time_str = time.strftime('%Y-%m-%dT%H:%M:%S%z')
-        Punch.should.receive(:log).with(@project, "punch in @ #{time_str}")
+        Punch.should.receive(:log).with(@project, 'punch in', :time => time)
         Punch.in(@project, :time => time)
+      end
+      
+      it 'should log an additional message if given' do
+        Punch.stub!(:log)  # for the time-based message
+        message = 'working on some stuff'
+        Punch.should.receive(:log).with(@project, message, :time => @now)
+        Punch.in(@project, :message => message)
+      end
+      
+      it 'should log the additional message with the given time' do
+        Punch.stub!(:log)  # for the time-based message
+        time = @now + 75
+        message = 'working on some stuff'
+        Punch.should.receive(:log).with(@project, message, :time => time)
+        Punch.in(@project, :message => message, :time => time)
+      end
+      
+      it 'should allow the different time to be specified using :at' do
+        time = @now + 50
+        Punch.in(@project, :at => time)
+        Punch.data[@project].last['in'].should == time
       end
       
       it 'should return true' do
@@ -518,7 +543,7 @@ describe Punch do
         Punch.out(@project, :message => message)
       end
       
-      it "should allow the different time to be specified using :at" do
+      it 'should allow the different time to be specified using :at' do
         time = @now + 50
         Punch.out(@project, :at => time)
         Punch.data[@project].last['out'].should == time
