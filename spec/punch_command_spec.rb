@@ -506,8 +506,30 @@ describe 'punch command' do
     
     it 'should log a message for the given project' do
       Punch.stub!(:write)
-      Punch.should.receive(:log).with(@project, @message)
+      Punch.should.receive(:log).with(@project, @message, {})
       run_command('log', @project, @message)
+    end
+    
+    it 'should pass a time if specified on the command line (with --time)' do
+      time_option = '2008-08-23 15:39'
+      time = Time.local(2008, 8, 23, 15, 39)
+      Punch.should.receive(:log) do |proj, msg, options|
+        proj.should == @project
+        msg.should == @message
+        options[:time].should == time
+      end
+      run_command('log', @project, @message, '--time', time_option)
+    end
+    
+    it 'should pass a time if specified on the command line (with --at)' do
+      time_option = '2008-08-23 15:39'
+      time = Time.local(2008, 8, 23, 15, 39)
+      Punch.should.receive(:log) do |proj, msg, options|
+        proj.should == @project
+        msg.should == @message
+        options[:time].should == time
+      end
+      run_command('log', @project, @message, '--at', time_option)
     end
     
     describe 'when logged successfully' do

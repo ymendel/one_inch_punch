@@ -101,7 +101,7 @@ commands = {
   'log' => lambda do |project|
     if project
       if message = ARGV[2]
-        if Punch.log(project, message)
+        if Punch.log(project, message, OPTIONS)
           Punch.write
         else
           puts "Not punched in to '#{project}'"
