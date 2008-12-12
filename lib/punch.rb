@@ -104,11 +104,11 @@ class Punch
       end
     end
     
-    def log(project, message)
+    def log(project, message, options = {})
       return false unless in?(project)
       project_data = data[project].last
       project_data['log'] ||= []
-      time = Time.now
+      time = time_from_options(options)
       project_data['log'].push "#{message} @ #{time.strftime('%Y-%m-%dT%H:%M:%S%z')}"
       true
     end

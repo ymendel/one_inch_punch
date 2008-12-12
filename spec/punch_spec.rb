@@ -906,6 +906,10 @@ describe Punch do
       lambda { Punch.log }.should.raise(ArgumentError)
     end
     
+    it 'should accept options' do
+      lambda { Punch.log('proj', 'some mess', :time => Time.now) }.should.not.raise(ArgumentError)
+    end
+    
     it 'should check if the project is punched in' do
       Punch.should.receive(:in?).with(@project)
       Punch.log(@project, @message)
@@ -932,6 +936,20 @@ describe Punch do
         time = @now.strftime('%Y-%m-%dT%H:%M:%S%z')
         Punch.log(@project, @message)
         Punch.data[@project].last['log'].last.should == "#{@message} @ #{time}"
+      end
+      
+      it 'should use a different time if given' do
+        time = @now + 50
+        time_str = time.strftime('%Y-%m-%dT%H:%M:%S%z')
+        Punch.log(@project, @message, :time => time)
+        Punch.data[@project].last['log'].last.should == "#{@message} @ #{time_str}"
+      end
+      
+      it 'should allow the different time to be specified using :at' do
+        time = @now + 50
+        time_str = time.strftime('%Y-%m-%dT%H:%M:%S%z')
+        Punch.log(@project, @message, :at => time)
+        Punch.data[@project].last['log'].last.should == "#{@message} @ #{time_str}"
       end
       
       it 'should return true' do
