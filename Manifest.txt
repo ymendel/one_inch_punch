@@ -19,9 +19,7 @@ spec/fixnum_spec.rb
 spec/punch_command_spec.rb
 spec/punch_instance_spec.rb
 spec/punch_spec.rb
-spec/spec.opts
 spec/spec_helper.rb
 tasks/deployment.rake
 tasks/environment.rake
-tasks/rspec.rake
 tasks/website.rake
