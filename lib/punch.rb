@@ -119,8 +119,8 @@ class Punch
     def do_out_single(project, options)
       return false if out?(project)
       time = time_from_options(options)
-      log(project, options[:message]) if options[:message]
-      log(project, "punch out @ #{time.strftime('%Y-%m-%dT%H:%M:%S%z')}")
+      log(project, options[:message], :time => time) if options[:message]
+      log(project, 'punch out', :time => time)
       data[project].last['out'] = time
     end
     
