@@ -314,21 +314,40 @@ describe Punch, 'instance' do
       lambda { @punch.log }.should.raise(ArgumentError)
     end
     
+    it 'should accept options' do
+      lambda { @punch.log(@message, :time => Time.now) }.should.not.raise(ArgumentError)
+    end
+    
     it 'should delegate to the class' do
       Punch.should.receive(:log)
       @punch.log(@message)
     end
     
     it 'should pass the project when delegating to the class' do
-      Punch.should.receive(:log) do |proj, _|
+      Punch.should.receive(:log) do |proj, _, _|
         proj.should == @project
       end
       @punch.log(@message)
     end
     
     it 'should pass the message when delegating to the class' do
-      Punch.should.receive(:log) do |_, msg|
+      Punch.should.receive(:log) do |_, msg, _|
         msg.should == @message
+      end
+      @punch.log(@message)
+    end
+    
+    it 'should pass the options when delegating to the class' do
+      options = { :time => Time.now }
+      Punch.should.receive(:log) do |_, _, opts|
+        opts.should == options
+      end
+      @punch.log(@message, options)
+    end
+    
+    it 'should pass an empty hash if no options given' do
+      Punch.should.receive(:log) do |_, _, opts|
+        opts.should == {}
       end
       @punch.log(@message)
     end
