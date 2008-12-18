@@ -30,13 +30,38 @@ describe Punch, 'instance' do
       Punch.stub!(:status).and_return(@status)
     end
     
+    it 'should accept options' do
+      lambda { @punch.status(:full => true) }.should.not.raise(ArgumentError)
+    end
+    
+    it 'should not require options' do
+      lambda { @punch.status }.should.not.raise(ArgumentError)
+    end
+    
     it 'should delegate to the class' do
       Punch.should.receive(:status)
       @punch.status
     end
     
     it 'should pass the project when delegating to the class' do
-      Punch.should.receive(:status).with(@project)
+      Punch.should.receive(:status) do |proj, _|
+        proj.should == @project
+      end
+      @punch.status
+    end
+    
+    it 'should pass the options when delegating to the class' do
+      options = { :full => true }
+      Punch.should.receive(:status) do |_, opts|
+        opts.should == options
+      end
+      @punch.status(options)
+    end
+    
+    it 'should pass an empty hash if no options given' do
+      Punch.should.receive(:status) do |_, opts|
+        opts.should == {}
+      end
       @punch.status
     end
     

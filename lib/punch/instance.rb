@@ -5,8 +5,8 @@ class Punch
     @project = project
   end
   
-  def status
-    self.class.status(project)
+  def status(options = {})
+    self.class.status(project, options)
   end
   
   def out?
