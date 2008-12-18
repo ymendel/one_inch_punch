@@ -210,6 +210,24 @@ describe Punch do
     it 'should return the status of all projects if no project name given' do
       Punch.status.should == { @projects['out'] => 'out', @projects['in'] => 'in' }
     end
+    
+    it 'should accept options' do
+      lambda { Punch.status('proj', :full => true) }.should.not.raise(ArgumentError)
+    end
+    
+    describe 'when given a :full option' do
+      it 'should return the status and the time of that status if the project is currently punched in' do
+        Punch.status(@projects['in'], :full => true).should == { :status => 'in', :time => @now }
+      end
+      
+      it 'should return the status and the time of that status if the project is currently punched out' do
+        Punch.status(@projects['out'], :full => true).should == { :status => 'out', :time => @now + 12 }
+      end
+      
+      it 'should return nil if project does not exist' do
+        Punch.status('other project', :full => true).should.be.nil
+      end
+    end
   end
   
   it 'should indicate whether a project is punched out' do

@@ -39,14 +39,17 @@ class Punch
       end
     end
     
-    def status(project = nil)
+    def status(project = nil, options = {})
       return data.keys.inject({}) { |hash, project|  hash.merge(project => status(project)) } unless project
       
       project_data = data[project]
       return nil if !project_data or project_data.empty?
       
       time_data = project_data.last
-      time_data['out'] ? 'out' : 'in'
+      status = time_data['out'] ? 'out' : 'in'
+      return status unless options[:full]
+      
+      { :status => status, :time => time_data[status] }
     end
     
     def out?(project)
