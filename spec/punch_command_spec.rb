@@ -147,12 +147,12 @@ describe 'punch command' do
     end
     
     it 'should get the status for the requested project' do
-      Punch.should.receive(:status).with(@project)
+      Punch.should.receive(:status).with(@project, {})
       run_command('status', @project)
     end
     
     it 'should get the status for all projects if none given' do
-      Punch.should.receive(:status).with(nil)
+      Punch.should.receive(:status).with(nil, {})
       run_command('status')
     end
     
@@ -168,6 +168,30 @@ describe 'punch command' do
       Punch.stub!(:status).and_return(result)
       self.should.receive(:puts).with(result.to_yaml)
       run_command('status')
+    end
+    
+    it 'should pass a true full option if specified on the command line (with --full)' do
+      Punch.should.receive(:status).with(@project, :full => true)
+      run_command('status', @project, '--full')
+    end
+    
+    it 'should pass a true full option if specified on the command line (with --full) and no project given' do
+      Punch.should.receive(:status).with(nil, :full => true)
+      run_command('status', '--full')
+    end
+    
+    it 'should output the status as YAML if a full option is given' do
+      result = 'status data'
+      Punch.stub!(:status).and_return(result)
+      self.should.receive(:puts).with(result.to_yaml)
+      run_command('status', @project, '--full')
+    end
+    
+    it 'should output the status as YAML if not project given even if a full option is given' do
+      result = 'status data'
+      Punch.stub!(:status).and_return(result)
+      self.should.receive(:puts).with(result.to_yaml)
+      run_command('status', '--full')
     end
     
     it 'should not write the data' do

@@ -33,6 +33,8 @@ BANNER
           "Use the given time to punch in/out") { |time|  OPTIONS[:time] = Time.parse(time) }
   opts.on('-m', '--message [MESSAGE]', String,
           "Add the given log message when punching in/out") { |message|  OPTIONS[:message] = message }
+  opts.on('--full',
+          "Show full output for the command") { |full|  OPTIONS[:full] = true }
   opts.on("-h", "--help",
           "Show this help message.") { puts opts; exit }
   opts.parse!(ARGV)
@@ -55,11 +57,11 @@ Punch.load
 
 commands = {
   'status' => lambda do |project|
-    result = Punch.status(project)
-    if project
-      puts result.inspect
-    else
+    result = Punch.status(project, OPTIONS)
+    if project.nil? or OPTIONS[:full]
       puts result.to_yaml
+    else
+      puts result.inspect
     end
   end,
   'total'  => lambda do |project|
