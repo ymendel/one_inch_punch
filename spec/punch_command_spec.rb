@@ -187,7 +187,7 @@ describe 'punch command' do
       run_command('status', @project, '--full')
     end
     
-    it 'should output the status as YAML if not project given even if a full option is given' do
+    it 'should output the status as YAML if no project given even if a full option is given' do
       result = 'status data'
       Punch.stub!(:status).and_return(result)
       self.should.receive(:puts).with(result.to_yaml)
