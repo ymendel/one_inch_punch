@@ -40,7 +40,12 @@ class Punch
     end
     
     def status(project = nil, options = {})
-      return data.keys.inject({}) { |hash, project|  hash.merge(project => status(project)) } unless project
+      if project.is_a?(Hash)
+        options = project
+        project = nil
+      end
+      
+      return data.keys.inject({}) { |hash, project|  hash.merge(project => status(project, options)) } unless project
       
       project_data = data[project]
       return nil if !project_data or project_data.empty?

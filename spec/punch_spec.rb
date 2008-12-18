@@ -227,6 +227,20 @@ describe Punch do
       it 'should return nil if project does not exist' do
         Punch.status('other project', :full => true).should.be.nil
       end
+      
+      it 'should return the full status if all projects if nil is given as the project' do
+        Punch.status(nil, :full => true).should == {
+          @projects['out'] => { :status => 'out', :time => @now + 12 },
+          @projects['in']  => { :status => 'in',  :time => @now }
+        }
+      end
+      
+      it 'should return the full status if all projects if no project given' do
+        Punch.status(:full => true).should == {
+          @projects['out'] => { :status => 'out', :time => @now + 12 },
+          @projects['in']  => { :status => 'in',  :time => @now }
+        }
+      end
     end
   end
   
