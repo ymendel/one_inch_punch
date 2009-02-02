@@ -242,6 +242,69 @@ describe Punch do
         }
       end
     end
+    
+    describe 'handling a sub-project' do
+      before do
+        @projects['parent'] = 'daddy'
+        @projects['child'] = @projects['parent'] + '/sugar'
+      end
+      
+      it "should return 'in' for a non-existent parent project if the sub-project is punched in" do
+        @data[@projects['child']] = [ { 'in' => @now } ]
+        Punch.data = @data
+        Punch.status(@projects['parent']).should == 'in'
+      end
+      
+      it "should return 'in' for an empty parent project if the sub-project is punched in" do
+        @data[@projects['parent']] = []
+        @data[@projects['child']] = [ { 'in' => @now } ]
+        Punch.data = @data
+        Punch.status(@projects['parent']).should == 'in'
+      end
+      
+      it "should return 'in' for a punched-out parent project if the sub-project is punched in" do
+        @data[@projects['parent']] = [ { 'in' => @now - 13, 'out' => @now - 5 } ]
+        @data[@projects['child']] = [ { 'in' => @now } ]
+        Punch.data = @data
+        Punch.status(@projects['parent']).should == 'in'
+      end
+      
+      it "should return nil for a non-existent parent project if the sub-project does not exist" do
+        Punch.status(@projects['parent']).should.be.nil
+      end
+      
+      it "should return nil for an empty parent project if the sub-project does not exist" do
+        @data[@projects['parent']] = []
+        Punch.data = @data
+        Punch.status(@projects['parent']).should.be.nil
+      end
+      
+      it "should return nil for a non-existent parent project if the sub-project is empty" do
+        @data[@projects['child']] = []
+        Punch.data = @data
+        Punch.status(@projects['parent']).should.be.nil
+      end
+      
+      it "should return nil for an empty parent project if the sub-project is empty" do
+        @data[@projects['parent']] = []
+        @data[@projects['child']] = []
+        Punch.data = @data
+        Punch.status(@projects['parent']).should.be.nil
+      end
+      
+      it "should return 'out' for a punched-out parent project if the sub-project does not exist" do
+        @data[@projects['parent']] = [ { 'in' => @now - 13, 'out' => @now - 5 } ]
+        Punch.data = @data
+        Punch.status(@projects['parent']).should == 'out'
+      end
+      
+      it "should return 'out' for a punched-out parent project if the sub-project is empty" do
+        @data[@projects['parent']] = [ { 'in' => @now - 13, 'out' => @now - 5 } ]
+        @data[@projects['child']] = []
+        Punch.data = @data
+        Punch.status(@projects['parent']).should == 'out'
+      end
+    end
   end
   
   it 'should indicate whether a project is punched out' do

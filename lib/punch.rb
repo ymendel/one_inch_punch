@@ -48,11 +48,18 @@ class Punch
       return data.keys.inject({}) { |hash, project|  hash.merge(project => status(project, options)) } unless project
       
       project_data = data[project]
-      return nil if !project_data or project_data.empty?
+      time_data = (project_data || []).last
       
-      time_data = project_data.last
-      status = time_data['out'] ? 'out' : 'in'
+      if time_data
+        status = time_data['out'] ? 'out' : 'in'
+      end
+      
+      if status != 'in'
+        status = 'in' if child_projects(project).any? { |proj|  status(proj) == 'in' }
+      end
+      
       return status unless options[:full]
+      return status if status.nil?
       
       { :status => status, :time => time_data[status] }
     end
@@ -148,6 +155,10 @@ class Punch
     
     def time_from_options(options)
       options[:time] || options[:at] || Time.now
+    end
+    
+    def child_projects(project)
+      data.keys.select { |proj|  proj.match(/^#{Regexp.escape(project)}/) } - [project]
     end
   end
 end
