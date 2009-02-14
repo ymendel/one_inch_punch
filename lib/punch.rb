@@ -132,6 +132,7 @@ class Punch
     
     def do_out_single(project, options)
       return false if out?(project)
+      project = in_child(project) || project
       time = time_from_options(options)
       log(project, options[:message], :time => time) if options[:message]
       log(project, 'punch out', :time => time)
@@ -159,9 +160,13 @@ class Punch
       data.keys.select { |proj|  proj.match(/^#{Regexp.escape(project)}/) } - [project]
     end
     
+    def in_child(project)
+      child_projects(project).detect { |proj|  status(proj) == 'in' }
+    end
+    
     def check_child_status(project, status, time_data)
       if status != 'in'
-        in_child = child_projects(project).detect { |proj|  status(proj) == 'in' }
+        in_child = in_child(project)
         if in_child
           status = 'in'
           time_data = data[in_child].last

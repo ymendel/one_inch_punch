@@ -783,6 +783,45 @@ describe Punch do
         end
       end
     end
+    
+    describe 'handling a sub-project' do
+      before do
+        @projects = {}
+        @projects['parent'] = 'daddy'
+        @projects['child'] = @projects['parent'] + '/sugar'
+      end
+      
+      it 'should actually punch out the sub-project when told to punch out the parent project' do
+        @data[@projects['parent']] = [ { 'in' => @now - 100, 'out' => @now - 50 } ]
+        @data[@projects['child']] = [ { 'in' => @now - 20 } ]
+        Punch.data = @data
+        Punch.out(@projects['parent'])
+        Punch.data[@projects['child']].last['out'].should == @now
+      end
+      
+      it 'should not change the punch-out time for the parent project' do
+        @data[@projects['parent']] = [ { 'in' => @now - 100, 'out' => @now - 50 } ]
+        @data[@projects['child']] = [ { 'in' => @now - 20 } ]
+        Punch.data = @data
+        Punch.out(@projects['parent'])
+        Punch.data[@projects['parent']].last['out'].should == @now - 50
+      end
+      
+      it 'should not add data for a non-existent parent project' do
+        @data[@projects['child']] = [ { 'in' => @now - 20 } ]
+        Punch.data = @data
+        Punch.out(@projects['parent'])
+        Punch.data[@projects['parent']].should.be.nil
+      end
+      
+      it 'should not add data for an empty parent project' do
+        @data[@projects['parent']] = []
+        @data[@projects['child']] = [ { 'in' => @now - 20 } ]
+        Punch.data = @data
+        Punch.out(@projects['parent'])
+        Punch.data[@projects['parent']].should == []
+      end
+    end
   end
 
   it 'should delete a project' do
