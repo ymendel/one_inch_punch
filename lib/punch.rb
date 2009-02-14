@@ -45,7 +45,7 @@ class Punch
         project = nil
       end
       
-      return data.keys.inject({}) { |hash, project|  hash.merge(project => status(project, options)) } unless project
+      return projects.inject({}) { |hash, project|  hash.merge(project => status(project, options)) } unless project
       
       project_data = data[project]
       time_data = (project_data || []).last
@@ -86,7 +86,7 @@ class Punch
       if project
         return false unless do_out_single(project, options)
       else
-        return false unless data.keys.collect { |project|  do_out_single(project, options) }.any?
+        return false unless projects.collect { |project|  do_out_single(project, options) }.any?
       end
       true
     end
@@ -102,7 +102,7 @@ class Punch
       if project
         do_list_single(project, options)
       else
-        data.keys.inject({}) { |hash, project|  hash.merge(project => do_list_single(project, options)) }
+        projects.inject({}) { |hash, project|  hash.merge(project => do_list_single(project, options)) }
       end
     end
     
@@ -156,8 +156,12 @@ class Punch
       options[:time] || options[:at] || Time.now
     end
     
+    def projects
+      data.keys
+    end
+    
     def child_projects(project)
-      data.keys.select { |proj|  proj.match(/^#{Regexp.escape(project)}/) } - [project]
+      projects.select { |proj|  proj.match(/^#{Regexp.escape(project)}/) } - [project]
     end
     
     def in_child(project)
