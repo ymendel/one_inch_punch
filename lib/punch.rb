@@ -55,7 +55,11 @@ class Punch
       end
       
       if status != 'in'
-        status = 'in' if child_projects(project).any? { |proj|  status(proj) == 'in' }
+        in_child = child_projects(project).detect { |proj|  status(proj) == 'in' }
+        if in_child
+          status = 'in'
+          time_data = data[in_child].last
+        end
       end
       
       return status unless options[:full]

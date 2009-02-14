@@ -269,6 +269,20 @@ describe Punch do
         Punch.status(@projects['parent']).should == 'in'
       end
       
+      it "should use the sub-project's punch-in time for the parent project when returning full status" do
+        @data[@projects['child']] = [ { 'in' => @now } ]
+        Punch.data = @data
+        Punch.status(@projects['parent'], :full => true).should == { :status => 'in', :time => @now }
+        
+        @data[@projects['parent']] = []
+        Punch.data = @data
+        Punch.status(@projects['parent'], :full => true).should == { :status => 'in', :time => @now }
+        
+        @data[@projects['parent']] = [ { 'in' => @now - 13, 'out' => @now - 5 } ]
+        Punch.data = @data
+        Punch.status(@projects['parent'], :full => true).should == { :status => 'in', :time => @now }
+      end
+      
       it "should return nil for a non-existent parent project if the sub-project does not exist" do
         Punch.status(@projects['parent']).should.be.nil
       end
@@ -292,6 +306,24 @@ describe Punch do
         Punch.status(@projects['parent']).should.be.nil
       end
       
+      it "should return nil for the parent project when returning full status" do
+        Punch.status(@projects['parent'], :full => true).should.be.nil
+        
+        @data[@projects['parent']] = []
+        Punch.data = @data
+        Punch.status(@projects['parent'], :full => true).should.be.nil
+        
+        @data.delete(@projects['parent'])
+        @data[@projects['child']] = []
+        Punch.data = @data
+        Punch.status(@projects['parent'], :full => true).should.be.nil
+        
+        @data[@projects['parent']] = []
+        @data[@projects['child']] = []
+        Punch.data = @data
+        Punch.status(@projects['parent'], :full => true).should.be.nil
+      end
+      
       it "should return 'out' for a punched-out parent project if the sub-project does not exist" do
         @data[@projects['parent']] = [ { 'in' => @now - 13, 'out' => @now - 5 } ]
         Punch.data = @data
@@ -303,6 +335,20 @@ describe Punch do
         @data[@projects['child']] = []
         Punch.data = @data
         Punch.status(@projects['parent']).should == 'out'
+      end
+      
+      it "should use the parent project's punch-out time for the parent project when returning full status" do
+        @data[@projects['parent']] = [ { 'in' => @now - 13, 'out' => @now - 5 } ]
+        Punch.data = @data
+        Punch.status(@projects['parent'], :full => true).should == { :status => 'out', :time => @now - 5 }
+        
+        @data[@projects['child']] = []
+        Punch.data = @data
+        Punch.status(@projects['parent'], :full => true).should == { :status => 'out', :time => @now - 5 }
+        
+        @data[@projects['child']] = [ { 'in' => @now - 4, 'out' => @now - 1 } ]
+        Punch.data = @data
+        Punch.status(@projects['parent'], :full => true).should == { :status => 'out', :time => @now - 5 }
       end
     end
   end
