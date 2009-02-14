@@ -54,13 +54,7 @@ class Punch
         status = time_data['out'] ? 'out' : 'in'
       end
       
-      if status != 'in'
-        in_child = child_projects(project).detect { |proj|  status(proj) == 'in' }
-        if in_child
-          status = 'in'
-          time_data = data[in_child].last
-        end
-      end
+      status, time_data = check_child_status(project, status, time_data)
       
       return status unless options[:full]
       return status if status.nil?
@@ -163,6 +157,18 @@ class Punch
     
     def child_projects(project)
       data.keys.select { |proj|  proj.match(/^#{Regexp.escape(project)}/) } - [project]
+    end
+    
+    def check_child_status(project, status, time_data)
+      if status != 'in'
+        in_child = child_projects(project).detect { |proj|  status(proj) == 'in' }
+        if in_child
+          status = 'in'
+          time_data = data[in_child].last
+        end
+      end
+      
+      return status, time_data
     end
   end
 end
