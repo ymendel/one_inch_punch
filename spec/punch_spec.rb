@@ -1113,15 +1113,15 @@ describe Punch do
       end
       
       it 'should give totals for all projects' do
-        Punch.total.should == { @projects[0] => 25, @projects[1] => 70, @projects[2] => 15}
+        Punch.total.should == { @projects[0] => 25, @projects[1] => 70, @projects[2] => 15 }
       end
       
       it 'should respect options' do
-        Punch.total(:after => @now - 51).should == { @projects[0] => 25, @projects[1] => 20, @projects[2] => 15}
+        Punch.total(:after => @now - 51).should == { @projects[0] => 25, @projects[1] => 20, @projects[2] => 15 }
       end
       
       it 'should format the time spent if passed a format option' do
-        Punch.total(:format => true).should == { @projects[0] => "00:25", @projects[1] => "01:10", @projects[2] => "00:15"}
+        Punch.total(:format => true).should == { @projects[0] => "00:25", @projects[1] => "01:10", @projects[2] => "00:15" }
       end
     end
     
