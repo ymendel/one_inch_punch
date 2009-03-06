@@ -36,4 +36,9 @@ class Punch
   def log(message, options = {})
     self.class.log(project, message, options)
   end
+  
+  def child_projects
+    Punch.send(:child_projects, project).collect { |proj|  Punch.new(proj) }
+  end
+  alias_method :children, :child_projects
 end

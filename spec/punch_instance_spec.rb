@@ -381,4 +381,44 @@ describe Punch, 'instance' do
       @punch.log(@message).should == @log
     end
   end
+  
+  it 'should return child projects' do
+    @punch.should.respond_to(:child_projects)
+  end
+  
+  describe 'returning child projects' do
+    before do
+      Punch.instance_eval do
+        class << self
+          public :data, :data=
+        end
+      end
+      
+      @projects = {}
+      @projects['parent'] = 'daddy'
+      @projects['child']  = @projects['parent'] + '/sugar'
+      @projects['kid']    = @projects['parent'] + '/object'
+      
+      @data = { @projects['parent'] => [], @projects['child'] => [], @projects['kid'] => [] }
+      Punch.data = @data
+    end
+    
+    it 'should return instances for each child project' do
+      children = Punch.new(@projects['parent']).child_projects
+      children.size.should == 2
+      children.collect { |c|  c.class }.should == [Punch, Punch]
+      children.collect { |c|  c.project }.sort.should == @projects.values_at('child', 'kid').sort
+    end
+    
+    it "should provide 'children' as an alias" do
+      children = Punch.new(@projects['parent']).children
+      children.size.should == 2
+      children.collect { |c|  c.class }.should == [Punch, Punch]
+      children.collect { |c|  c.project }.sort.should == @projects.values_at('child', 'kid').sort
+    end
+    
+    it 'should return an empty array if the project has no child projects' do
+      @punch.child_projects.should == []
+    end
+  end
 end
