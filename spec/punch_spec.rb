@@ -1124,6 +1124,42 @@ describe Punch do
         Punch.total(:format => true).should == { @projects[0] => "00:25", @projects[1] => "01:10", @projects[2] => "00:15"}
       end
     end
+    
+    describe 'handling a sub-project' do
+      before do
+        @projects = {}
+        @projects['parent'] = 'daddy'
+        @projects['child'] = @projects['parent'] + '/sugar'
+        @data[@projects['parent']] = [ { 'in' => @now - 100, 'out' => @now - 50 } ]
+        @data[@projects['child']] = [ { 'in' => @now - 20, 'out' => @now - 10 } ]
+        Punch.data = @data
+      end
+      
+      it 'should return data for the parent and sub-project' do
+        total_data = { @projects['parent'] => 50, @projects['child'] => 10 }
+        Punch.total(@projects['parent']).should == total_data
+      end
+      
+      it 'should respect options' do
+        total_data = { @projects['parent'] => 0, @projects['child'] => 10 }
+        Punch.total(@projects['parent'], :after => @now - 21).should == total_data
+      end
+      
+      describe 'when do project is given' do
+        before do
+          @extra_projects = ['test project', 'out project', 'other project']
+          @data[@extra_projects[0]] = [ {'in' => @now - 50, 'out' => @now - 25} ]
+          @data[@extra_projects[1]] = [ {'in' => @now - 300, 'out' => @now - 250}, {'in' => @now - 40, 'out' => @now - 20} ]
+          @data[@extra_projects[2]] = [ {'in' => @now - 50, 'out' => @now - 35} ]
+          Punch.data = @data
+        end
+        
+        it 'should give totals for all projects' do
+          total_data = { @extra_projects[0] => 25, @extra_projects[1] => 70, @extra_projects[2] => 15, @projects['parent'] => 50, @projects['child'] => 10 }
+          Punch.total.should == total_data
+        end
+      end
+    end
   end
   
   it 'should log information about a project' do
