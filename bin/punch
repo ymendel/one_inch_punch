@@ -66,10 +66,10 @@ commands = {
   end,
   'total'  => lambda do |project|
     result = Punch.total(project, OPTIONS.merge(:format => true))
-    if project
-      puts result.inspect
-    else
+    if result.is_a?(Hash)
       puts result.to_yaml
+    else
+      puts result.inspect
     end
   end,
   'in'     => lambda do |project|

@@ -64,11 +64,11 @@ describe 'punch command' do
       run_command('total', @project)
     end
     
-    it 'should output the total as YAML if no project given' do
-      result = 'total data'
+    it 'should output the total as YAML if the total data is a Hash' do
+      result = { :some_project => 'total data', :some_other_project => 'other total data' }
       Punch.stub!(:total).and_return(result)
       self.should.receive(:puts).with(result.to_yaml)
-      run_command('total')
+      run_command('total', @project)
     end
     
     it 'should not write the data' do
