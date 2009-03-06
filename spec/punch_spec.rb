@@ -978,6 +978,41 @@ describe Punch do
         Punch.data.should == old_data
       end
     end
+    
+    describe 'handling a sub-project' do
+      before do
+        @projects = {}
+        @projects['parent'] = 'daddy'
+        @projects['child'] = @projects['parent'] + '/sugar'
+        @data[@projects['parent']] = [ { 'in' => @now - 100, 'out' => @now - 50 } ]
+        @data[@projects['child']] = [ { 'in' => @now - 20 } ]
+        Punch.data = @data
+      end
+      
+      it 'should return data for the parent and sub-project' do
+        list_data = { @projects['parent'] => @data[@projects['parent']], @projects['child'] => @data[@projects['child']] }
+        Punch.list(@projects['parent']).should == list_data
+      end
+      
+      it 'should respect options' do
+        list_data = { @projects['parent'] => [], @projects['child'] => @data[@projects['child']] }
+        Punch.list(@projects['parent'], :after => @now - 21).should == list_data
+      end
+      
+      describe 'when do project is given' do
+        before do
+          @projects = ['test project', 'out project', 'other project']
+          @data[@projects[0]] = [ {'in' => @now - 50, 'out' => @now - 25} ]
+          @data[@projects[1]] = [ {'in' => @now - 300, 'out' => @now - 250}, {'in' => @now - 40, 'out' => @now - 20} ]
+          @data[@projects[2]] = [ {'in' => @now - 50, 'out' => @now - 35} ]
+          Punch.data = @data
+        end
+        
+        it 'should return data for all projects' do
+          Punch.list.should == @data
+        end
+      end
+    end
   end
 
   it 'should get the total time for a project' do

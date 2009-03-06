@@ -99,10 +99,17 @@ class Punch
     def list(*args)
       options = args.last.is_a?(Hash) ? args.pop : {}
       project = args.first
+      
       if project
-        do_list_single(project, options)
+        list_projects = child_projects(project) + [project]
       else
-        projects.inject({}) { |hash, project|  hash.merge(project => do_list_single(project, options)) }
+        list_projects = projects
+      end
+      
+      if list_projects.length == 1
+        do_list_single(list_projects.first, options)
+      else
+        list_projects.inject({}) { |hash, project|  hash.merge(project => do_list_single(project, options)) }
       end
     end
     
