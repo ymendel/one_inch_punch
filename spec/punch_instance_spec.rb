@@ -382,6 +382,16 @@ describe Punch, 'instance' do
     end
   end
   
+  describe 'equality' do
+    it 'should be equal to another instance for the same project' do
+      Punch.new('proj').should == Punch.new('proj')
+    end
+    
+    it 'should not be equal to an instance for a different project' do
+      Punch.new('proj').should.not == Punch.new('other')
+    end
+  end
+  
   it 'should return child projects' do
     @punch.should.respond_to(:child_projects)
   end
@@ -405,16 +415,14 @@ describe Punch, 'instance' do
     
     it 'should return instances for each child project' do
       children = Punch.new(@projects['parent']).child_projects
-      children.size.should == 2
-      children.collect { |c|  c.class }.should == [Punch, Punch]
-      children.collect { |c|  c.project }.sort.should == @projects.values_at('child', 'kid').sort
+      expected = [Punch.new(@projects['child']), Punch.new(@projects['kid'])]
+      children.sort_by { |c|  c.project }.should == expected.sort_by { |e|  e.project }
     end
     
     it "should provide 'children' as an alias" do
       children = Punch.new(@projects['parent']).children
-      children.size.should == 2
-      children.collect { |c|  c.class }.should == [Punch, Punch]
-      children.collect { |c|  c.project }.sort.should == @projects.values_at('child', 'kid').sort
+      expected = [Punch.new(@projects['child']), Punch.new(@projects['kid'])]
+      children.sort_by { |c|  c.project }.should == expected.sort_by { |e|  e.project }
     end
     
     it 'should return an empty array if the project has no child projects' do

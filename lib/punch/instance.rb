@@ -37,6 +37,10 @@ class Punch
     self.class.log(project, message, options)
   end
   
+  def ==(other)
+    project == other.project
+  end
+  
   def child_projects
     Punch.send(:child_projects, project).collect { |proj|  Punch.new(proj) }
   end
