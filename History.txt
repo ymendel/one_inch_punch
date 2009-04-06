@@ -1,3 +1,12 @@
+== 0.3.0 2008-04-05
+
+* 1 minor enhancement:
+  * Can now have 'sub-projects', or projects with names of the form 'parent/child'
+    * A parent will be checked in if a child is checked in
+    * Punching out of a parent project will punch the real checked-in project out
+    * Listing time and getting totals for a parent project will include child time
+  * Some small convenience methods probably nobody cares about, so they aren't included in the total number of enchancements above
+
 == 0.2.4 2008-12-17
 
 * 1 tiny enhancement:

@@ -12,13 +12,8 @@ One-inch punch: Smaller, more effective
 == FEATURES/PROBLEMS:
 
 * Can load and write .punch.yml data compatibly with Ara's punch gem
-* Can punch in and out of projects (including creating a project by punching in)
-* Can query project status
-* Can delete a project
-* Can list project data
-* Can give total time for a project
-* Can be used command-line
-* Command-line output is less ugly
+* Things you may expect from a time-tracking program, like punching in and out and getting time data
+* The ability to be punched in to multiple projects at once, because double-billing is awesome
 * More, since this is unfinished
 
 == SYNOPSIS:
