@@ -154,6 +154,7 @@ class Punch
     end
     
     def do_total_time(list_data, options)
+      return nil unless list_data
       total = list_data.collect { |t|  ((t['out'] || Time.now) - t['in']).to_i }.inject(0) { |sum, t|  sum + t }
       return total unless options[:format]
       total.elapsed_time

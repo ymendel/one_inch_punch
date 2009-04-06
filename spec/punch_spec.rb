@@ -1145,6 +1145,28 @@ describe Punch do
         Punch.total(@projects['parent'], :after => @now - 21).should == total_data
       end
       
+      it 'should handle a non-existent parent project' do
+        @data.delete(@projects['parent'])
+        Punch.data = @data
+        total_data = { @projects['parent'] => nil, @projects['child'] => 10 }
+        Punch.total(@projects['parent']).should == total_data
+      end
+      
+      it 'should handle an empty parent project' do
+        @data[@projects['parent']] = []
+        Punch.data = @data
+        total_data = { @projects['parent'] => 0, @projects['child'] => 10 }
+        Punch.total(@projects['parent']).should == total_data
+      end
+      
+      it 'should handle an empty child project' do
+        @projects['other_child'] = @projects['parent'] + '/button'
+        @data[@projects['other_child']] = []
+        Punch.data = @data
+        total_data = { @projects['parent'] => 50, @projects['child'] => 10, @projects['other_child'] => 0 }
+        Punch.total(@projects['parent']).should == total_data
+      end
+      
       describe 'when no project is given' do
         before do
           @extra_projects = ['test project', 'out project', 'other project']
