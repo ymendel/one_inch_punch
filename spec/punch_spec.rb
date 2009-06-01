@@ -1027,7 +1027,7 @@ describe Punch do
         Punch.list(@projects['parent'], :after => @now - 21).should == list_data
       end
       
-      describe 'when do project is given' do
+      describe 'when no project is given' do
         before do
           @projects = ['test project', 'out project', 'other project']
           @data[@projects[0]] = [ {'in' => @now - 50, 'out' => @now - 25} ]
