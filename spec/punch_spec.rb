@@ -350,6 +350,15 @@ describe Punch do
         Punch.data = @data
         Punch.status(@projects['parent'], :full => true).should == { :status => 'out', :time => @now - 5 }
       end
+      
+      it 'should only see projects having the specific parent/child naming as sub-projects' do
+        @data[@projects['parent']] = []
+        non_child = @projects['parent'] + '_other'
+        @data[non_child] = [ { 'in' => @now - 45 } ]
+        Punch.data = @data
+        
+        Punch.status(@projects['parent']).should.be.nil
+      end
     end
   end
   
@@ -821,6 +830,16 @@ describe Punch do
         Punch.out(@projects['parent'])
         Punch.data[@projects['parent']].should == []
       end
+      
+      it 'should only see projects having the specific parent/child naming as sub-projects' do
+        @data[@projects['parent']] = [ { 'in' => @now - 20 } ]
+        non_child = @projects['parent'] + '_other'
+        @data[non_child] = [ { 'in' => @now - 45 } ]
+        Punch.data = @data
+        
+        Punch.out(@projects['parent'])
+        Punch.data[non_child].should == [ { 'in' => @now - 45 } ]
+      end
     end
   end
 
@@ -990,6 +1009,15 @@ describe Punch do
       end
       
       it 'should return data for the parent and sub-project' do
+        list_data = { @projects['parent'] => @data[@projects['parent']], @projects['child'] => @data[@projects['child']] }
+        Punch.list(@projects['parent']).should == list_data
+      end
+      
+      it 'should only see projects having the specific parent/child naming as sub-projects' do
+        non_child = @projects['parent'] + '_other'
+        @data[non_child] = [ { 'in' => @now - 45 } ]
+        Punch.data = @data
+        
         list_data = { @projects['parent'] => @data[@projects['parent']], @projects['child'] => @data[@projects['child']] }
         Punch.list(@projects['parent']).should == list_data
       end
@@ -1164,6 +1192,15 @@ describe Punch do
         @data[@projects['other_child']] = []
         Punch.data = @data
         total_data = { @projects['parent'] => 50, @projects['child'] => 10, @projects['other_child'] => 0 }
+        Punch.total(@projects['parent']).should == total_data
+      end
+      
+      it 'should only see projects having the specific parent/child naming as sub-projects' do
+        non_child = @projects['parent'] + '_other'
+        @data[non_child] = [ { 'in' => @now - 45, 'out' => @now - 20 } ]
+        Punch.data = @data
+        
+        total_data = { @projects['parent'] => 50, @projects['child'] => 10 }
         Punch.total(@projects['parent']).should == total_data
       end
       

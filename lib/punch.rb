@@ -169,7 +169,7 @@ class Punch
     end
     
     def child_projects(project)
-      projects.select { |proj|  proj.match(/^#{Regexp.escape(project)}/) } - [project]
+      projects.select { |proj|  proj.match(/^#{Regexp.escape(project)}\//) } - [project]
     end
     
     def in_child(project)
