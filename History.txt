@@ -1,3 +1,9 @@
+== 0.3.2 2008-06-01
+
+* 1 tiny bugfix enhancement:
+  * sub-projects now truly restricting to the naming form of 'parent/child',
+    not 'parent_child' or even simply 'parentseriouslythisisnotachild'
+
 == 0.3.1 2008-04-06
 
 * 1 tiny bugfix enhancement:
