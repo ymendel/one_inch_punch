@@ -45,7 +45,15 @@ class Punch
         project = nil
       end
       
-      return projects.inject({}) { |hash, project|  hash.merge(project => status(project, options)) } unless project
+      unless project
+        stats = {}
+        projects.each { |project|  stats[project] = status(project, options) }
+        if options[:short]
+          stats.reject! { |k, v|  v == 'out' }
+          stats = 'out' if stats.empty?
+        end
+        return stats
+      end
       
       project_data = data[project]
       time_data = (project_data || []).last

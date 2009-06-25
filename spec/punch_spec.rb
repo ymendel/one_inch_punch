@@ -235,11 +235,57 @@ describe Punch do
         }
       end
       
-      it 'should return the full status if all projects if no project given' do
+      it 'should return the full status of all projects if no project given' do
         Punch.status(:full => true).should == {
           @projects['out'] => { :status => 'out', :time => @now + 12 },
           @projects['in']  => { :status => 'in',  :time => @now }
         }
+      end
+      
+      describe 'when given a :short option' do
+        it "should return 'in' if the project is currently punched in" do
+          Punch.status(@projects['in'], :short => true).should == 'in'
+        end
+        
+        it "should return 'out' if the project is currently punched out" do
+          Punch.status(@projects['out'], :short => true).should == 'out'
+        end
+        
+        it 'should return nil if project does not exist' do
+          Punch.status('other project', :short => true).should.be.nil
+        end
+        
+        describe 'handling multiple projects' do
+          before do
+            @projects['in2']  = 'bingbang'
+            @projects['out2'] = 'boopadope'
+            @data[@projects['in2']]  = [ { 'in' => @now - 5 } ]
+            @data[@projects['out2']] = [ { 'in' => @now - 500, 'out' => @now - 20 } ]
+            Punch.data = @data
+          end
+          
+          it 'should return just the punched-in projects if nil is given as the project' do
+            Punch.status(nil, :short => true).should == {
+              @projects['in']  => 'in',
+              @projects['in2'] => 'in'
+            }
+          end
+          
+          it 'should return just the punched-in projects if no project given' do
+            Punch.status(:short => true).should == {
+              @projects['in']  => 'in',
+              @projects['in2'] => 'in'
+            }
+          end
+          
+          it "should return 'out' if all projects are punched out" do
+            @data.delete(@projects['in'])
+            @data.delete(@projects['in2'])
+            Punch.data = @data
+            
+            Punch.status(:short => true).should == 'out'
+          end
+        end
       end
     end
     
