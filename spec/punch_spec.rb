@@ -278,9 +278,28 @@ describe Punch do
             }
           end
           
+          it 'should not include empty projects' do
+            @data['empty_project'] = []
+            Punch.data = @data
+            
+            Punch.status(:short => true).should == {
+              @projects['in']  => 'in',
+              @projects['in2'] => 'in'
+            }
+          end
+          
           it "should return 'out' if all projects are punched out" do
             @data.delete(@projects['in'])
             @data.delete(@projects['in2'])
+            Punch.data = @data
+            
+            Punch.status(:short => true).should == 'out'
+          end
+          
+          it "should return 'out' if all projects are punched out or empty" do
+            @data.delete(@projects['in'])
+            @data.delete(@projects['in2'])
+            @data['empty_project'] = []
             Punch.data = @data
             
             Punch.status(:short => true).should == 'out'

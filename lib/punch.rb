@@ -49,7 +49,7 @@ class Punch
         stats = {}
         projects.each { |project|  stats[project] = status(project, options) }
         if options[:short]
-          stats.reject! { |k, v|  v == 'out' }
+          stats.reject! { |k, v|  v != 'in' }
           stats = 'out' if stats.empty?
         end
         return stats
