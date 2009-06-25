@@ -1,3 +1,9 @@
+== 0.3.3 2008-06-25
+
+* 1 tiny enhancement:
+  * added 'short' status, which only displays what's currently punched in (or 'out' if nothing)
+    * punch command displays status as YAML if it's a hash, like it does for total
+
 == 0.3.2 2008-06-01
 
 * 1 tiny bugfix enhancement:
