@@ -35,6 +35,8 @@ BANNER
           "Add the given log message when punching in/out") { |message|  OPTIONS[:message] = message }
   opts.on('--full',
           "Show full output for the command") { |full|  OPTIONS[:full] = true }
+  opts.on('--short',
+          "Show short output for the command") { |full|  OPTIONS[:short] = true }
   opts.on("-h", "--help",
           "Show this help message.") { puts opts; exit }
   opts.parse!(ARGV)
@@ -58,7 +60,7 @@ Punch.load
 commands = {
   'status' => lambda do |project|
     result = Punch.status(project, OPTIONS)
-    if project.nil? or OPTIONS[:full]
+    if result.is_a?(Hash)
       puts result.to_yaml
     else
       puts result.inspect

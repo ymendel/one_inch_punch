@@ -163,8 +163,8 @@ describe 'punch command' do
       run_command('status', @project)
     end
     
-    it 'should output the status as YAML if no project given' do
-      result = 'status data'
+    it "should output the status as YAML if the status data is a Hash" do
+      result = { 'status' => 'data' }
       Punch.stub!(:status).and_return(result)
       self.should.receive(:puts).with(result.to_yaml)
       run_command('status')
@@ -180,18 +180,14 @@ describe 'punch command' do
       run_command('status', '--full')
     end
     
-    it 'should output the status as YAML if a full option is given' do
-      result = 'status data'
-      Punch.stub!(:status).and_return(result)
-      self.should.receive(:puts).with(result.to_yaml)
-      run_command('status', @project, '--full')
+    it 'should pass a true short option if specified on the command line (with --short)' do
+      Punch.should.receive(:status).with(@project, :short => true)
+      run_command('status', @project, '--short')
     end
     
-    it 'should output the status as YAML if no project given even if a full option is given' do
-      result = 'status data'
-      Punch.stub!(:status).and_return(result)
-      self.should.receive(:puts).with(result.to_yaml)
-      run_command('status', '--full')
+    it 'should pass a true short option if specified on the command line (with --short) and no project given' do
+      Punch.should.receive(:status).with(nil, :short => true)
+      run_command('status', '--short')
     end
     
     it 'should not write the data' do
