@@ -68,7 +68,13 @@ class Punch
       return status unless options[:full]
       return status if status.nil?
       
-      { :status => status, :time => time_data[status] }
+      if status == 'in'
+        message = (time_data['log'] || []).last
+      end
+      
+      result = { :status => status, :time => time_data[status] }
+      result[:message] = message if message
+      result
     end
     
     def out?(project)

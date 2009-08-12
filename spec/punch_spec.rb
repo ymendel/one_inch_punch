@@ -241,6 +241,23 @@ describe Punch do
           @projects['in']  => { :status => 'in',  :time => @now }
         }
       end
+      
+      it 'should include a message for a punched-in project with log messages' do
+        message = 'some test message'
+        @data[@projects['in']].last['log'] = [message]
+        Punch.status(@projects['in'], :full => true).should == { :status => 'in', :time => @now, :message => message }
+      end
+      
+      it 'should use the last log message for punched-in projects' do
+        message = 'some test message'
+        @data[@projects['in']].last['log'] = ['some other message', message]
+        Punch.status(@projects['in'], :full => true).should == { :status => 'in', :time => @now, :message => message }
+      end
+      
+      it 'should not include a message for a punched-out project with log messages' do
+        @data[@projects['out']].last['log'] = ['some message']
+        Punch.status(@projects['out'], :full => true).should == { :status => 'out', :time => @now + 12 }
+      end
     end
     
     describe 'when given a :short option' do
