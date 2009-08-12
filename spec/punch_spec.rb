@@ -306,6 +306,71 @@ describe Punch do
           end
         end
       end
+      
+      describe 'when given both :short and :full options option' do
+        it 'should return the full status of a punched-in project' do
+          Punch.status(@projects['in'], :short => true, :full => true).should == { :status => 'in', :time => @now }
+        end
+        
+        it 'should return the full status of a punched-out project' do
+          Punch.status(@projects['out'], :short => true, :full => true).should == { :status => 'out', :time => @now + 12 }
+        end
+        
+        it 'should return nil if project does not exist' do
+          Punch.status('other project', :short => true, :full => true).should.be.nil
+        end
+        
+        describe 'handling multiple projects' do
+          before do
+            @projects['in2']  = 'bingbang'
+            @projects['out2'] = 'boopadope'
+            @data[@projects['in2']]  = [ { 'in' => @now - 5 } ]
+            @data[@projects['out2']] = [ { 'in' => @now - 500, 'out' => @now - 20 } ]
+            Punch.data = @data
+          end
+          
+          it 'should return the full status of just the punched-in projects if nil is given as the project' do
+            Punch.status(nil, :short => true, :full => true).should == {
+              @projects['in']  => { :status => 'in', :time => @now },
+              @projects['in2'] => { :status => 'in', :time => @now - 5 }
+            }
+          end
+          
+          it 'should return the full status of just the punched-in projects if no project given' do
+            Punch.status(:short => true, :full => true).should == {
+              @projects['in']  => { :status => 'in', :time => @now },
+              @projects['in2'] => { :status => 'in', :time => @now - 5 }
+            }
+          end
+          
+          it 'should not include empty projects' do
+            @data['empty_project'] = []
+            Punch.data = @data
+            
+            Punch.status(:short => true, :full => true).should == {
+              @projects['in']  => { :status => 'in', :time => @now },
+              @projects['in2'] => { :status => 'in', :time => @now - 5 }
+            }
+          end
+          
+          it "should return 'out' if all projects are punched out" do
+            @data.delete(@projects['in'])
+            @data.delete(@projects['in2'])
+            Punch.data = @data
+            
+            Punch.status(:short => true, :full => true).should == 'out'
+          end
+          
+          it "should return 'out' if all projects are punched out or empty" do
+            @data.delete(@projects['in'])
+            @data.delete(@projects['in2'])
+            @data['empty_project'] = []
+            Punch.data = @data
+            
+            Punch.status(:short => true, :full => true).should == 'out'
+          end
+        end
+      end
     end
     
     describe 'handling a sub-project' do
