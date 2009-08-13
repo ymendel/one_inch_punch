@@ -1565,7 +1565,7 @@ describe Punch do
         ] }
         Punch.data = @data
         
-        Punch.summary(@project).should == { 'unspecified' => 200, @message => 100, other_message => 300}
+        Punch.summary(@project).should == { 'unspecified' => 200, @message => 100, other_message => 300 }
       end
       
       it 'should allow options' do
@@ -1594,6 +1594,10 @@ describe Punch do
         
         it 'should restrict the summary to times only within a time range' do
           Punch.summary(@project, :after => @now - 401, :before => @now - 149).should == { 'unspecified' => 150, @message => 50 }
+        end
+        
+        it 'should format the time spent if passed a format option' do
+          Punch.summary(@project, :format => true).should == { 'unspecified' => '03:20', @message => '01:40', @other_message => '05:00' }
         end
       end
     end

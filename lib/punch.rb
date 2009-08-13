@@ -171,7 +171,10 @@ class Punch
           summary['unspecified'] += (time_data['out'] - time_data['in']).to_i
         end
       end
-      summary.reject { |k, v|  v == 0 }
+      
+      summary.reject! { |k, v|  v == 0 }
+      summary.each { |k, v|  summary[k] = v.elapsed_time } if options[:format]
+      summary
     end
     
     
