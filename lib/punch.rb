@@ -151,11 +151,11 @@ class Punch
       true
     end
     
-    def summary(project)
-      return unless data[project]
+    def summary(project, options = {})
+      return unless list_data = list(project, options)
       summary = Hash.new(0)
       
-      data[project].each do |time_data|
+      list_data.each do |time_data|
         unless (time_data['log'] || []).empty?
           log = time_data['log'].collect do |l|
             msg, time = l.split('@')

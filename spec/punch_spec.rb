@@ -1567,6 +1567,35 @@ describe Punch do
         
         Punch.summary(@project).should == { 'unspecified' => 200, @message => 100, other_message => 300}
       end
+      
+      it 'should allow options' do
+        lambda { Punch.summary('proj', :after => Time.now) }.should.not.raise(ArgumentError)
+      end
+      
+      describe 'handling options' do
+        before do
+          @other_message = 'some other message'
+          @data = { @project => [ 
+            {'in' => @now - 650, 'out' => @now - 600, 'log' => ["punch in @ #{(@now - 650).strftime(@time_format)}", "#{@message} @ #{(@now - 650).strftime(@time_format)}", "punch out @ #{(@now - 600).strftime(@time_format)}"]},
+            {'in' => @now - 400, 'out' => @now - 350, 'log' => ["punch in @ #{(@now - 400).strftime(@time_format)}", "punch out @ #{(@now - 350).strftime(@time_format)}"]},
+            {'in' => @now - 300, 'out' => @now - 150, 'log' => ["punch in @ #{(@now - 300).strftime(@time_format)}", "#{@message} @ #{(@now - 200).strftime(@time_format)}", "punch out @ #{(@now - 150).strftime(@time_format)}"]},
+            {'in' => @now - 100, 'out' => @now + 250, 'log' => ["punch in @ #{(@now - 100).strftime(@time_format)}", "#{@other_message} @ #{(@now - 50).strftime(@time_format)}", "punch out @ #{(@now + 250).strftime(@time_format)}"]}
+          ] }
+          Punch.data = @data
+        end
+        
+        it 'should restrict the summary to times only after a certain time' do
+          Punch.summary(@project, :after => @now - 401).should == { 'unspecified' => 200, @message => 50, @other_message => 300 }
+        end
+        
+        it 'should restrict the summary to times only before a certain time' do
+          Punch.summary(@project, :before => @now - 149).should == { 'unspecified' => 150, @message => 100 }
+        end
+        
+        it 'should restrict the summary to times only within a time range' do
+          Punch.summary(@project, :after => @now - 401, :before => @now - 149).should == { 'unspecified' => 150, @message => 50 }
+        end
+      end
     end
     
     describe 'when the project does not exist' do
