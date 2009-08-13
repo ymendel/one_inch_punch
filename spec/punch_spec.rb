@@ -1539,6 +1539,21 @@ describe Punch do
         @time_data['log'][-1,0] = "some third message @ #{(@time_data['out']).strftime(@time_format)}"
         Punch.summary(@project).should == { @message => 300, other_message => 100 }
       end
+      
+      it 'should record unspecified time use' do
+        @time_data['log'][1] = "#{@message} @ #{(@time_data['in'] + 100).strftime(@time_format)}"
+        Punch.summary(@project).should == { @message => 300, 'unspecified' => 100 }
+      end
+      
+      it 'should record the block of time as unspecified if there are no log messages' do
+        @time_data['log'] = []
+        Punch.summary(@project).should == { 'unspecified' => 400 }
+      end
+      
+      it 'should record the block of time as unspecified if there is no log' do
+        @time_data.delete('log')
+        Punch.summary(@project).should == { 'unspecified' => 400 }
+      end
     end
     
     describe 'when the project does not exist' do
