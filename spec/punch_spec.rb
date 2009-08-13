@@ -1486,4 +1486,46 @@ describe Punch do
       end
     end
   end
+  
+  it 'should provide a summary of project time use' do
+    Punch.should.respond_to(:summary)
+  end
+  
+  describe 'providing a summary of project time use' do
+    before do
+      @now = Time.now
+      Time.stub!(:now).and_return(@now)
+      @project = 'test project'
+      @data = { @project => [ {'in' => @now - 500, 'out' => @now - 100} ] }
+      
+      Punch.instance_eval do
+        class << self
+          public :data, :data=
+        end
+      end
+      Punch.data = @data
+    end
+    
+    it 'should accept a project name' do
+      lambda { Punch.summary('proj') }.should.not.raise(ArgumentError)
+    end
+    
+    it 'should require a project name' do
+      lambda { Punch.summary }.should.raise(ArgumentError)
+    end
+    
+    describe 'when the project exists' do
+      #stuff happens
+    end
+    
+    describe 'when the project does not exist' do
+      before do
+        @project = 'non-existent project'
+      end
+      
+      it 'should return nil' do
+        Punch.summary(@project).should.be.nil
+      end
+    end
+  end
 end

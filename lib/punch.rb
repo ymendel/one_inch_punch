@@ -149,6 +149,9 @@ class Punch
       true
     end
     
+    def summary(project)
+    end
+    
     
     private
     
