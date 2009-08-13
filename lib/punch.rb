@@ -163,12 +163,14 @@ class Punch
             msg = 'unspecified' if msg == 'punch in'
             { :msg => msg, :time => Time.parse(time) }
           end
+          
+          log << { :msg => 'punch out', :time => Time.now } unless log.last[:msg] == 'punch out'
       
           log.each_cons(2) do |a, b|
             summary[a[:msg]] += (b[:time] - a[:time]).to_i
           end
         else
-          summary['unspecified'] += (time_data['out'] - time_data['in']).to_i
+          summary['unspecified'] += ((time_data['out'] || Time.now) - time_data['in']).to_i
         end
       end
       

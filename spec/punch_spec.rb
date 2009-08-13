@@ -1600,6 +1600,34 @@ describe Punch do
           Punch.summary(@project, :format => true).should == { 'unspecified' => '03:20', @message => '01:40', @other_message => '05:00' }
         end
       end
+      
+      describe 'when the project is currently punched in' do
+        before do
+          @data = { @project => [ {'in' => @now - 500} ] }
+          @time_data = @data[@project].last
+          @time_data['log'] = ["punch in @ #{@time_data['in'].strftime(@time_format)}", "#{@message} @ #{(@time_data['in'] + 200).strftime(@time_format)}"]
+          Punch.data = @data
+        end
+        
+        it 'should summarize time up to now' do
+          Punch.summary(@project).should == { 'unspecified' => 200, @message => 300 }
+        end
+        
+        it 'should handle time data with no specific log messages' do
+          @time_data['log'].pop
+          Punch.summary(@project).should == { 'unspecified' => 500 }
+        end
+        
+        it 'should handle time data with no log messages' do
+          @time_data['log'] = []
+          Punch.summary(@project).should == { 'unspecified' => 500 }
+        end
+        
+        it 'should handle time data with no log' do
+          @time_data.delete('log')
+          Punch.summary(@project).should == { 'unspecified' => 500 }
+        end
+      end
     end
     
     describe 'when the project does not exist' do
