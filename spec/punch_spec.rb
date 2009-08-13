@@ -1492,11 +1492,19 @@ describe Punch do
   end
   
   describe 'providing a summary of project time use' do
+    def format_time(time)
+      time.strftime()
+    end
+    
     before do
+      @message = 'test usage'
       @now = Time.now
       Time.stub!(:now).and_return(@now)
       @project = 'test project'
       @data = { @project => [ {'in' => @now - 500, 'out' => @now - 100} ] }
+      @time_data = @data[@project].last
+      @time_format = '%Y-%m-%dT%H:%M:%S%z'
+      @time_data['log'] = ["punch in @ #{@time_data['in'].strftime(@time_format)}", "#{@message} @ #{@time_data['in'].strftime(@time_format)}", "punch out @ #{@time_data['out'].strftime(@time_format)}"]
       
       Punch.instance_eval do
         class << self
@@ -1515,7 +1523,15 @@ describe Punch do
     end
     
     describe 'when the project exists' do
-      #stuff happens
+      it 'should use the log message to indicate time usage' do
+        Punch.summary(@project).should == { @message => 400 }
+      end
+      
+      it 'should break down a punched-in time based on log message times' do
+        other_message = 'some other message'
+        @time_data['log'][-1,0] = "#{other_message} @ #{(@time_data['out'] - 100).strftime(@time_format)}"
+        Punch.summary(@project).should == { @message => 300, other_message => 100 }
+      end
     end
     
     describe 'when the project does not exist' do

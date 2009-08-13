@@ -2,6 +2,8 @@ $:.unshift(File.dirname(__FILE__)) unless
   $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
 
 require 'yaml'
+require 'time'
+require 'enumerator'
 require 'punch/core_ext'
 require 'punch/instance'
 
@@ -150,6 +152,18 @@ class Punch
     end
     
     def summary(project)
+      return unless data[project]
+      time_data = data[project].last
+      log = time_data['log'].collect do |l|
+        msg, time = l.split('@')
+        { :msg => msg.strip, :time => Time.parse(time) }
+      end
+      
+      summary = Hash.new(0)
+      log.each_cons(2) do |a, b|
+        summary[a[:msg]] += (b[:time] - a[:time]).to_i
+      end
+      summary.reject { |k, v|  k == 'punch in'}
     end
     
     
