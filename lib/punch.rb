@@ -163,7 +163,7 @@ class Punch
       log.each_cons(2) do |a, b|
         summary[a[:msg]] += (b[:time] - a[:time]).to_i
       end
-      summary.reject { |k, v|  k == 'punch in'}
+      summary.reject { |k, v|  v == 0 }
     end
     
     

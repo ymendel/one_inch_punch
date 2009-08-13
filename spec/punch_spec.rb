@@ -1532,6 +1532,13 @@ describe Punch do
         @time_data['log'][-1,0] = "#{other_message} @ #{(@time_data['out'] - 100).strftime(@time_format)}"
         Punch.summary(@project).should == { @message => 300, other_message => 100 }
       end
+      
+      it 'should leave out any messages with empty times' do
+        other_message = 'some other message'
+        @time_data['log'][-1,0] = "#{other_message} @ #{(@time_data['out'] - 100).strftime(@time_format)}"
+        @time_data['log'][-1,0] = "some third message @ #{(@time_data['out']).strftime(@time_format)}"
+        Punch.summary(@project).should == { @message => 300, other_message => 100 }
+      end
     end
     
     describe 'when the project does not exist' do
