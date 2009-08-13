@@ -155,20 +155,21 @@ class Punch
       return unless data[project]
       summary = Hash.new(0)
       
-      time_data = data[project].last
-      unless (time_data['log'] || []).empty?
-        log = time_data['log'].collect do |l|
-          msg, time = l.split('@')
-          msg = msg.strip
-          msg = 'unspecified' if msg == 'punch in'
-          { :msg => msg, :time => Time.parse(time) }
-        end
+      data[project].each do |time_data|
+        unless (time_data['log'] || []).empty?
+          log = time_data['log'].collect do |l|
+            msg, time = l.split('@')
+            msg = msg.strip
+            msg = 'unspecified' if msg == 'punch in'
+            { :msg => msg, :time => Time.parse(time) }
+          end
       
-        log.each_cons(2) do |a, b|
-          summary[a[:msg]] += (b[:time] - a[:time]).to_i
+          log.each_cons(2) do |a, b|
+            summary[a[:msg]] += (b[:time] - a[:time]).to_i
+          end
+        else
+          summary['unspecified'] += (time_data['out'] - time_data['in']).to_i
         end
-      else
-        summary['unspecified'] += (time_data['out'] - time_data['in']).to_i
       end
       summary.reject { |k, v|  v == 0 }
     end

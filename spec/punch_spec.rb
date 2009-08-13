@@ -1554,6 +1554,19 @@ describe Punch do
         @time_data.delete('log')
         Punch.summary(@project).should == { 'unspecified' => 400 }
       end
+      
+      it 'should summarize and combine all time data for the project' do
+        other_message = 'some other message'
+        @data = { @project => [ 
+          {'in' => @now - 650, 'out' => @now - 600, 'log' => ["punch in @ #{(@now - 650).strftime(@time_format)}", "#{@message} @ #{(@now - 650).strftime(@time_format)}", "punch out @ #{(@now - 600).strftime(@time_format)}"]},
+          {'in' => @now - 400, 'out' => @now - 350, 'log' => ["punch in @ #{(@now - 400).strftime(@time_format)}", "punch out @ #{(@now - 350).strftime(@time_format)}"]},
+          {'in' => @now - 300, 'out' => @now - 150, 'log' => ["punch in @ #{(@now - 300).strftime(@time_format)}", "#{@message} @ #{(@now - 200).strftime(@time_format)}", "punch out @ #{(@now - 150).strftime(@time_format)}"]},
+          {'in' => @now - 100, 'out' => @now + 250, 'log' => ["punch in @ #{(@now - 100).strftime(@time_format)}", "#{other_message} @ #{(@now - 50).strftime(@time_format)}", "punch out @ #{(@now + 250).strftime(@time_format)}"]}
+        ] }
+        Punch.data = @data
+        
+        Punch.summary(@project).should == { 'unspecified' => 200, @message => 100, other_message => 300}
+      end
     end
     
     describe 'when the project does not exist' do
