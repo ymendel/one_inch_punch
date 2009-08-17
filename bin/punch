@@ -118,6 +118,13 @@ commands = {
     end
   end,
   'list' => lambda { |project|  puts Punch.list(project, OPTIONS).to_yaml },
+  'summary' => lambda do |project|
+    if project
+      puts Punch.summary(project, OPTIONS.merge(:format => true)).to_yaml
+    else
+      puts "Project required"
+    end
+  end
 }
 
 if command_code = commands[command]

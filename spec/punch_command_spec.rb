@@ -711,6 +711,99 @@ describe 'punch command' do
     end
   end
   
+  describe "when the command is 'summary'" do
+    before do
+      Punch.stub!(:summary)
+    end
+    
+    it 'should load punch data' do
+      Punch.should.receive(:load)
+      run_command('summary', @project)
+    end
+    
+    it 'should get the summary for the requested project' do
+      Punch.should.receive(:summary) do |proj, _|
+        proj.should == @project
+      end
+      run_command('summary', @project)
+    end
+    
+    it 'should output the summary' do
+      result = 'summary data'
+      Punch.stub!(:summary).and_return(result)
+      self.should.receive(:puts).with(result.to_yaml)
+      run_command('summary', @project)
+    end
+    
+    describe 'when options specified' do
+      it "should pass on an 'after' time option given by --after" do
+        time_option = '2008-08-26 09:47'
+        time = Time.local(2008, 8, 26, 9, 47)
+        Punch.should.receive(:summary) do |proj, options|
+          proj.should == @project
+          options[:after].should == time
+        end
+        run_command('summary', @project, '--after', time_option)
+      end
+      
+      it "should pass on a 'before' time option given by --before" do
+        time_option = '2008-08-23 15:39'
+        time = Time.local(2008, 8, 23, 15, 39)
+        Punch.should.receive(:summary) do |proj, options|
+          proj.should == @project
+          options[:before].should == time
+        end
+        run_command('summary', @project, '--before', time_option)
+      end
+      
+      it 'should handle a time option given as a date' do
+        time_option = '2008-08-23'
+        time = Time.local(2008, 8, 23)
+        Punch.should.receive(:summary) do |proj, options|
+          proj.should == @project
+          options[:before].should == time
+        end
+        run_command('summary', @project, '--before', time_option)
+      end
+      
+      it 'should also pass the formatting option' do
+        time_option = '2008-08-23'
+        Punch.should.receive(:summary) do |proj, options|
+          proj.should == @project
+          options[:format].should == true
+        end
+        run_command('summary', @project, '--before', time_option)
+      end
+    end
+    
+    it 'should pass only the formatting option if no options specified' do
+      Punch.should.receive(:summary) do |proj, options|
+        proj.should == @project
+        options[:format].should == true
+      end
+      run_command('summary', @project)
+    end
+    
+    it 'should not write the data' do
+      Punch.should.receive(:write).never
+      run_command('summary')
+    end
+    
+    describe 'when no project given' do
+      it 'should display an error message' do
+        self.should.receive(:puts) do |output|
+          output.should.match(/project.+require/i)
+        end
+        run_command('summary')
+      end
+
+      it 'should not punch in' do
+        Punch.should.receive(:summary).never
+        run_command('summary')
+      end
+    end
+  end
+  
   describe 'when the command is unknown' do
     it 'should not error' do
       lambda { run_command('bunk') }.should.not.raise
