@@ -382,6 +382,56 @@ describe Punch, 'instance' do
     end
   end
   
+  it 'should give project summary' do
+    @punch.should.respond_to(:summary)
+  end
+  
+  describe 'giving project summary' do
+    before do
+      @summary = 'summary val'
+      Punch.stub!(:summary).and_return(@summary)
+    end
+    
+    it 'should accept options' do
+      lambda { @punch.summary(:format => true) }.should.not.raise(ArgumentError)
+    end
+    
+    it 'should not require options' do
+      lambda { @punch.summary }.should.not.raise(ArgumentError)
+    end
+    
+    it 'should delegate to the class' do
+      Punch.should.receive(:summary)
+      @punch.summary
+    end
+    
+    it 'should pass the project when delegating to the class' do
+      Punch.should.receive(:summary) do |proj, _|
+        proj.should == @project
+      end
+      @punch.summary
+    end
+    
+    it 'should pass the options when delegating to the class' do
+      options = { :format => true }
+      Punch.should.receive(:summary) do |_, opts|
+        opts.should == options
+      end
+      @punch.summary(options)
+    end
+    
+    it 'should pass an empty hash if no options given' do
+      Punch.should.receive(:summary) do |_, opts|
+        opts.should == {}
+      end
+      @punch.summary
+    end
+    
+    it 'should return the value returned by the class method' do
+      @punch.summary.should == @summary
+    end
+  end
+  
   describe 'equality' do
     it 'should be equal to another instance for the same project' do
       Punch.new('proj').should == Punch.new('proj')

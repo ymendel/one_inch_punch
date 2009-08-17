@@ -37,6 +37,10 @@ class Punch
     self.class.log(project, message, options)
   end
   
+  def summary(options = {})
+    self.class.summary(project, options)
+  end
+  
   def ==(other)
     project == other.project
   end
