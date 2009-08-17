@@ -1,3 +1,14 @@
+== 0.4.0 2008-08-17
+
+* 1 minor enhancement:
+  * added 'summary' command
+    * shows a breakdown of time spent on a project, using the times in log messages to indicate activities
+    * accepts before/after options
+* 1 tiny enhancement
+  * full status now includes the last log message if the project is punched in
+* 1 tiny bugfix
+  * full status now works with "short" (only display what's punched-in) instead of always showing 'out'
+
 == 0.3.3 2008-06-25
 
 * 1 tiny enhancement:
