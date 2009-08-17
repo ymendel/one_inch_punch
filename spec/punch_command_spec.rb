@@ -190,6 +190,11 @@ describe 'punch command' do
       run_command('status', '--short')
     end
     
+    it 'should handle both --short and --full options together' do
+      Punch.should.receive(:status).with(nil, :short => true, :full => true)
+      run_command('status', '--short', '--full')
+    end
+    
     it 'should not write the data' do
       Punch.should.receive(:write).never
       run_command('status')
