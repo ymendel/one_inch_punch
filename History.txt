@@ -1,3 +1,9 @@
+== 0.4.1 2008-08-26
+
+* 1 tiny enhancement:
+  * allowing command-line log message to be specified with --message
+    (will take precedence over normal message argument if both are specified)
+
 == 0.4.0 2008-08-17
 
 * 1 minor enhancement:
