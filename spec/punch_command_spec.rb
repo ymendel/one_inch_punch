@@ -822,7 +822,7 @@ describe 'punch command' do
     end
     
     it 'should not run any punch command' do
-      [:in, :out, :delete, :status, :total, :log, :list].each do |command|
+      [:in, :out, :delete, :status, :total, :log, :list, :summary].each do |command|
         Punch.should.receive(command).never
       end
       run_command('bunk')
