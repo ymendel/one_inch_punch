@@ -547,6 +547,13 @@ describe 'punch command' do
       run_command('log', @project, '-m', @message)
     end
     
+    it 'should use the message option specified with --message over the command-line argument' do
+      other_message = 'some other message'
+      Punch.stub!(:write)
+      Punch.should.receive(:log).with(@project, other_message, {})
+      run_command('log', @project, @message, '-m', other_message)
+    end
+    
     it 'should pass a time if specified on the command line (with --time)' do
       time_option = '2008-08-23 15:39'
       time = Time.local(2008, 8, 23, 15, 39)
