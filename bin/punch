@@ -30,9 +30,9 @@ BANNER
   opts.on('--before [TIME]', String,
           "Restrict command to only before the given time") { |time|  OPTIONS[:before] = Time.parse(time) }
   opts.on('--at [TIME]', '--time [TIME]', String,
-          "Use the given time to punch in/out") { |time|  OPTIONS[:time] = Time.parse(time) }
+          "Use the given time") { |time|  OPTIONS[:time] = Time.parse(time) }
   opts.on('-m', '--message [MESSAGE]', String,
-          "Add the given log message when punching in/out") { |message|  OPTIONS[:message] = message }
+          "Use the given log message") { |message|  OPTIONS[:message] = message }
   opts.on('--full',
           "Show full output for the command") { |full|  OPTIONS[:full] = true }
   opts.on('--short',
