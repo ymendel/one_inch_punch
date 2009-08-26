@@ -104,7 +104,7 @@ commands = {
   end,
   'log' => lambda do |project|
     if project
-      if message = ARGV[2]
+      if message = OPTIONS.delete(:message) || ARGV[2]
         if Punch.log(project, message, OPTIONS)
           Punch.write
         else
