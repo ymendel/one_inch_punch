@@ -3,6 +3,8 @@ $:.unshift(File.dirname(__FILE__)) unless
 
 require 'yaml'
 require 'time'
+require 'date'
+require 'timely'
 require 'enumerator'
 require 'punch/core_ext'
 require 'punch/instance'
@@ -212,9 +214,8 @@ class Punch
     
     def fix_time_options(options)
       return options unless date = options[:on]
-      tom = date + 1
-      options[:after]  = Time.local(date.year, date.month, date.day, 0, 0, 0)
-      options[:before] = Time.local(tom.year,  tom.month,  tom.day,  0, 0, 0)
+      options[:after]  = date.at_time(0)
+      options[:before] = (date + 1).at_time(0)
       options
     end
     

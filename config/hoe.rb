@@ -8,7 +8,7 @@ RUBYFORGE_PROJECT = 'yomendel' # The unix name for your project
 HOMEPATH = "http://#{RUBYFORGE_PROJECT}.rubyforge.org"
 DOWNLOAD_PATH = "http://rubyforge.org/projects/#{RUBYFORGE_PROJECT}"
 EXTRA_DEPENDENCIES = [
-#  ['activesupport', '>= 1.3.1']
+  ['timely', '>= 0.0.1']
 ]    # An array of rubygem dependencies [name, version]
 EXTRA_DEV_DEPENDENCIES = [
   ['bacon', '>= 1.1.0'],
