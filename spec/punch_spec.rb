@@ -1276,6 +1276,40 @@ describe Punch do
         Punch.total(@project, :format => true).should == "1:05:00"
       end
       
+      describe 'using :on option' do
+        before do
+          # yay ugly setup!
+          @date = Date.today - 4
+          morning = Time.local(@date.year, @date.month, @date.day, 0, 0, 1)
+          night   = Time.local(@date.year, @date.month, @date.day, 23, 59, 59)
+          earlier_date = @date - 2
+          earlier_time = Time.local(earlier_date.year, earlier_date.month, earlier_date.day, 13, 43)
+          early_date   = @date - 1
+          early_time   = Time.local(early_date.year, early_date.month, early_date.day, 11, 25)
+          later_date   = @date + 1
+          later_time   = Time.local(later_date.year, later_date.month, later_date.day, 3, 12)
+          
+          @data = { @project => [
+            {'in' => earlier_time - 50, 'out' => earlier_time + 100},
+            {'in' => early_time   - 60, 'out' => early_time   + 70},
+            {'in' => morning,           'out' => morning + 200},
+            {'in' => night - 500,       'out' => night},
+            {'in' => later_time   - 30, 'out' => later_time + 70}
+            ]
+          }
+          
+          Punch.data = @data
+        end
+        
+        it 'should accept an :on shortcut option to restrict returned amount to times only on a certain day' do
+          Punch.total(@project, :on => @date).should == 700
+        end
+        
+        it 'should allow the :on option to override the before/after options' do
+          Punch.total(@project, :on => @date, :before => @now - 2525, :after => @now - 7575).should == 700
+        end
+      end
+      
       describe 'and is punched in' do
         before do
           @data[@project].push({ 'in' => @now - 25 })
