@@ -29,6 +29,8 @@ BANNER
           "Restrict command to only after the given time") { |time|  OPTIONS[:after] = Time.parse(time) }
   opts.on('--before [TIME]', String,
           "Restrict command to only before the given time") { |time|  OPTIONS[:before] = Time.parse(time) }
+  opts.on('--on [DATE]', String,
+          "Restrict command to only on the given date") { |date|  OPTIONS[:on] = Date.parse(date) }
   opts.on('--at [TIME]', '--time [TIME]', String,
           "Use the given time") { |time|  OPTIONS[:time] = Time.parse(time) }
   opts.on('-m', '--message [MESSAGE]', String,

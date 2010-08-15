@@ -117,6 +117,16 @@ describe 'punch command' do
         run_command('total', '--before', time_option)
       end
       
+      it "should pass on an 'on' date option given by --on" do
+        date_option = '2008-08-23'
+        date = Date.new(2008, 8, 23)
+        Punch.should.receive(:total) do |proj, options|
+          proj.should == @project
+          options[:on].should == date
+        end
+        run_command('total', @project, '--on', date_option)
+      end
+      
       it 'should also pass the formatting option' do
         time_option = '2008-08-26 09:47'
         Punch.should.receive(:total) do |proj, options|
