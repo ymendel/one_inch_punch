@@ -732,6 +732,16 @@ describe 'punch command' do
         end
         run_command('list', '--before', time_option)
       end
+      
+      it "should pass on an 'on' date option given by --on" do
+        date_option = '2008-08-23'
+        date = Date.new(2008, 8, 23)
+        Punch.should.receive(:list) do |proj, options|
+          proj.should == @project
+          options[:on].should == date
+        end
+        run_command('list', @project, '--on', date_option)
+      end
     end
     
     it 'should not write the data' do
@@ -793,6 +803,16 @@ describe 'punch command' do
           options[:before].should == time
         end
         run_command('summary', @project, '--before', time_option)
+      end
+      
+      it "should pass on an 'on' date option given by --on" do
+        date_option = '2008-08-23'
+        date = Date.new(2008, 8, 23)
+        Punch.should.receive(:summary) do |proj, options|
+          proj.should == @project
+          options[:on].should == date
+        end
+        run_command('summary', @project, '--on', date_option)
       end
       
       it 'should also pass the formatting option' do
