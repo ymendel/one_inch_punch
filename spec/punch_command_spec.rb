@@ -846,7 +846,7 @@ describe 'punch command' do
         run_command('summary')
       end
 
-      it 'should not punch in' do
+      it 'should not get a summary' do
         Punch.should.receive(:summary).never
         run_command('summary')
       end
