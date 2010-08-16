@@ -1,3 +1,11 @@
+== 0.4.2 2010-08-16
+
+* 1 tiny enhancement:
+  * adding some date handling for list/total/summary:
+    * can now take an :on option, to restrict the operation to the given date
+    * option can be given on command-line with --on
+    * :before and :after can also take dates now, converting them to times
+
 == 0.4.1 2008-08-26
 
 * 1 tiny enhancement:
