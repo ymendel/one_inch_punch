@@ -1085,7 +1085,7 @@ describe Punch do
         Punch.list(@project, :after => @now - 2001, :before => @now - 999).should == Punch.data[@project][1, 1]
       end
       
-      describe 'using :on option' do
+      describe 'handling date options' do
         before do
           # yay ugly setup!
           @date = Date.today - 4
@@ -1116,6 +1116,14 @@ describe Punch do
         
         it 'should allow the :on option to override the before/after options' do
           Punch.list(@project, :on => @date, :before => @now - 2525, :after => @now - 7575).should == Punch.data[@project][2, 2]
+        end
+        
+        it 'should allow the :after option to be a date instead of time' do
+          Punch.list(@project, :after => @date).should == Punch.data[@project][2..-1]
+        end
+        
+        it 'should allow the :before option to be a date instead of time' do
+          Punch.list(@project, :before => @date).should == Punch.data[@project][0, 2]
         end
       end
       
@@ -1276,7 +1284,7 @@ describe Punch do
         Punch.total(@project, :format => true).should == "1:05:00"
       end
       
-      describe 'using :on option' do
+      describe 'handling date options' do
         before do
           # yay ugly setup!
           @date = Date.today - 4
@@ -1307,6 +1315,14 @@ describe Punch do
         
         it 'should allow the :on option to override the before/after options' do
           Punch.total(@project, :on => @date, :before => @now - 2525, :after => @now - 7575).should == 700
+        end
+        
+        it 'should allow the :after option to be a date instead of time' do
+          Punch.total(@project, :after => @date).should == 800
+        end
+        
+        it 'should allow the :before option to be a date instead of time' do
+          Punch.total(@project, :before => @date).should == 280
         end
       end
       
@@ -1668,7 +1684,7 @@ describe Punch do
           Punch.summary(@project, :format => true).should == { 'unspecified' => '03:20', @message => '01:40', @other_message => '05:00' }
         end
         
-        describe 'using :on option' do
+        describe 'handling date options' do
           before do
             # yay ugly setup!
             @date = Date.today - 4
@@ -1699,6 +1715,14 @@ describe Punch do
 
           it 'should allow the :on option to override the before/after options' do
             Punch.summary(@project, :on => @date, :before => @now - 2525, :after => @now - 7575).should == { 'unspecified' => 700 }
+          end
+          
+          it 'should allow the :after option to be a date instead of time' do
+            Punch.summary(@project, :after => @date).should == { 'unspecified' => 800 }
+          end
+
+          it 'should allow the :before option to be a date instead of time' do
+            Punch.summary(@project, :before => @date).should == { 'unspecified' => 280 }
           end
         end
       end

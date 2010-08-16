@@ -213,9 +213,12 @@ class Punch
     end
     
     def fix_time_options(options)
-      return options unless date = options[:on]
-      options[:after]  = date.at_time(0)
-      options[:before] = (date + 1).at_time(0)
+      if date = options[:on]
+        options[:after]  = date
+        options[:before] = date + 1
+      end
+      [:after, :before].each { |k|  options[k] = options[k].at_time(0) if options[k].respond_to?(:at_time) }
+      
       options
     end
     
