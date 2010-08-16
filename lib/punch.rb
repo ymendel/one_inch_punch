@@ -195,7 +195,7 @@ class Punch
     
     def do_list_single(project, options)
       return nil unless project_data = data[project]
-      options = fix_time_options(options)
+      options = fix_range_options(options)
       project_data = project_data.select { |t|  t['in']                > options[:after] }  if options[:after]
       project_data = project_data.select { |t|  (t['out'] || Time.now) < options[:before] } if options[:before]
       project_data
@@ -212,7 +212,7 @@ class Punch
       options[:time] || options[:at] || Time.now
     end
     
-    def fix_time_options(options)
+    def fix_range_options(options)
       if date = options[:on]
         options[:after]  = date
         options[:before] = date + 1
