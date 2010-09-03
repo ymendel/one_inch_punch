@@ -6,13 +6,13 @@
     * option can be given on command-line with --on
     * :before and :after can also take dates now, converting them to times
 
-== 0.4.1 2008-08-26
+== 0.4.1 2009-08-26
 
 * 1 tiny enhancement:
   * allowing command-line log message to be specified with --message
     (will take precedence over normal message argument if both are specified)
 
-== 0.4.0 2008-08-17
+== 0.4.0 2009-08-17
 
 * 1 minor enhancement:
   * added 'summary' command
@@ -23,24 +23,24 @@
 * 1 tiny bugfix
   * full status now works with "short" (only display what's punched-in) instead of always showing 'out'
 
-== 0.3.3 2008-06-25
+== 0.3.3 2009-06-25
 
 * 1 tiny enhancement:
   * added 'short' status, which only displays what's currently punched in (or 'out' if nothing)
     * punch command displays status as YAML if it's a hash, like it does for total
 
-== 0.3.2 2008-06-01
+== 0.3.2 2009-06-01
 
 * 1 tiny bugfix enhancement:
   * sub-projects now truly restricting to the naming form of 'parent/child',
     not 'parent_child' or even simply 'parentseriouslythisisnotachild'
 
-== 0.3.1 2008-04-06
+== 0.3.1 2009-04-06
 
 * 1 tiny bugfix enhancement:
   * Total no longer erroring on non-existent parent project
 
-== 0.3.0 2008-04-05
+== 0.3.0 2009-04-05
 
 * 1 minor enhancement:
   * Can now have 'sub-projects', or projects with names of the form 'parent/child'
