@@ -432,6 +432,33 @@ describe Punch, 'instance' do
     end
   end
   
+  it 'should age the project' do
+    @punch.should.respond_to(:age)
+  end
+  
+  describe 'aging project' do
+    before do
+      @age = 'age val'
+      Punch.stub!(:age).and_return(@age)
+    end
+    
+    it 'should delegate to the class' do
+      Punch.should.receive(:age)
+      @punch.age
+    end
+    
+    it 'should pass the project when delegating to the class' do
+      Punch.should.receive(:age) do |proj|
+        proj.should == @project
+      end
+      @punch.age
+    end
+    
+    it 'should return the value returned by the class method' do
+      @punch.age.should == @age
+    end
+  end
+  
   describe 'equality' do
     it 'should be equal to another instance for the same project' do
       Punch.new('proj').should == Punch.new('proj')

@@ -41,6 +41,10 @@ class Punch
     self.class.summary(project, options)
   end
   
+  def age
+    self.class.age(project)
+  end
+  
   def ==(other)
     project == other.project
   end
