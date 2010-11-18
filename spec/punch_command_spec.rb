@@ -853,6 +853,66 @@ describe 'punch command' do
     end
   end
   
+  describe "when the command is 'age'" do
+    before do
+      Punch.stub!(:age)
+    end
+    
+    it 'should load punch data' do
+      Punch.should.receive(:load)
+      run_command('age', @project)
+    end
+    
+    it 'should age the given project' do
+      Punch.stub!(:write)
+      Punch.should.receive(:age).with(@project)
+      run_command('age', @project)
+    end
+    
+    it 'should output the result' do
+      result = 'result'
+      Punch.stub!(:age).and_return(result)
+      self.should.receive(:puts).with(result.inspect)
+      run_command('age', @project)
+    end
+    
+    describe 'when aged successfully' do
+      it 'should write the data' do
+        Punch.stub!(:age).and_return(true)
+        Punch.should.receive(:write)
+        run_command('age', @project)
+      end
+    end
+    
+    describe 'when not aged successfully' do
+      it 'should not write the data' do
+        Punch.stub!(:age).and_return(nil)
+        Punch.should.receive(:write).never
+        run_command('age', @project)
+      end
+    end
+    
+    describe 'when no project given' do
+      it 'should display an error message' do
+        self.should.receive(:puts) do |output|
+          output.should.match(/project.+require/i)
+        end
+        run_command('age')
+      end
+      
+      it 'should not age' do
+        Punch.stub!(:write)
+        Punch.should.receive(:age).never
+        run_command('age')
+      end
+      
+      it 'should not write the data' do
+        Punch.should.receive(:write).never
+        run_command('age')
+      end
+    end
+  end
+  
   describe 'when the command is unknown' do
     it 'should not error' do
       lambda { run_command('bunk') }.should.not.raise
@@ -871,7 +931,7 @@ describe 'punch command' do
     end
     
     it 'should not run any punch command' do
-      [:in, :out, :delete, :status, :total, :log, :list, :summary].each do |command|
+      [:in, :out, :delete, :status, :total, :log, :list, :summary, :age].each do |command|
         Punch.should.receive(command).never
       end
       run_command('bunk')

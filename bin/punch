@@ -126,6 +126,14 @@ commands = {
     else
       puts "Project required"
     end
+  end,
+  'age' => lambda do |project|
+    if project
+      Punch.write if result = Punch.age(project)
+      puts result.inspect
+    else
+      puts "Project required"
+    end
   end
 }
 
