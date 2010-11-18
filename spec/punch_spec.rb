@@ -1576,10 +1576,6 @@ describe Punch do
   end
   
   describe 'providing a summary of project time use' do
-    def format_time(time)
-      time.strftime()
-    end
-    
     before do
       @message = 'test usage'
       @now = Time.now

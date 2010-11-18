@@ -158,21 +158,22 @@ class Punch
       summary = Hash.new(0)
       
       list_data.each do |time_data|
-        unless (time_data['log'] || []).empty?
-          log = time_data['log'].collect do |l|
-            msg, time = l.split('@')
-            msg = msg.strip
-            msg = 'unspecified' if msg == 'punch in'
-            { :msg => msg, :time => Time.parse(time) }
-          end
-          
-          log << { :msg => 'punch out', :time => Time.now } unless log.last[:msg] == 'punch out'
-      
-          log.each_cons(2) do |a, b|
-            summary[a[:msg]] += (b[:time] - a[:time]).to_i
-          end
-        else
+        if (time_data['log'] || []).empty?
           summary['unspecified'] += ((time_data['out'] || Time.now) - time_data['in']).to_i
+          next
+        end
+        
+        log = time_data['log'].collect do |l|
+          msg, time = l.split('@')
+          msg = msg.strip
+          msg = 'unspecified' if msg == 'punch in'
+          { :msg => msg, :time => Time.parse(time) }
+        end
+        
+        log << { :msg => 'punch out', :time => Time.now } unless log.last[:msg] == 'punch out'
+        
+        log.each_cons(2) do |a, b|
+          summary[a[:msg]] += (b[:time] - a[:time]).to_i
         end
       end
       
