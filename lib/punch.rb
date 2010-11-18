@@ -182,6 +182,15 @@ class Punch
       summary
     end
     
+    def age(project)
+      return nil unless projects.include?(project)
+      
+      aged_project = "#{project}_old/1"
+      data[aged_project] = data.delete(project)
+      
+      true
+    end
+    
     
     private
     

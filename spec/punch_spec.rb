@@ -1762,4 +1762,53 @@ describe Punch do
       end
     end
   end
+  
+  it 'should age a project' do
+    Punch.should.respond_to(:age)
+  end
+  
+  describe 'aging a project' do
+    before do
+      @now = Time.now
+      Time.stub!(:now).and_return(@now)
+      @project = 'pro-ject'
+      @data = { @project => [ {'in' => @now - 3000} ] }
+      
+      Punch.instance_eval do
+        class << self
+          public :data, :data=
+        end
+      end
+      Punch.data = @data
+    end
+    
+    it 'should accept a project name' do
+      lambda { Punch.age('proj') }.should.not.raise(ArgumentError)
+    end
+    
+    it 'should require a project name' do
+      lambda { Punch.age }.should.raise(ArgumentError)
+    end
+    
+    describe 'when the project exists' do
+      it 'should move the project to #{project}_old/1' do
+        Punch.age(@project)
+        Punch.data.should == { "#{@project}_old/1" => [ {'in' => @now - 3000} ] }
+      end
+      
+      it 'should return true' do
+        Punch.age(@project).should == true
+      end
+    end
+    
+    describe 'when the project does not exist' do
+      before do
+        @project = 'no dice'
+      end
+      
+      it 'should return nil' do
+        Punch.age(@project).should.be.nil
+      end
+    end
+  end
 end
