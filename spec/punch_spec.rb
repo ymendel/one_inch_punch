@@ -1796,6 +1796,23 @@ describe Punch do
         Punch.data.should == { "#{@project}_old/1" => [ {'in' => @now - 3000} ] }
       end
       
+      it 'should simply increment the number of a project name in the x_old/1 format' do
+        @data = { 'some_old/1' => [ {'in' => @now - 3900} ] }
+        Punch.data = @data
+        
+        Punch.age('some_old/1')
+        Punch.data.should == { "some_old/2" => [ {'in' => @now - 3900} ] }
+      end
+      
+      it 'should cascade aging a project to older versions' do
+        @data["#{@project}_old/1"] = [ {'in' => @now - 50000, 'out' => @now - 40000} ]
+        @data["#{@project}_old/2"] = [ {'in' => @now - 90000, 'out' => @now - 85000} ]
+        Punch.data = @data
+        
+        Punch.age(@project)
+        Punch.data.should == { "#{@project}_old/1" => [ {'in' => @now - 3000} ], "#{@project}_old/2" => [ {'in' => @now - 50000, 'out' => @now - 40000} ], "#{@project}_old/3" => [ {'in' => @now - 90000, 'out' => @now - 85000} ] }
+      end
+      
       it 'should return true' do
         Punch.age(@project).should == true
       end

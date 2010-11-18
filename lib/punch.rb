@@ -185,7 +185,13 @@ class Punch
     def age(project)
       return nil unless projects.include?(project)
       
-      aged_project = "#{project}_old/1"
+      if project.match(%r{_old/\d+$})
+        aged_project = project.succ
+      else
+        aged_project = "#{project}_old/1"
+      end
+      
+      age(aged_project)
       data[aged_project] = data.delete(project)
       
       true
