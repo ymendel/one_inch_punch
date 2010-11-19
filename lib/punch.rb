@@ -182,7 +182,8 @@ class Punch
       summary
     end
     
-    def age(project)
+    def age(project, options = {})
+      raise ":after option makes no sense for aging" if options[:after]
       return nil unless projects.include?(project)
       
       if project.match(%r{_old/\d+$})
@@ -192,7 +193,12 @@ class Punch
       end
       
       age(aged_project)
-      data[aged_project] = data.delete(project)
+      if options[:before]
+        data[aged_project], data[project] = data[project].partition { |d|  d['out'] < options[:before] }
+        [project, aged_project].each { |proj|  data.delete(proj) if data[proj].empty? }
+      else
+        data[aged_project] = data.delete(project)
+      end
       
       true
     end

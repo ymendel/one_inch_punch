@@ -1828,15 +1828,27 @@ describe Punch do
         end
         
         it 'should only move the appropriate data to the old-version project' do
-          expected = {   @project         => [ {'in' => @now - 5000, 'out' => @now - 4000}, {'in' => @now - 3500, 'out' => @now - 3000} ],
-                      "#{@project}_old/1" => [ {'in' => @now - 1500, 'out' => @now - 900}, {'in' => @now - 500, 'out' => @now - 400} ]
+          expected = {   @project         => [ {'in' => @now - 1500, 'out' => @now - 900},  {'in' => @now - 500,  'out' => @now - 400} ],
+                      "#{@project}_old/1" => [ {'in' => @now - 5000, 'out' => @now - 4000}, {'in' => @now - 3500, 'out' => @now - 3000} ]
                      }
           Punch.age(@project, :before => @now - 1500)
           Punch.data.should == expected
         end
         
+        it 'should not create an old project if no data would be moved' do
+          expected = { @project => [ {'in' => @now - 5000, 'out' => @now - 4000}, {'in' => @now - 3500, 'out' => @now - 3000}, {'in' => @now - 1500, 'out' => @now - 900}, {'in' => @now - 500, 'out' => @now - 400} ] }
+          Punch.age(@project, :before => @now - 50000)
+          Punch.data.should == expected
+        end
+        
+        it 'should remove the project if all data would be moved' do
+          expected = { "#{@project}_old/1" => [ {'in' => @now - 5000, 'out' => @now - 4000}, {'in' => @now - 3500, 'out' => @now - 3000}, {'in' => @now - 1500, 'out' => @now - 900}, {'in' => @now - 500, 'out' => @now - 400} ] }
+          Punch.age(@project, :before => @now - 10)
+          Punch.data.should == expected
+        end
+        
         it 'should not accept an after option' do
-          Punch.age(@project, :after => @now - 500).should.raise
+          lambda { Punch.age(@project, :after => @now - 500) }.should.raise
         end
       end
     end
