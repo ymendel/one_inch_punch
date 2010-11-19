@@ -865,8 +865,32 @@ describe 'punch command' do
     
     it 'should age the given project' do
       Punch.stub!(:write)
-      Punch.should.receive(:age).with(@project)
+      Punch.should.receive(:age) do |proj, _|
+        proj.should == @project
+      end
       run_command('age', @project)
+    end
+    
+    describe 'when options specified' do
+      it "should pass on a 'before' time option given by --before" do
+        time_option = '2008-08-23 15:39'
+        time = Time.local(2008, 8, 23, 15, 39)
+        Punch.should.receive(:age) do |proj, options|
+          proj.should == @project
+          options[:before].should == time
+        end
+        run_command('age', @project, '--before', time_option)
+      end
+      
+      it 'should handle a time option given as a date' do
+        time_option = '2008-08-23'
+        time = Time.local(2008, 8, 23)
+        Punch.should.receive(:age) do |proj, options|
+          proj.should == @project
+          options[:before].should == time
+        end
+        run_command('age', @project, '--before', time_option)
+      end
     end
     
     it 'should output the result' do

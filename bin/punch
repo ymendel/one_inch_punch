@@ -129,7 +129,7 @@ commands = {
   end,
   'age' => lambda do |project|
     if project
-      Punch.write if result = Punch.age(project)
+      Punch.write if result = Punch.age(project, OPTIONS)
       puts result.inspect
     else
       puts "Project required"
