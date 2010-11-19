@@ -1762,4 +1762,105 @@ describe Punch do
       end
     end
   end
+  
+  it 'should age a project' do
+    Punch.should.respond_to(:age)
+  end
+  
+  describe 'aging a project' do
+    before do
+      @now = Time.now
+      Time.stub!(:now).and_return(@now)
+      @project = 'pro-ject'
+      @data = { @project => [ {'in' => @now - 3000} ] }
+      
+      Punch.instance_eval do
+        class << self
+          public :data, :data=
+        end
+      end
+      Punch.data = @data
+    end
+    
+    it 'should accept a project name' do
+      lambda { Punch.age('proj') }.should.not.raise(ArgumentError)
+    end
+    
+    it 'should require a project name' do
+      lambda { Punch.age }.should.raise(ArgumentError)
+    end
+    
+    it 'should accept options' do
+      lambda { Punch.age('proj', :before => @now - 5000) }.should.not.raise(ArgumentError)
+    end
+    
+    describe 'when the project exists' do
+      it 'should move the project to #{project}_old/1' do
+        Punch.age(@project)
+        Punch.data.should == { "#{@project}_old/1" => [ {'in' => @now - 3000} ] }
+      end
+      
+      it 'should simply increment the number of a project name in the x_old/1 format' do
+        @data = { 'some_old/1' => [ {'in' => @now - 3900} ] }
+        Punch.data = @data
+        
+        Punch.age('some_old/1')
+        Punch.data.should == { "some_old/2" => [ {'in' => @now - 3900} ] }
+      end
+      
+      it 'should cascade aging a project to older versions' do
+        @data["#{@project}_old/1"] = [ {'in' => @now - 50000, 'out' => @now - 40000} ]
+        @data["#{@project}_old/2"] = [ {'in' => @now - 90000, 'out' => @now - 85000} ]
+        Punch.data = @data
+        
+        Punch.age(@project)
+        Punch.data.should == { "#{@project}_old/1" => [ {'in' => @now - 3000} ], "#{@project}_old/2" => [ {'in' => @now - 50000, 'out' => @now - 40000} ], "#{@project}_old/3" => [ {'in' => @now - 90000, 'out' => @now - 85000} ] }
+      end
+      
+      it 'should return true' do
+        Punch.age(@project).should == true
+      end
+      
+      describe 'when options given' do
+        before do
+          @data = { @project => [ {'in' => @now - 5000, 'out' => @now - 4000}, {'in' => @now - 3500, 'out' => @now - 3000}, {'in' => @now - 1500, 'out' => @now - 900}, {'in' => @now - 500, 'out' => @now - 400} ] }
+          Punch.data = @data
+        end
+        
+        it 'should only move the appropriate data to the old-version project' do
+          expected = {   @project         => [ {'in' => @now - 1500, 'out' => @now - 900},  {'in' => @now - 500,  'out' => @now - 400} ],
+                      "#{@project}_old/1" => [ {'in' => @now - 5000, 'out' => @now - 4000}, {'in' => @now - 3500, 'out' => @now - 3000} ]
+                     }
+          Punch.age(@project, :before => @now - 1500)
+          Punch.data.should == expected
+        end
+        
+        it 'should not create an old project if no data would be moved' do
+          expected = { @project => [ {'in' => @now - 5000, 'out' => @now - 4000}, {'in' => @now - 3500, 'out' => @now - 3000}, {'in' => @now - 1500, 'out' => @now - 900}, {'in' => @now - 500, 'out' => @now - 400} ] }
+          Punch.age(@project, :before => @now - 50000)
+          Punch.data.should == expected
+        end
+        
+        it 'should remove the project if all data would be moved' do
+          expected = { "#{@project}_old/1" => [ {'in' => @now - 5000, 'out' => @now - 4000}, {'in' => @now - 3500, 'out' => @now - 3000}, {'in' => @now - 1500, 'out' => @now - 900}, {'in' => @now - 500, 'out' => @now - 400} ] }
+          Punch.age(@project, :before => @now - 10)
+          Punch.data.should == expected
+        end
+        
+        it 'should not accept an after option' do
+          lambda { Punch.age(@project, :after => @now - 500) }.should.raise
+        end
+      end
+    end
+    
+    describe 'when the project does not exist' do
+      before do
+        @project = 'no dice'
+      end
+      
+      it 'should return nil' do
+        Punch.age(@project).should.be.nil
+      end
+    end
+  end
 end
