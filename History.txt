@@ -1,3 +1,11 @@
+== 0.5.0 2010-11-18
+
+* 1 minor enhancement:
+  * added 'age' command
+    * moves project data to an old-version name, e.g. project -> project_old/1
+    * cascades old-version project data, e.g. project -> project_old/1, project_old/1 -> project_old/2
+    * can take a :before option to only move a subset of data
+
 == 0.4.2 2010-08-16
 
 * 1 tiny enhancement:
