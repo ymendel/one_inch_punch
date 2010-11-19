@@ -442,14 +442,37 @@ describe Punch, 'instance' do
       Punch.stub!(:age).and_return(@age)
     end
     
+    it 'should accept options' do
+      lambda { @punch.age(:before => Time.now) }.should.not.raise(ArgumentError)
+    end
+    
+    it 'should not require options' do
+      lambda { @punch.age }.should.not.raise(ArgumentError)
+    end
+    
     it 'should delegate to the class' do
       Punch.should.receive(:age)
       @punch.age
     end
     
     it 'should pass the project when delegating to the class' do
-      Punch.should.receive(:age) do |proj|
+      Punch.should.receive(:age) do |proj, _|
         proj.should == @project
+      end
+      @punch.age
+    end
+    
+    it 'should pass the options when delegating to the class' do
+      options = { :before => Time.now }
+      Punch.should.receive(:age) do |_, opts|
+        opts.should == options
+      end
+      @punch.age(options)
+    end
+    
+    it 'should pass an empty hash if no options given' do
+      Punch.should.receive(:age) do |_, opts|
+        opts.should == {}
       end
       @punch.age
     end

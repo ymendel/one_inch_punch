@@ -41,8 +41,8 @@ class Punch
     self.class.summary(project, options)
   end
   
-  def age
-    self.class.age(project)
+  def age(options = {})
+    self.class.age(project, options)
   end
   
   def ==(other)
