@@ -1,3 +1,8 @@
+== 0.5.1 2012-03-19
+
+* 1 tiny bugfix:
+  * short status no longer errors under 1.9.2 when all projects are punched out
+
 == 0.5.0 2010-11-18
 
 * 1 minor enhancement:
