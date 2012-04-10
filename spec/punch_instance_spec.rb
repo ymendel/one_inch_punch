@@ -220,6 +220,60 @@ describe Punch, 'instance' do
     end
   end
   
+  it 'should make a punch entry' do
+    @punch.should.respond_to(:entry)
+  end
+  
+  describe 'making a punch entry' do
+    before do
+      @entry = 'entry val'
+      Punch.stub!(:entry).and_return(@entry)
+    end
+    
+    it 'should accept options' do
+      lambda { @punch.entry(:time => Time.now) }.should.not.raise(ArgumentError)
+    end
+    
+    it 'should not require options' do
+      lambda { @punch.entry }.should.not.raise(ArgumentError)
+    end
+    
+    it 'should delegate to the class' do
+      Punch.should.receive(:entry)
+      @punch.entry
+    end
+    
+    it 'should pass the project when delegating to the class' do
+      Punch.should.receive(:entry) do |proj, _|
+        proj.should == @project
+      end
+      @punch.entry
+    end
+    
+    it 'should pass the options when delegating to the class' do
+      options = { :time => Time.now }
+      Punch.should.receive(:entry) do |_, opts|
+        opts.should == options
+      end
+      @punch.entry(options)
+    end
+    
+    it 'should pass an empty hash if no options given' do
+      Punch.should.receive(:entry) do |_, opts|
+        opts.should == {}
+      end
+      @punch.entry
+    end
+    
+    it 'should return the value returned by the class method' do
+      @punch.entry.should == @entry
+    end
+
+    it 'should have clock as an alias' do
+      @punch.clock.should == @entry
+    end
+  end
+  
   it 'should list the project data' do
     @punch.should.respond_to(:list)
   end

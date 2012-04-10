@@ -33,6 +33,10 @@ BANNER
           "Restrict command to only on the given date") { |date|  OPTIONS[:on] = Date.parse(date) }
   opts.on('--at [TIME]', '--time [TIME]', String,
           "Use the given time") { |time|  OPTIONS[:time] = Time.parse(time) }
+  opts.on('--from [TIME]', String,
+          "Use the given time") { |time|  OPTIONS[:from] = Time.parse(time) }
+  opts.on('--to [TIME]', String,
+          "Use the given time") { |time|  OPTIONS[:to] = Time.parse(time) }
   opts.on('-m', '--message [MESSAGE]', String,
           "Use the given log message") { |message|  OPTIONS[:message] = message }
   opts.on('--full',
@@ -104,6 +108,17 @@ commands = {
       puts message
     end
   end,
+  'entry'  => lambda do |project|
+    if project
+      if Punch.entry(project, OPTIONS)
+        Punch.write
+      else
+        puts "Cannot create entry for '#{project}'"
+      end
+    else
+      puts "Project required"
+    end
+  end,
   'log' => lambda do |project|
     if project
       if message = OPTIONS.delete(:message) || ARGV[2]
@@ -136,6 +151,7 @@ commands = {
     end
   end
 }
+commands['clock'] = commands['entry']
 
 if command_code = commands[command]
   command_code.call(project)

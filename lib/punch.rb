@@ -108,7 +108,19 @@ class Punch
       end
       true
     end
-    
+
+    def entry(project, options = {})
+      raise ArgumentError, 'both :from and :to time are needed' unless options[:from] and options[:to]
+
+      in_options = { :time => options[:from] }
+      in_options[:message] = options[:message] if options[:message]
+      result = self.in(project, in_options)
+      return result unless result
+
+      out(project, :time => options[:to])
+    end
+    alias_method :clock, :entry
+
     def delete(project)
       return nil unless data.delete(project)
       true

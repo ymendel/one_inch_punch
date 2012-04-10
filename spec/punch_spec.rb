@@ -990,6 +990,84 @@ describe Punch do
     end
   end
 
+  it 'should create a full punch entry' do
+    Punch.should.respond_to(:entry)
+  end
+
+  describe 'creating a full punch entry' do
+    before do
+      Punch.stub!(:in)
+      Punch.stub!(:out)
+
+      @now = Time.now
+      @from_time = @now - 1000
+      @to_time   = @now - 100
+      @project   = 'myproj'
+    end
+
+    it 'should require a project name' do
+      lambda { Punch.entry }.should.raise(ArgumentError)
+    end
+
+    it 'should accept a project name and options' do
+      lambda { Punch.entry('proj', :from => Time.now - 500, :to => Time.now - 20) }.should.not.raise(ArgumentError)
+    end
+
+    it 'should require :from and :to options' do
+      lambda { Punch.entry('proj') }.should.raise(ArgumentError)
+    end
+
+    it 'should punch the project in with the given :from time' do
+      Punch.should.receive(:in).with(@project, :time => @from_time)
+      Punch.entry(@project, :from => @from_time, :to => @to_time)
+    end
+
+    it 'should pass any given message when punching in' do
+      msg = 'just some work'
+      Punch.should.receive(:in).with(@project, :time => @from_time, :message => msg)
+      Punch.entry(@project, :from => @from_time, :to => @to_time, :message => msg)
+    end
+
+    describe 'when punching in is successful' do
+      before do
+        Punch.stub!(:in).and_return(true)
+      end
+
+      it 'should punch the project out with the given :to time' do
+        Punch.should.receive(:out).with(@project, :time => @to_time)
+        Punch.entry(@project, :from => @from_time, :to => @to_time)
+      end
+
+      it 'should return the result from punching out' do
+        result = Object.new
+        Punch.stub!(:out).and_return(result)
+        Punch.entry(@project, :from => @from_time, :to => @to_time).should == result
+      end
+    end
+
+    describe 'when punching in is unsuccesful' do
+      before do
+        Punch.stub!(:in).and_return(false)
+      end
+
+      it 'should not attempt the punch the project out' do
+        Punch.should.receive(:out).never
+        Punch.entry(@project, :from => @from_time, :to => @to_time)
+      end
+
+      it 'should return false' do
+        Punch.entry(@project, :from => @from_time, :to => @to_time).should == false
+      end
+    end
+
+    it 'should have .clock as an alias' do
+      msg = 'just some work'
+      Punch.should.receive(:in).with(@project, :time => @from_time, :message => msg).and_return(true)
+      Punch.should.receive(:out).with(@project, :time => @to_time)
+      Punch.clock(@project, :from => @from_time, :to => @to_time, :message => msg)
+    end
+  end
+
   it 'should delete a project' do
     Punch.should.respond_to(:delete)
   end

@@ -24,7 +24,12 @@ class Punch
   def out(options = {})
     self.class.out(project, options)
   end
-  
+
+  def entry(options = {})
+    self.class.entry(project, options)
+  end
+  alias_method :clock, :entry
+
   def list(options = {})
     self.class.list(project, options)
   end
