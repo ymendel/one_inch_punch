@@ -11,5 +11,5 @@ Gem::Specification.new do |gem|
   gem.name = 'one_inch_punch'
   gem.require_paths = ['lib']
   gem.summary = %q{Track your time locally.}
-  gem.version = '0.5.1'
+  gem.version = '0.6.0'
 end

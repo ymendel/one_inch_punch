@@ -1,3 +1,10 @@
+== 0.6.0 2012-04-10
+
+* 1 minor enhancement:
+  * adding 'entry' command:
+    * combines in+out into one command, requiring from (in) and to (out) times
+    * has 'clock' alias
+
 == 0.5.1 2012-03-19
 
 * 1 tiny bugfix:
