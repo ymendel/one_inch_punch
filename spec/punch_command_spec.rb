@@ -570,6 +570,22 @@ describe 'punch command' do
         run_command('entry')
       end
     end
+
+    it "should have 'clock' as an alias" do
+      from_option = '2012-04-10 14:39'
+      from_time   = Time.local(2012, 4, 10, 14, 39)
+      to_option   = '2012-04-10 17:43'
+      to_time     = Time.local(2012, 4, 10, 17, 43)
+
+      Punch.should.receive(:entry) do |proj, options|
+        proj.should == @project
+        options[:from].should == from_time
+        options[:to  ].should == to_time
+      end
+
+      run_command('clock', @project, '--from', from_option, '--to', to_option)
+    end
+
   end
 
   describe "when the command is 'delete'" do

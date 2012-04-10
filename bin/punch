@@ -151,6 +151,7 @@ commands = {
     end
   end
 }
+commands['clock'] = commands['entry']
 
 if command_code = commands[command]
   command_code.call(project)
