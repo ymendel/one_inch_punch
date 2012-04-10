@@ -467,7 +467,111 @@ describe 'punch command' do
       end
     end
   end
-  
+
+  describe "when the command is 'entry'" do
+    before do
+      Punch.stub!(:entry)
+      @from_option = '2012-04-10 14:39'
+      @to_option   = '2012-04-10 17:43'
+    end
+
+    it 'should load punch data' do
+      Punch.should.receive(:load)
+      run_command('entry', @project)
+    end
+
+    it 'should make a punch entry for the given project' do
+      from_option = '2012-04-10 14:39'
+      from_time   = Time.local(2012, 4, 10, 14, 39)
+      to_option   = '2012-04-10 17:43'
+      to_time     = Time.local(2012, 4, 10, 17, 43)
+
+      Punch.should.receive(:entry) do |proj, options|
+        proj.should == @project
+        options[:from].should == from_time
+        options[:to  ].should == to_time
+      end
+
+      run_command('entry', @project, '--from', from_option, '--to', to_option)
+    end
+
+    it 'should pass a message if specified on the command line (with --message)' do
+      message = 'About to do some amazing work'
+
+      Punch.should.receive(:entry) do |proj, options|
+        proj.should == @project
+        options[:message].should == message
+      end
+
+      run_command('entry', @project, '--from', @from_option, '--to', @to_option, '--message', message)
+    end
+
+    it 'should pass a message if specified on the command line (with -m)' do
+      message = 'About to do some amazing work'
+
+      Punch.should.receive(:entry) do |proj, options|
+        proj.should == @project
+        options[:message].should == message
+      end
+
+      run_command('entry', @project, '--from', @from_option, '--to', @to_option, '-m', message)
+    end
+
+    describe 'when entry created successfully' do
+      before do
+        Punch.stub!(:entry).and_return(true)
+      end
+
+      it 'should write the data' do
+        Punch.should.receive(:write)
+        run_command('entry', @project, '--from', @from_option, '--to', @to_option)
+      end
+
+      it 'should not print anything' do
+        self.should.receive(:puts).never
+        run_command('entry', @project, '--from', @from_option, '--to', @to_option)
+      end
+    end
+
+    describe 'when entry not created successfully' do
+      before do
+        Punch.stub!(:entry).and_return(false)
+      end
+
+      it 'should not write the data' do
+        Punch.should.receive(:write).never
+        run_command('entry', @project, '--from', @from_option, '--to', @to_option)
+      end
+
+      it 'should print a message' do
+        self.should.receive(:puts) do |output|
+          output.should.match(/cannot.+entry/i)
+        end
+        run_command('entry', @project, '--from', @from_option, '--to', @to_option)
+      end
+    end
+
+    describe 'when no project given' do
+      it 'should display an error message' do
+        self.should.receive(:puts) do |output|
+          output.should.match(/project.+require/i)
+        end
+        run_command('entry')
+      end
+
+      it 'should not create an entry' do
+        Punch.stub!(:write)
+        Punch.should.receive(:entry).never
+        run_command('entry')
+      end
+
+      it 'should not write the data' do
+        Punch.should.receive(:write).never
+        run_command('entry')
+      end
+    end
+  end
+
   describe "when the command is 'delete'" do
     before do
       Punch.stub!(:delete)
