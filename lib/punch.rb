@@ -119,6 +119,7 @@ class Punch
 
       out(project, :time => options[:to])
     end
+    alias_method :clock, :entry
 
     def delete(project)
       return nil unless data.delete(project)

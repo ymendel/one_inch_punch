@@ -1059,6 +1059,13 @@ describe Punch do
         Punch.entry(@project, :from => @from_time, :to => @to_time).should == false
       end
     end
+
+    it 'should have .clock as an alias' do
+      msg = 'just some work'
+      Punch.should.receive(:in).with(@project, :time => @from_time, :message => msg).and_return(true)
+      Punch.should.receive(:out).with(@project, :time => @to_time)
+      Punch.clock(@project, :from => @from_time, :to => @to_time, :message => msg)
+    end
   end
 
   it 'should delete a project' do
