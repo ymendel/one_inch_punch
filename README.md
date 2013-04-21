@@ -6,8 +6,8 @@
 to Ara T. Howard's `punch` gem. The main benefits will be greater understandability,
 test coverage, and usage outside of merely command-line situations.
 
-Punch: Good enough
-One-inch punch: Smaller, more effective
+  * Punch: Good enough
+  * One-inch punch: Smaller, more effective
 
 ## Features/Problems
 
