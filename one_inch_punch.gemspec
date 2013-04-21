@@ -6,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.description = %q{A simple time-tracking tool, compatible with Ara T. Howard's punch gem.}
   gem.email = ['ymendel@pobox.com']
   gem.executables = ['punch']
-  gem.files = Dir['License.txt', 'History.txt', 'README.txt', 'lib/**/*', 'spec/**/*', 'bin/**/*']
+  gem.files = Dir['License.txt', 'History.txt', 'README.md', 'lib/**/*', 'spec/**/*', 'bin/**/*']
   gem.homepage = 'http://github.com/ymendel/one_inch_punch/'
   gem.name = 'one_inch_punch'
   gem.require_paths = ['lib']
