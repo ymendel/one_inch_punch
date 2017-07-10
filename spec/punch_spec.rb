@@ -30,6 +30,7 @@ describe Punch do
         total: "00:55:17"
         in: 2008-05-19T11:23:35.00-05:00
       EOD
+      @data.gsub!(/^      /, '')
       File.stub!(:read).and_return(@data)
       
       Punch.instance_eval do
