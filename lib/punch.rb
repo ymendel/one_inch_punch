@@ -4,7 +4,6 @@ $:.unshift(File.dirname(__FILE__)) unless
 require 'yaml'
 require 'time'
 require 'date'
-require 'timely'
 require 'enumerator'
 require 'punch/core_ext'
 require 'punch/instance'
@@ -250,7 +249,7 @@ class Punch
         options[:after]  = date
         options[:before] = date + 1
       end
-      [:after, :before].each { |k|  options[k] = options[k].at_time(0) if options[k].respond_to?(:at_time) }
+      [:after, :before].each { |k|  options[k] = options[k].to_time if options[k].respond_to?(:to_time) }
       
       options
     end
