@@ -393,8 +393,8 @@ describe Punch do
     
     describe 'handling a sub-project' do
       before do
-        @projects['parent'] = 'daddy'
-        @projects['child'] = @projects['parent'] + '/sugar'
+        @projects['parent'] = 'part'
+        @projects['child'] = @projects['parent'] + '/kid'
       end
       
       it "should return 'in' for a non-existent parent project if the sub-project is punched in" do
@@ -944,8 +944,8 @@ describe Punch do
     describe 'handling a sub-project' do
       before do
         @projects = {}
-        @projects['parent'] = 'daddy'
-        @projects['child'] = @projects['parent'] + '/sugar'
+        @projects['parent'] = 'part'
+        @projects['child'] = @projects['parent'] + '/kid'
       end
       
       it 'should actually punch out the sub-project when told to punch out the parent project' do
@@ -1269,8 +1269,8 @@ describe Punch do
     describe 'handling a sub-project' do
       before do
         @projects = {}
-        @projects['parent'] = 'daddy'
-        @projects['child'] = @projects['parent'] + '/sugar'
+        @projects['parent'] = 'part'
+        @projects['child'] = @projects['parent'] + '/kid'
         @data[@projects['parent']] = [ { 'in' => @now - 100, 'out' => @now - 50 } ]
         @data[@projects['child']] = [ { 'in' => @now - 20 } ]
         Punch.data = @data
@@ -1466,8 +1466,8 @@ describe Punch do
     describe 'handling a sub-project' do
       before do
         @projects = {}
-        @projects['parent'] = 'daddy'
-        @projects['child'] = @projects['parent'] + '/sugar'
+        @projects['parent'] = 'part'
+        @projects['child'] = @projects['parent'] + '/kid'
         @data[@projects['parent']] = [ { 'in' => @now - 100, 'out' => @now - 50 } ]
         @data[@projects['child']] = [ { 'in' => @now - 20, 'out' => @now - 10 } ]
         Punch.data = @data

@@ -559,9 +559,9 @@ describe Punch, 'instance' do
       end
       
       @projects = {}
-      @projects['parent'] = 'daddy'
-      @projects['child']  = @projects['parent'] + '/sugar'
-      @projects['kid']    = @projects['parent'] + '/object'
+      @projects['parent'] = 'part'
+      @projects['child']  = @projects['parent'] + '/kid'
+      @projects['kid']    = @projects['parent'] + '/other'
       
       @data = { @projects['parent'] => [], @projects['child'] => [], @projects['kid'] => [] }
       Punch.data = @data
