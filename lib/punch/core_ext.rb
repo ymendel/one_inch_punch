@@ -1,1 +1,1 @@
-require 'punch/core_ext/fixnum'
+require 'punch/core_ext/integer'
