@@ -1,3 +1,8 @@
+== 0.6.3 2019-03-01
+
+* 1 tiny bugfix:
+  * fixing require broken in 0.6.2
+
 == 0.6.2 2019-03-01
 
 * 1 tiny change:
